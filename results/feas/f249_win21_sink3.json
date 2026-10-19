@@ -1,0 +1,14 @@
+{
+ "latent_frames": 63,
+ "local_attn": 21,
+ "sink": 3,
+ "prompt": "A dashcam view from a car driving along a quiet suburban road on a sunny afternoon. Green trees and houses with white fences line both sides of the street, parked cars sit along the curb, and a clear blue sky with a few white clouds stretches overhead. The road has crisp lane markings, and the camera moves steadily forward at moderate speed with natural lighting and realistic colors.",
+ "seed": 0,
+ "out": "/nfsscratch/Users/ywang906/vdrift/feas/f249_win21_sink3.mp4",
+ "gpu": "NVIDIA A40",
+ "torch": "2.5.1+cu121",
+ "video_frames": 249,
+ "load_s": 79.5,
+ "gen_s": 74.1,
+ "peak_mem_gb": 23.72
+}

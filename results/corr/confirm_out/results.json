@@ -1,0 +1,184 @@
+{
+ "counts": {
+  "none": 160,
+  "ttc_s1": 160,
+  "ttc_s1_b15": 160
+ },
+ "gpus": {
+  "NVIDIA A100 80GB PCIe": 440,
+  "NVIDIA A800 40GB Active": 136
+ },
+ "tests": {
+  "D:ttc_s1": {
+   "est": -1.4766608640380334,
+   "se": 0.14634616512548898,
+   "ci": [
+    -1.7634993476839917,
+    -1.189822380392075
+   ],
+   "boot_ci": [
+    -1.8202146706223372,
+    -1.1458607084929089
+   ],
+   "mean_none": 5.782136821430261,
+   "mean_arm": 4.305475957392228,
+   "n": 320,
+   "p": 3.052508099037626e-24,
+   "family": "primary",
+   "p_holm": 3.052508099037626e-24,
+   "supported": true
+  },
+  "D:ttc_s1_b15": {
+   "est": -1.779692066012201,
+   "se": 0.1705981984262661,
+   "ci": [
+    -2.1140645349276825,
+    -1.4453195970967196
+   ],
+   "boot_ci": [
+    -2.259285475289278,
+    -1.3536112528643962
+   ],
+   "mean_none": 5.782136821430261,
+   "mean_arm": 4.002444755418057,
+   "n": 320,
+   "p": 8.849647341759282e-26,
+   "family": "primary",
+   "p_holm": 1.7699294683518565e-25,
+   "supported": true
+  },
+  "zL:ttc_s1": {
+   "est": 1.0820704048439844,
+   "se": 0.12210748404626891,
+   "ci": [
+    0.8427397361132973,
+    1.3214010735746715
+   ],
+   "boot_ci": [
+    0.7436471941901603,
+    1.4594830912897596
+   ],
+   "mean_none": -2.188167002125804,
+   "mean_arm": -1.10609659728182,
+   "n": 320,
+   "p": 3.942918398318799e-19,
+   "family": "secondary",
+   "p_holm": 3.942918398318799e-19,
+   "supported": true
+  },
+  "zL:ttc_s1_b15": {
+   "est": 1.3158440634220967,
+   "se": 0.1353682890169399,
+   "ci": [
+    1.0505222169488946,
+    1.5811659098952988
+   ],
+   "boot_ci": [
+    0.9044461285042604,
+    1.7291834370622856
+   ],
+   "mean_none": -2.188167002125804,
+   "mean_arm": -0.872322938703707,
+   "n": 320,
+   "p": 1.2331419548715038e-22,
+   "family": "secondary",
+   "p_holm": 2.4662839097430076e-22,
+   "supported": true
+  },
+  "K:ttc_s1": {
+   "est": -0.001947699051205263,
+   "se": 0.054782598314090866,
+   "ci": [
+    -0.10932159174682335,
+    0.10542619364441283
+   ],
+   "boot_ci": [
+    -0.1074786000225044,
+    0.11089136984841107
+   ],
+   "mean_none": 2.077235752331407,
+   "mean_arm": 2.0752880532802016,
+   "n": 320,
+   "family": "secondary-noninferiority",
+   "margin": 0.3,
+   "noninferior": true
+  },
+  "K:ttc_s1_b15": {
+   "est": 0.008019921244439112,
+   "se": 0.04734651040511556,
+   "ci": [
+    -0.08477923914958739,
+    0.1008190816384656
+   ],
+   "boot_ci": [
+    -0.06789501975642494,
+    0.08711286987326688
+   ],
+   "mean_none": 2.077235752331407,
+   "mean_arm": 2.085255673575846,
+   "n": 320,
+   "family": "secondary-noninferiority",
+   "margin": 0.3,
+   "noninferior": true
+  }
+ },
+ "flicker_ratio_vs_none": {
+  "jitter": {
+   "none": 1.0,
+   "ttc_s1": 1.128,
+   "ttc_s1_b15": 1.671
+  },
+  "boundary": {
+   "none": 1.0,
+   "ttc_s1": 1.318,
+   "ttc_s1_b15": 2.402
+  }
+ },
+ "controls": {
+  "transition_none_meanabs_dL": {
+   "cfm_canyon_out": 11.59,
+   "cfm_cloud_cover": 9.65,
+   "cfm_garage_in": 9.05,
+   "cfm_garage_out": 26.73,
+   "cfm_meadow_out": 10.64,
+   "cfm_sunset_mountains": 3.93,
+   "cfm_underpass": 15.24,
+   "cfm_warehouse_in": 18.24
+  },
+  "valid": [
+   "cfm_canyon_out",
+   "cfm_cloud_cover",
+   "cfm_garage_in",
+   "cfm_garage_out",
+   "cfm_meadow_out",
+   "cfm_underpass",
+   "cfm_warehouse_in"
+  ],
+  "ttc_s1": {
+   "kept_by_prompt": {
+    "cfm_canyon_out": 1.51,
+    "cfm_cloud_cover": 0.67,
+    "cfm_garage_in": 1.02,
+    "cfm_garage_out": 0.58,
+    "cfm_meadow_out": 1.47,
+    "cfm_sunset_mountains": 0.28,
+    "cfm_underpass": 0.81,
+    "cfm_warehouse_in": 0.83
+   },
+   "median_kept_valid": 0.8279647666409151
+  },
+  "ttc_s1_b15": {
+   "kept_by_prompt": {
+    "cfm_canyon_out": 1.48,
+    "cfm_cloud_cover": 0.77,
+    "cfm_garage_in": 1.07,
+    "cfm_garage_out": 0.83,
+    "cfm_meadow_out": 1.71,
+    "cfm_sunset_mountains": 0.15,
+    "cfm_underpass": 0.93,
+    "cfm_warehouse_in": 0.9
+   },
+   "median_kept_valid": 0.929221290675958
+  }
+ }
+}
