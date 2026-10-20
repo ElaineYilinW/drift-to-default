@@ -86,3 +86,37 @@ axs[2].set_title("(c) Self Forcing, by caption lighting", fontsize=9.5, loc="lef
 fig.tight_layout()
 fig.savefig(f"{R}/report/fig_match.pdf")
 print("ok match")
+
+# calibrated-lighting experiment: paired |dL| and retention vs the generic prompt, and signed dL by lighting class
+V = pd.read_csv(f"{R}/results/corr/calib_out/calib_videos.csv")
+O = V.groupby(["model", "open", "light", "arm"], as_index=False).mean(numeric_only=True)
+rng = np.random.default_rng(0)
+arms = ["M", "CL", "C", "C+ttc"]
+fig, axs = plt.subplots(1, 3, figsize=(10, 3.2), gridspec_kw={"width_ratios": [1, 1, 1.15]})
+for ax, y, lab in [(axs[0], "absdL_end", "|ΔL| after 31 s, minus generic prompt"),
+                   (axs[1], "retention", "content retention, minus generic prompt")]:
+    for j, (m, col) in enumerate([("SF", "#2a78d6"), ("LL", "#eb6834")]):
+        w = O[O.model == m].pivot(index="open", columns="arm", values=y)
+        for i, a in enumerate(arms):
+            d = (w[a] - w["G"]).values
+            bs = np.percentile([rng.choice(d, len(d)).mean() for _ in range(4000)], [2.5, 97.5])
+            ax.errorbar(d.mean(), i + (j - .5) * .28, xerr=[[d.mean() - bs[0]], [bs[1] - d.mean()]], fmt="o", ms=4,
+                        color=col, lw=1.4, label={"SF": "Self Forcing", "LL": "LongLive"}[m] if i == 0 else None)
+    ax.axvline(0, color=MUTED, lw=.8)
+    ax.set_yticks(range(4), ["M (VLM)", "CL", "C", "C+ttc"]), ax.invert_yaxis(), ax.set_xlabel(lab, fontsize=8.5)
+axs[0].legend(frameon=False, fontsize=7.5, loc="upper left")
+axs[0].set_title("(a) brightness drift", fontsize=9.5, loc="left")
+axs[1].set_title("(b) content kept", fontsize=9.5, loc="left")
+g = O[O.model == "SF"].copy()
+g["cls"] = np.where(g.light == "sunny", "sunny (n=23)", "night/dusk/\novercast (n=17)")
+t = g.pivot_table(index="cls", columns="arm", values="dL_end")
+x = np.arange(2)
+for k, (a, c) in enumerate([("G", "#898781"), ("M", "#eb6834"), ("C", "#1baf7a"), ("C+ttc", "#6250d6")]):
+    axs[2].bar(x + (k - 1.5) * .2, t[a].values, .19, color=c, label=a)
+axs[2].axhline(0, color=MUTED, lw=.8)
+axs[2].set_xticks(x, t.index, fontsize=8), axs[2].set_ylabel("signed ΔL after 31 s (L*)")
+axs[2].legend(frameon=False, fontsize=7.5, ncol=2)
+axs[2].set_title("(c) Self Forcing, by calibrated class", fontsize=9.5, loc="left")
+fig.tight_layout()
+fig.savefig(f"{R}/report/fig_calib.pdf")
+print("ok calib")

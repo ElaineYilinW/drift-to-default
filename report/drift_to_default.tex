@@ -17,7 +17,7 @@
 Autoregressive (causal) video diffusion models generate long videos chunk by chunk and drift over tens of seconds:
 the picture darkens, saturates or loses detail. We study this drift on Self Forcing (Wan2.1-1.3B) and LongLive with
 the design tools of clinical research: paired seeds, held-out prompts, mixed-effects models, cluster-bootstrap
-intervals and preregistered analyses. Across about \textbf{5{,}800} generated videos (mostly 31\,s) we find:
+intervals and preregistered analyses. Across about \textbf{6{,}400} generated videos (mostly 31\,s) we find:
 (i) anchoring the first frames in the KV cache (an attention sink) slows colour drift strongly, and a small rolling
 window drifts fastest without it (preregistered, 2{,}000 videos);
 (ii) brightness drift is \emph{two-way regression to a default level}: brighter openings darken and darker ones
@@ -27,7 +27,7 @@ regression slope does not ($-0.69$ vs $-0.74$);
 (iii) a training-free, content-aware correction that transfers the per-channel mean tone of an anchor-only prediction
 at one early denoising step reduces drift without harming structure (preregistered confirmation on 40 held-out prompts)
 and transfers to LongLive at half the effect;
-(iv) in a preregistered test, prompts written from an off-the-shelf VLM caption of the opening did \emph{not} reduce brightness drift on either model, although they kept 0.10--0.15 more of the opening's content (DINOv2 similarity); an exploratory breakdown shows that the captioner's lighting descriptions are poorly calibrated to actual brightness, so the prompt pulls normally lit scenes towards ``dim''.
+(iv) in a preregistered test, prompts written from an off-the-shelf VLM caption of the opening did \emph{not} reduce brightness drift on either model, although they kept 0.10--0.15 more of the opening's content (DINOv2 similarity); the captioner's lighting words are poorly calibrated to actual brightness. (v) In a second preregistered test, choosing the lighting description from the opening's measured brightness, with levels taken from (ii), reduced brightness drift against the generic prompt on Self Forcing ($-26\%$, Holm $p=0.013$); combined with the correction it cut brightness drift by 44\% and colour shift by 39\%. On LongLive the effect was smaller and not significant, because the calibration was estimated on Self Forcing.
 We also report what did not hold, and two evaluation pitfalls: the GPU architecture changes bf16 outputs, breaking
 seed pairing, and a popular image-quality metric is insensitive to this drift.
 \end{abstract}
@@ -44,7 +44,7 @@ plan was written down before the data existed where it mattered:
 \begin{enumerate}
 \item How do the two standard context strategies, a rolling window and an attention sink, affect drift? (\S\ref{sec:ctx})
 \item What is drift? We find that brightness drift is regression to a default level set by the prompt, on two models. (\S\ref{sec:default})
-\item Can it be reduced without training? A content-aware correction works and transfers (\S\ref{sec:corr}); describing the opening in the prompt does not, as tested (\S\ref{sec:match}).
+\item Can it be reduced without training? A content-aware correction works and transfers (\S\ref{sec:corr}); describing the opening with a free-form caption does not (\S\ref{sec:match}), but a lighting description calibrated to measured brightness does (\S\ref{sec:calib}).
 \end{enumerate}
 No model was trained. Everything is inference on public weights, run on a university cluster. Code, prompts,
 preregistrations and per-experiment summaries are at \url{https://github.com/ElaineYilinW/drift-to-default}.
@@ -218,6 +218,42 @@ words of the VLM caption.}
 \label{fig:match}
 \end{figure}
 
+\section{Calibrating the lighting description (preregistered)}\label{sec:calib}
+\paragraph{Design.} If the failure in \S\ref{sec:match} comes from the caption's lighting words, choosing those words
+from measured brightness should work. We froze the rule before generation (public commit d5e4c24). Each opening gets the
+Part~4 lighting prompt whose Self Forcing zero-drift level is nearest to its brightness (night 16, dusk 19, overcast 34,
+sunny 43; levels estimated on the earlier, independent openings). This gave 23 sunny, 10 overcast, 5 dusk and 2 night.
+New arms: CL (generic scene + calibrated lighting, i.e.\ the Part~4 prompt itself), C (the VLM scene phrase +
+calibrated lighting) and C+correction. They were compared with the existing G and M videos of \S\ref{sec:match}. Each
+opening ran on the GPU architecture of its earlier arms. A rerun of G (seed 0) reproduced all 80 stored videos bit for
+bit, so the new and old arms are strictly paired. While preparing this run we found that 4 LongLive openings of
+\S\ref{sec:match} had arms split across architectures (a preempted job resumed on another GPU type). We regenerated
+them; the preregistered conclusions of \S\ref{sec:match} did not change. Primary hypotheses, per model and
+Holm-corrected: $|\Delta L_\text{end}|$ lower for C than M (H1) and lower for C than G (H2).
+
+\paragraph{Results.} H2 is supported on Self Forcing: $-2.45$ \ci{-4.08}{-1.04} (9.29\,$\to$\,6.84, Holm $p=0.013$).
+H1 points the same way on both models ($-1.24$ and $-1.15$) but is not significant, and neither is H2 on LongLive
+($-1.34$ \ci{-3.19}{0.55}). Secondary results (Fig.~\ref{fig:calib}):
+\begin{itemize}
+\item On Self Forcing, the plain calibrated prompt CL reduces $|\Delta L|$ by 3.20 \ci{-4.69}{-1.89}.
+\item Calibrated prompt + correction vs generic reduces $|\Delta L|$ by 4.05 \ci{-5.64}{-2.54} (44\%) and $\Delta E$ by
+4.54 (39\%). Content retention improves (+0.08) and jitter falls.
+\item Content retention comes from the VLM scene phrase (C vs CL: +0.06 on Self Forcing, +0.14 on LongLive), not from
+the lighting words.
+\item The Part~4 law, applied out of sample, predicts the CL outcomes on Self Forcing moderately (correlation 0.64,
+$R^2$ 0.34).
+\item On LongLive the same predictions are biased by $+4.3$ \Lstar: its defaults are higher, so dark openings were
+still brightened under the Self-Forcing-calibrated prompts. A calibration has to be estimated per model.
+\end{itemize}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{fig_calib.pdf}
+\caption{Calibrated lighting descriptions. (a, b) Paired differences from the generic prompt (40 openings, seed means,
+opening-cluster bootstrap 95\% CIs). (c) Self Forcing, signed brightness change by calibrated class.}
+\label{fig:calib}
+\end{figure}
+
 \section{What did not hold}
 We report claims that we made at some point during the study and later revised or withdrew after further checks:
 \begin{itemize}
@@ -232,7 +268,7 @@ have a direct effect of only 0.036, yet they reduce drift; how is not explained.
 \end{itemize}
 
 \section{Limitations}
-Both models share the Wan2.1-1.3B base. The preregistered positive results are on Self Forcing; the preregistered test on both models (\S\ref{sec:match}) was negative. The lighting
+Both models share the Wan2.1-1.3B base. The preregistered positive results are on Self Forcing; of the two preregistered tests on both models, the first (\S\ref{sec:match}) was negative and the second (\S\ref{sec:calib}) positive on Self Forcing only. The lighting calibration has four discrete levels and was estimated on Self Forcing; openings brighter than the sunny level (43 \Lstar) have no matching description. The lighting
 and LongLive experiments use 2 seeds. Videos are 31 seconds. Real openings are single held frames, not real video. The
 correction acts on colour and brightness only; structural degradation (for example sky textures late in a video)
 remains.

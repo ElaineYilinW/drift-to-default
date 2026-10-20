@@ -3,7 +3,8 @@
 预注册见 `docs/preregistration_match_cn.md`（生成前冻结，GitHub commit 43bbd4c）。
 
 - **数据与执行：** 800 个视频全部完成。每个分支每个模型 80 个视频；同一模型、同一开头帧的全部分支在同一块 GPU 上运行。
-- **抢占：** 中途有 24 个任务被所在节点的课题组抢回 GPU，已自动整任务重跑。
+- **抢占：** 中途有 24 个任务被所在节点的课题组抢回 GPU，已自动重新提交。
+- **更正（2026-10-20）：** 之前写的"整任务重跑"不对。生成脚本会跳过已存在的输出，所以重跑是接着之前的进度做。结果 LongLive 上 ng16–ng19 这 4 张开头帧的 M+ttc 和 ML 在 A40 上生成，其余分支在 A100 上，配对不严格。受影响的只有这两个分支：H1（M vs G）不受影响，H2（M+ttc vs M）的 LongLive 部分受影响。这两个分支已在 A100/A800 上重新生成，敏感性分析见文末。
 - **分析：** 用冻结的 `analyze_match.py`（SHA-256 315fbf7d…，核对一致）。运行命令为 `python analyze_match.py results/corr/match_out SF=results/corr/match_sf LL=results/corr/match_ll`。
 - **与预注册的偏离：** 无。
 
@@ -65,3 +66,15 @@
 - 描述类别的划分规则是事后定的。
 
 注：公开仓库里的 `prompts/matched.jsonl` 和 `prompts/match_openings.jsonl` 去掉了集群上的图片路径字段（NAVSIM 图片不分发），所以哈希与预注册中记录的不同；预注册的哈希对应集群上的原文件，分析前已核对一致。
+
+## 敏感性分析：修复 LongLive 配对之后（2026-10-20）
+LongLive 上 ng16–ng19 的 ML 和 M+ttc 已在 A100 上重新生成（原 A40 文件保留在 `match_ll_a40_split/`）。修复后这 4 张开头帧的全部分支都在 A100 上，重新生成的 G 种子 0 与原文件逐位相同。用冻结的 `analyze_match.py`（哈希核对一致）重新分析，结果在 `results/corr/match_out_repaired/`：
+
+| 检验 | 按执行 | 修复后 |
+|---|---|---|
+| Self Forcing H1 | −1.21 [−3.09, 0.36]，Holm p 0.58 | 相同（Self Forcing 数据未变） |
+| Self Forcing H2 | −1.00 [−1.89, −0.12]，Holm p 0.14 | 相同 |
+| LongLive H1 | −0.19 [−2.00, 1.63]，Holm p 1.0 | −0.19 [−2.00, 1.63]，Holm p 0.91 |
+| LongLive H2 | −0.36 [−1.48, 0.75]，Holm p 1.0 | −0.42 [−1.50, 0.66]，Holm p 0.91 |
+
+结论不变：四个主要假设都不成立。
