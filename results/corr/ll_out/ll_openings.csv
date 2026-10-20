@@ -1,0 +1,81 @@
+model,open,src,seed,L_open,dL_end
+LongLive,real00,real,0.5,46.30612,-1.050621
+LongLive,real01,real,0.5,41.030518,-4.195078
+LongLive,real02,real,0.5,51.313164,-5.5364685
+LongLive,real03,real,0.5,32.86577,7.577938
+LongLive,real04,real,0.5,49.373375,-6.795702
+LongLive,real05,real,0.5,46.276672,-1.8980389
+LongLive,real06,real,0.5,47.590282,-5.451483
+LongLive,real07,real,0.5,42.605347,-4.464712
+LongLive,real08,real,0.5,47.530537,-7.462166
+LongLive,real09,real,0.5,43.96541,-6.977846
+LongLive,real10,real,0.5,42.499832,-11.373218
+LongLive,real11,real,0.5,39.69324,-3.7354908
+LongLive,real12,real,0.5,48.78856,-6.488945
+LongLive,real13,real,0.5,63.315197,-15.110373
+LongLive,real14,real,0.5,49.60687,-9.231003
+LongLive,real15,real,0.5,52.753914,-27.121922
+LongLive,real16,real,0.5,50.9002,-10.53466
+LongLive,real17,real,0.5,49.184135,-6.909586
+LongLive,real18,real,0.5,45.494812,-8.469112
+LongLive,real19,real,0.5,46.30699,1.4856625
+LongLive,self00,self,0.5,43.724064,2.5095654
+LongLive,self01,self,0.5,39.858814,-1.130558
+LongLive,self02,self,0.5,21.355816,11.666857
+LongLive,self03,self,0.5,11.531248,20.159626
+LongLive,self04,self,0.5,41.490437,2.5386543
+LongLive,self05,self,0.5,34.229088,6.0863647
+LongLive,self06,self,0.5,42.350777,3.2068787
+LongLive,self07,self,0.5,34.4071,1.5913134
+LongLive,self08,self,0.5,45.803707,2.6055717
+LongLive,self09,self,0.5,33.34053,11.92098
+LongLive,self10,self,0.5,37.593594,0.1970253
+LongLive,self11,self,0.5,47.146725,-8.627438
+LongLive,self12,self,0.5,31.628935,18.411188
+LongLive,self13,self,0.5,17.475254,7.3611755
+LongLive,self14,self,0.5,43.431866,-6.5715103
+LongLive,self15,self,0.5,45.954063,-2.4262428
+LongLive,self16,self,0.5,40.43294,6.9999866
+LongLive,self17,self,0.5,26.611706,10.808956
+LongLive,self18,self,0.5,43.798695,1.7502823
+LongLive,self19,self,0.5,38.424065,-2.395382
+Self Forcing,real00,real,1.5,46.307102,-7.140873
+Self Forcing,real01,real,1.5,41.030876,-10.577534
+Self Forcing,real02,real,1.5,51.314625,-13.701803
+Self Forcing,real03,real,1.5,32.866096,2.4515243
+Self Forcing,real04,real,1.5,49.372883,-12.920345
+Self Forcing,real05,real,1.5,46.277573,-9.8944845
+Self Forcing,real06,real,1.5,47.590523,-8.423507
+Self Forcing,real07,real,1.5,42.605347,-5.504858
+Self Forcing,real08,real,1.5,47.530537,-9.208395
+Self Forcing,real09,real,1.5,43.96541,-4.70652
+Self Forcing,real10,real,1.5,42.499832,-7.5651584
+Self Forcing,real11,real,1.5,39.6932,-10.873693
+Self Forcing,real12,real,1.5,48.789185,-8.709682
+Self Forcing,real13,real,1.5,63.315197,-17.382145
+Self Forcing,real14,real,1.5,49.60687,-10.982977
+Self Forcing,real15,real,1.5,52.753914,-13.947871
+Self Forcing,real16,real,1.5,50.9002,-16.098644
+Self Forcing,real17,real,1.5,49.18445,-12.396751
+Self Forcing,real18,real,1.5,45.494053,-6.4137526
+Self Forcing,real19,real,1.5,46.307266,-7.479497
+Self Forcing,self00,self,1.5,43.723907,-13.808595
+Self Forcing,self01,self,1.5,39.859062,-7.717
+Self Forcing,self02,self,1.5,21.3555,2.7240949
+Self Forcing,self03,self,1.5,11.531916,18.759132
+Self Forcing,self04,self,1.5,41.49027,-8.532867
+Self Forcing,self05,self,1.5,34.228893,-0.0030379295
+Self Forcing,self06,self,1.5,42.35137,-2.2861748
+Self Forcing,self07,self,1.5,34.4071,7.822056
+Self Forcing,self08,self,1.5,45.803707,-3.6096735
+Self Forcing,self09,self,1.5,33.34053,-0.26470995
+Self Forcing,self10,self,1.5,37.593594,-3.6981516
+Self Forcing,self11,self,1.5,47.148396,-9.632658
+Self Forcing,self12,self,1.5,31.629494,1.9734511
+Self Forcing,self13,self,1.5,17.47511,8.124235
+Self Forcing,self14,self,1.5,43.431656,-9.038439
+Self Forcing,self15,self,1.5,45.954037,-11.148008
+Self Forcing,self16,self,1.5,40.43261,-4.0696735
+Self Forcing,self17,self,1.5,26.61242,5.9321175
+Self Forcing,self18,self,1.5,43.79847,-8.646985
+Self Forcing,self19,self,1.5,38.424084,-0.9475279
