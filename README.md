@@ -2,7 +2,7 @@
 
 **Colour drift in autoregressive video diffusion is regression to a default brightness set by the text prompt — measured, explained and corrected on Self Forcing (Wan2.1-1.3B) with preregistered experiments, and replicated on LongLive.**
 
-Autoregressive ("causal") video diffusion models generate long videos chunk by chunk, conditioning on their own past output through a KV cache. Over tens of seconds the picture drifts: it darkens, saturates or falls apart. This repository is an empirical study of that drift on the open [Self Forcing](https://github.com/guandeh17/Self-Forcing) model, with a replication on [LongLive](https://github.com/NVlabs/LongLive). It generates about 5,000 videos (mostly 31 s long) on a university HPC cluster and analyses them with the kind of design and statistics that are standard in clinical research but rare in this field: paired seeds, mixed-effects models, cluster-bootstrap confidence intervals, held-out prompts and frozen preregistrations.
+Autoregressive ("causal") video diffusion models generate long videos chunk by chunk, conditioning on their own past output through a KV cache. Over tens of seconds the picture drifts: it darkens, saturates or falls apart. This repository is an empirical study of that drift on the open [Self Forcing](https://github.com/guandeh17/Self-Forcing) model, with a replication on [LongLive](https://github.com/NVlabs/LongLive). It generates about 5,800 videos (mostly 31 s long) on a university HPC cluster and analyses them with the kind of design and statistics that are standard in clinical research but rare in this field: paired seeds, mixed-effects models, cluster-bootstrap confidence intervals, held-out prompts and frozen preregistrations.
 
 No model was trained. Everything is inference on public weights plus measurement.
 
@@ -25,6 +25,7 @@ No model was trained. Everything is inference on public weights plus measurement
 | 4b | **The correction transfers to LongLive** without changes, at about half the effect, because LongLive drifts less on these prompts. | 40 prompts × 2 seeds: D −0.70 [−1.13, −0.27], structure non-inferior, jitter ×1.10; 40 openings: brightness shift 7.4 → 5.2 (30/40 scenes improved). | exploratory |
 | 5 | **Observational estimates give the wrong causal answer.** | A regression-derived "brightness direction" in latent space realises 18% of an intended change, a direction estimated from designed per-channel perturbations realises 96%. An observational AR slope is 0.50 where interventions give 0.76–0.99. | holds |
 | 6 | The model follows the brightness of its recent context about 90–100% for natural differences, but only about 75% for an artificial tone shift. The first frames have a tiny direct effect (0.036) yet reduce drift. | Context-intervention experiments (KV-cache replay, bit-exact). | revised wording; mechanism of anchoring open |
+| 8 | **Describing the opening in the prompt (off-the-shelf VLM caption) does not reliably reduce brightness drift**, but it keeps much more of the opening's content. | Preregistered, 40 new openings × 2 models × 5 arms (800 videos): \|ΔL\| caption vs generic −1.21 [−3.09, 0.36] (Self Forcing), −0.19 [−2.00, 1.63] (LongLive), not supported; content retention +0.10 / +0.15 (p < 0.001). The captioner calls half of normally lit frames "dim", which pulls them darker. | **negative (preregistered)** |
 | 7 | ~~Anchoring works by stabilising the default brightness.~~ ~~A simple dynamics model forecasts the final brightness.~~ | Trend difference +0.5 [−2.4, 3.5]; out-of-sample forecasts weak. | **withdrawn** |
 
 ![regression to the default brightness](assets/fig1_regression_to_default.png)
@@ -76,9 +77,24 @@ Flicker is the cost: jitter ×1.13 / ×1.67 and chunk-boundary jumps ×1.32 / ×
 
 ![LongLive vs Self Forcing](assets/fig5_longlive.png)
 
+## Part 5 — Matching the prompt to the opening (preregistered, negative)
+
+If drift is the text overriding the opening, a prompt that describes the opening should drift less. We tested this with a frozen plan ([docs/preregistration_match_cn.md](docs/preregistration_match_cn.md), committed before any video was generated) and report the result in [docs/match_results_cn.md](docs/match_results_cn.md).
+- **Design.** 40 new openings: 20 NAVSIM frames spread over brightness and 20 generated frames. Qwen2.5-VL-3B captioned each opening (`caption_vlm.py`). Three prompts: generic (G); scene + lighting from the caption (M); the generic scene with the caption's lighting only (ML). G and M were each run with and without the correction. Two models, 2 seeds.
+- **Primary: not supported** on either model (Holm p ≥ 0.14).
+- **Secondary:**
+  - Content retention improves strongly (+0.10 / +0.15 DINOv2 similarity to the opening).
+  - Jitter drops.
+  - On Self Forcing, caption prompt + correction vs generic reduces the colour shift ΔE by 2.9.
+- **Why (exploratory).** The captioner's lighting words are not calibrated to brightness. Normally lit frames described as "dimly lit … early morning or late evening" darkened *more*. The 4 genuinely dark frames, which the generic prompt brightened by 16 L\*, stayed put under the caption prompt. A brightness-calibrated lighting description is the obvious next test.
+
+![matched prompts](assets/fig6_matched_prompts.png)
+
 ## Practical lessons about evaluating video models
 - **GPU architecture changes outputs.** With bf16, the same seed gives different videos on A40, on A100/A800, and on L40S/RTX 6000 Ada (identical within an architecture). About 70% of the "paired" comparisons in Part 1 were therefore not strictly paired. That does not bias the results, but it loses efficiency. All later experiments pin each prompt to one architecture.
 - **Prompts, not seeds, carry the variance.** In Part 1 the seed variance component of end-of-video drift was tiny next to the prompt component (0.2 vs 13.7), so more prompts buy more precision than more seeds. Most published long-video results use one sample per prompt and report no uncertainty.
+
+A 7-page technical report with all parts is in [report/drift_to_default.pdf](report/drift_to_default.pdf).
 
 ## Repository layout
 | Path | Contents |
@@ -89,6 +105,7 @@ Flicker is the cost: jitter ×1.13 / ×1.67 and chunk-boundary jumps ×1.32 / ×
 | `latent_summary.py`, `dose_response.py`, `jacobian.py` | latent → brightness: observational fit vs interventional (per-channel) estimate |
 | `analyze_e2.py`, `analyze_confirm.py` | correction development; frozen confirmatory analysis |
 | `ctx_swap.py`, `ctx_swap2.py`, `analyze_swap.py`, `analyze_real.py`, `analyze_checks.py` | Part 3 mechanism and real-opening experiments |
+| `caption_vlm.py`, `analyze_match.py`, `jobs/select_openings.py` | Part 5: VLM captions → prompts, frozen analysis, opening selection |
 | `analyze_light.py`, `ll_gen.py`, `analyze_ll.py` | Part 4: lighting prompts; LongLive generation with the correction hook (run from the LongLive repo, `jobs/setup_ll.sh`, `jobs/patch_ll.py`); two-model comparison |
 | `jobs/` | environment setup on a CentOS 7 / SGE cluster (`setup_sf_env.sh`), runtime patches to Self Forcing (`patch_sf.py`) |
 | `prompts/` | all prompt sets (real-frame prompts list the NAVSIM log, not the image) |

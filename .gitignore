@@ -4,3 +4,8 @@ __pycache__/
 *.mp4
 *.latents.npy
 real_starts/
+report/*.aux
+report/*.log
+report/*.fls
+report/*.fdb_latexmk
+report/*.out
