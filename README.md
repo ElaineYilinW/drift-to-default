@@ -1,159 +1,170 @@
-# drift-to-default
+# Drift to Default
 
-**Colour drift in autoregressive video diffusion is regression to a default brightness set by the text prompt — measured, explained and corrected on Self Forcing (Wan2.1-1.3B) with preregistered experiments, and replicated on LongLive.**
+**Brightness drift in autoregressive video diffusion is regression to a default level set by the text prompt. This repository measures it, explains it and reduces it without training, using preregistered experiments on two open models.**
 
-Autoregressive ("causal") video diffusion models generate long videos chunk by chunk, conditioning on their own past output through a KV cache. Over tens of seconds the picture drifts: it darkens, saturates or falls apart. This repository is an empirical study of that drift on the open [Self Forcing](https://github.com/guandeh17/Self-Forcing) model, with a replication on [LongLive](https://github.com/NVlabs/LongLive). It generates about 6,800 videos (mostly 31 s long) on a university HPC cluster and analyses them with the kind of design and statistics that are standard in clinical research but rare in this field: paired seeds, mixed-effects models, cluster-bootstrap confidence intervals, held-out prompts and frozen preregistrations.
-
-No model was trained. Everything is inference on public weights plus measurement.
+[![Technical report](https://img.shields.io/badge/report-PDF-b31b1b)](report/drift_to_default.pdf)
+[![Preregistered](https://img.shields.io/badge/preregistered-5%20studies-2a78d6)](docs/README.md#preregistrations)
+[![License: MIT](https://img.shields.io/badge/license-MIT-lightgrey)](LICENSE)
 
 <p align="center">
-  <img src="assets/gif_farm.gif" width="49%" alt="no correction vs correction, rural road">
-  <img src="assets/gif_tunnel.gif" width="49%" alt="brightness controller vs content-aware correction, tunnel">
+  <img src="assets/gif_farm.gif" width="49%" alt="the same seed without and with the correction, rural road">
+  <img src="assets/gif_tunnel.gif" width="49%" alt="naive brightness controller versus content-aware correction, tunnel">
 </p>
-<p align="center"><sub>Left: the same seed without and with the correction (31 s). Right: a naive brightness controller lifts a dark tunnel to overexposure; the content-aware correction keeps it dark.</sub></p>
+<p align="center"><sub>Left: one seed without and with the content-aware correction (31 s, Self Forcing). Right: a naive brightness controller lifts a tunnel to overexposure; the content-aware correction keeps it dark.</sub></p>
 
-## Findings at a glance
+## Overview
+
+Autoregressive ("causal") video diffusion models such as [Self Forcing](https://github.com/guandeh17/Self-Forcing) and [LongLive](https://github.com/NVlabs/LongLive) generate a video a few frames at a time. Each new chunk is conditioned on the model's own earlier output through a KV cache. This makes long, streaming generation possible, which world models need. Over tens of seconds the picture drifts: it darkens, saturates or loses detail.
+
+This study treats drift as a measurement problem. It uses the design tools of clinical research, which are rare in this field:
+- paired seeds;
+- prompts held out from development;
+- mixed-effects models and cluster-bootstrap confidence intervals;
+- analysis plans and code frozen before the data existed.
+
+About **6,800 videos**, most of them 31 seconds long, were generated on a university GPU cluster. No model was trained; everything is inference on public weights followed by measurement.
+
+## Key findings
 
 | | Finding | Evidence | Status |
 |---|---|---|---|
-| 1 | **Drift is two-way regression to a default brightness.** Openings brighter than the default darken, darker ones brighten. | 40 held opening frames: brightness change after 31 s = 22.8 − 0.69 × opening brightness, R² = 0.82, slope 95% CI [−0.79, −0.58]. Different seeds of a prompt regress to a common level (persistence of an early deviation only 0.1–0.3). | holds |
-| 1b | **The default is set by the prompt.** The same 40 openings continued under four lighting prompts regress to different levels: sunny 43, overcast 34, dusk 19, night 16 (the generic prompt: 33). | 320 videos; ANCOVA lighting term p ≈ 5 × 10⁻⁷⁸, common slope −0.78 [−0.83, −0.72] (only ~22% of the opening's brightness survives 31 s). | exploratory |
-| 1c | **The same law holds on a second model (LongLive 1.0)** with the same slope but a brighter default. | slope −0.74 [−1.01, −0.58] vs −0.69; zero-drift level 40 [38, 42] vs 33 [30, 35]; R² 0.65. | exploratory |
-| 2 | **Anchoring the first frames (attention sink) slows drift; a small rolling window drifts fastest without it.** | Preregistered factorial study, 40 prompts × 4 seeds × 10 context strategies: colour drift D, sink 3 vs 0: −7.56 [−8.32, −6.81]; window × sink interaction +5.71 [+4.21, +7.22]. | holds (preregistered) |
-| 3 | **A training-free, content-aware correction reduces drift without harming structure** and keeps legitimate brightness changes such as entering a tunnel. | Preregistered confirmation on 40 held-out prompts: D −1.48 [−1.76, −1.19] (β = 1) and −1.78 [−2.11, −1.45] (β = 1.5); structure drift non-inferior; 83–93% of legitimate brightness transitions kept on held-out control prompts. | holds (preregistered) |
-| 4 | **The correction also works when continuing a real driving frame** (NAVSIM front camera), and on Self Forcing real frames darken more only because they are brighter. | 20 real scenes: colour shift from the opening 10.7 → 8.1 / 7.8; real vs model-generated opening differs by p = 0.80 once opening brightness is controlled (on LongLive real openings darken 4.3 L\* more, p = 0.03). | holds (Self Forcing) |
-| 4b | **The correction transfers to LongLive** without changes, at about half the effect, because LongLive drifts less on these prompts. | 40 prompts × 2 seeds: D −0.70 [−1.13, −0.27], structure non-inferior, jitter ×1.10; 40 openings: brightness shift 7.4 → 5.2 (30/40 scenes improved). | exploratory |
-| 5 | **Observational estimates give the wrong causal answer.** | A regression-derived "brightness direction" in latent space realises 18% of an intended change, a direction estimated from designed per-channel perturbations realises 96%. An observational AR slope is 0.50 where interventions give 0.76–0.99. | holds |
-| 6 | The model follows the brightness of its recent context about 90–100% for natural differences, but only about 75% for an artificial tone shift. The first frames have a tiny direct effect (0.036) yet reduce drift. | Context-intervention experiments (KV-cache replay, bit-exact). | revised wording; mechanism of anchoring open |
-| 8 | **Describing the opening in the prompt (off-the-shelf VLM caption) does not reliably reduce brightness drift**, but it keeps much more of the opening's content. | Preregistered, 40 new openings × 2 models × 5 arms (800 videos): \|ΔL\| caption vs generic −1.21 [−3.09, 0.36] (Self Forcing), −0.19 [−2.00, 1.63] (LongLive), not supported; content retention +0.10 / +0.15 (p < 0.001). The captioner calls half of normally lit frames "dim", which pulls them darker. | **negative (preregistered)** |
-| 9 | **A lighting description chosen from the opening's measured brightness does reduce drift** (Self Forcing), and with the correction cuts brightness drift by 44%. | Preregistered, 560 new videos, strictly paired (80/80 bit-identical reruns): \|ΔL\| calibrated vs generic −2.45 [−4.08, −1.04], Holm p = 0.013 (Self Forcing); LongLive −1.34, n.s. (calibration estimated on Self Forcing is biased there). Calibrated vs VLM caption −1.2 on both, n.s. | **holds on Self Forcing (preregistered)** |
-| 9b | With LongLive's **own** lighting calibration the preregistered test is still not significant; the lighting-only calibrated prompt does reduce drift (−34%). | LongLive levels: night 21, dusk 32, overcast 40, sunny 45 (vs 16 / 19 / 34 / 43 on Self Forcing). C vs G −1.55 [−3.50, 0.39], Holm p = 0.26; CL vs G −2.50 [−4.33, −0.82], p = 0.009. VLM scene phrases with their own weather words likely conflict. | negative primary, positive secondary |
-| 7 | ~~Anchoring works by stabilising the default brightness.~~ ~~A simple dynamics model forecasts the final brightness.~~ | Trend difference +0.5 [−2.4, 3.5]; out-of-sample forecasts weak. | **withdrawn** |
+| 1 | **Anchoring the first frames slows drift.** An attention sink of 3 frames strongly reduces colour drift. A small rolling window drifts fastest without one. | 2,000 videos, 40 prompts × 4 seeds × 10 context strategies. Sink 3 vs 0: drift D −7.56 [−8.32, −6.81]. Window × sink interaction +5.71 [+4.21, +7.22]. | Preregistered, supported |
+| 2 | **Drift is two-way regression to a default brightness, and the prompt sets the default.** Openings brighter than the default darken; darker ones brighten. After 31 s about 22% of the opening's deviation is left. | Brightness change = 22.8 − 0.69 × opening brightness (R² 0.82). Default level by prompt: sunny 43, overcast 34, dusk 19, night 16 L\* (Self Forcing). Same slope on LongLive, different scale: 45, 40, 32, 21. | Exploratory, two models |
+| 3 | **A training-free, content-aware correction reduces drift without structural harm.** It keeps legitimate changes such as entering a tunnel. | 40 held-out prompts × 4 seeds: D −1.48 [−1.76, −1.19]. Structure drift non-inferior. 83–93% of legitimate brightness transitions kept. On LongLive about half the effect. | Preregistered, supported |
+| 4 | **Describing the opening with a free-form VLM caption does not reduce brightness drift**, though it keeps more of the opening's content. | Caption vs generic prompt: −1.21 [−3.09, +0.36] on Self Forcing, −0.19 on LongLive. Content retention +0.10 / +0.15. The captioner calls normally lit scenes "dim". | Preregistered, not supported |
+| 5 | **A lighting description chosen from measured brightness does reduce drift**, if it is calibrated to the model. | Self Forcing: −2.45 [−4.08, −1.04] vs generic (−26%, Holm p = 0.013). With the correction: −44% brightness drift, −39% colour shift. LongLive with its own calibration: primary −1.55, n.s.; lighting-only prompt −34% (p = 0.009). | Preregistered, supported on Self Forcing |
 
-![regression to the default brightness](assets/fig1_regression_to_default.png)
+![Brightness change after 31 seconds against the brightness of the opening frame](assets/fig_default_brightness.png)
+<sub>Brightness change after 31 s against the brightness of a held opening frame. (a) Real NAVSIM and model-generated openings fall on one line. (b) Four lighting prompts set four default levels. (c) Two models: same slope, different default.</sub>
 
-## Part 1 — How context strategies affect drift (preregistered)
+## Study design
 
-Self Forcing keeps a rolling KV cache of 21 latent frames and can keep the first frames permanently (an "attention sink"). We crossed window size {12, 21} × anchored frames {0, 1, 3} × RoPE re-alignment of the anchor {no, yes} — 10 strategies — over 40 prompts (20 MovieGen, 20 driving) × 4 seeds, 501 frames each, with a frozen analysis plan ([docs/preregistration_cn.md](docs/preregistration_cn.md)).
+Every experiment compares arms on the **same openings or prompts, with the same seeds, on the same GPU architecture**. In bf16 the GPU type changes the output; see [Lessons](#lessons-for-evaluating-video-models).
 
-Metrics are self-referenced: for every prompt, 10 fresh 5-second generations define the model's normal output.
-- **D** — Mahalanobis distance of each frame's colour statistics (Lab mean, saturation, sharpness) from that reference;
-- **K** — DINOv2 nearest-neighbour distance to the reference frames.
+| Part | Question | Design | Videos | Preregistration | Notes |
+|---|---|---|---|---|---|
+| 1 | How do rolling windows and attention sinks affect drift? | 10 strategies × 40 prompts × 4 seeds, 31 s | 2,000 | [01](docs/preregistrations/01_context_strategies.md) | [02](docs/lab-notes/02_context_strategies_results.md) |
+| 2 | Can drift be corrected at inference time? | Developed on 16 prompts, then confirmed on 40 held-out prompts and 8 held-out control prompts with legitimate changes | ~1,200 | [02](docs/preregistrations/02_correction.md) | [03](docs/lab-notes/03_correction_development.md), [04](docs/lab-notes/04_correction_results.md) |
+| 3 | What is drift? | Held real (NAVSIM) and generated openings; KV-cache interventions | ~400 | — | [05](docs/lab-notes/05_mechanism_and_real_openings.md) |
+| 4 | Does the prompt set the default? Does it replicate? | 40 openings × 4 lighting prompts; LongLive replication | ~1,250 | — | [06](docs/lab-notes/06_prompt_default_and_longlive.md) |
+| 5 | Does describing the opening help? | 40 new openings × 5 arms × 2 models | 800 | [03](docs/preregistrations/03_matched_prompts.md) | [07](docs/lab-notes/07_matched_prompts_results.md) |
+| 6 | Does a brightness-calibrated description help? | Same openings, 3 new arms, calibrated per model | ~670 | [04](docs/preregistrations/04_calibrated_lighting.md), [05](docs/preregistrations/05_calibrated_lighting_longlive.md) | [08](docs/lab-notes/08_calibrated_lighting_results.md), [09](docs/lab-notes/09_calibrated_lighting_longlive_results.md) |
 
-![context strategies](assets/fig2_context_strategies.png)
+**Metrics.** For each prompt, 10 fresh 5-second generations define the model's own normal output. Drift is measured against that reference.
+- **D:** Mahalanobis distance of per-frame colour statistics (Lab means, saturation, sharpness).
+- **K:** DINOv2 nearest-neighbour distance, scaled so that 1 means "as typical as a fresh start".
+- **Held-opening experiments:** the brightness change \|ΔL\| and colour shift ΔE between the opening and the last 2 seconds.
 
-- Anchoring 3 frames cuts colour drift strongly, with a dose effect (3 > 1 > 0). Without anchoring a window of 12 is much worse than 21; with anchoring the window size barely matters.
-- Drift is slowed, not stopped: D keeps rising to 31 s. Anchoring fixes over-saturation but not darkening (z_L ≈ −2 in >80% of videos).
-- RoPE re-alignment of the anchor (as in Rolling/Deep Forcing) did not help colour on Self Forcing and slightly increased K.
-- MUSIQ, the image-quality model behind VBench's "imaging quality" and common drift scores, is nearly flat across strategies (66–69) — it is insensitive to this drift.
+## Results
 
-## Part 2 — A training-free correction (developed, then preregistered and confirmed)
+### Context strategies (Part 1)
 
-Developed only on 10 pilot prompts and 6 control prompts whose brightness should change ([docs/correction_dev_cn.md](docs/correction_dev_cn.md), including the failures):
+![Colour drift and brightness over 31 seconds for four context strategies](assets/fig_context_strategies.png)
 
-- A **statistical closed-loop brightness controller** (integral control, jump guard, CUSUM trigger) failed. It cannot tell legitimate dimming from drift, it lifted tunnels to overexposure, and its jump guard ratcheted on its own corrections.
-- The **content-aware correction** works. At denoising step 1 of 4, the same noisy chunk is run once more with only the clean anchor frames as context. The difference in per-channel spatial means (the "DC" tone) between that prediction and the real prediction is added, scaled by β. Layout and detail are untouched, and the main KV cache and random-number stream are unchanged. It costs one extra forward pass per chunk (~25%).
-- **The denoising step is a knob between drift removal and content fidelity.** Correcting at step 0 removes the most drift but also erases tunnels and dusk (~56% of transitions kept). Step 1 keeps ~92%. Steps 2–3 have no effect.
+- Anchoring cuts colour drift, with a dose effect: 3 frames > 1 > 0.
+- Window size matters only without anchoring.
+- Re-aligning the sink's RoPE positions, as Rolling and Deep Forcing do, did not help on Self Forcing, which was not trained for it.
+- Anchoring slows darkening but does not stop it.
 
-The confirmatory test ([docs/preregistration_correction_cn.md](docs/preregistration_correction_cn.md), [docs/correction_results_cn.md](docs/correction_results_cn.md)) met every preregistered criterion:
+### The correction (Part 2)
 
-![confirmatory results](assets/fig3_correction_confirmatory.png)
+At denoising step 1 of 4, the noisy chunk is run once more with a temporary KV cache that holds only the anchor frames. The difference in per-channel spatial means (the "DC" tone) between that prediction and the real one is added back, scaled by β. Layout, detail, the main KV cache and the random stream are unchanged. The cost is one extra forward pass per chunk.
 
-Flicker is the cost: jitter ×1.13 / ×1.67 and chunk-boundary jumps ×1.32 / ×2.40 for β = 1 / 1.5. On real openings, flicker did not increase noticeably (×0.88 / ×1.0–1.06).
+The denoising step works as a knob between drift removal and content fidelity:
 
-## Part 3 — Mechanism checks (exploratory)
-
-[docs/swap_real_results_cn.md](docs/swap_real_results_cn.md) records every check and every correction of earlier claims.
-- **Context interventions** (`ctx_swap.py`, `ctx_swap2.py`): pause generation, rebuild the KV cache by replaying the stored history with the anchor or the rolling window shifted in brightness (synthetically along a validated latent direction, or naturally by swapping in another seed's window), regenerate the next chunk from the same noise and random state, then restore. Unshifted replays reproduce the original bit for bit.
-- **Real vs model-generated openings** (`correct_gen2.py --init_image`): a single frame held for 0.5 s, then continued to 31 s. Real frames are NAVSIM/nuPlan front-camera images (not redistributed here). Model-generated frames come from the main experiment.
-
-## Part 4 — Does the prompt set the default? Does it replicate? (exploratory)
-
-[docs/light_ll_results_cn.md](docs/light_ll_results_cn.md) has the full tables.
-
-**Lighting prompts** (`analyze_light.py`, `prompts/lighting.jsonl`). The 40 held openings of Part 3 were continued for 31 s under four prompts that differ only in the lighting description. Each prompt pulls the video to its own level. "Drift" is better described as the opening frame being forgotten while the text takes over: after 31 s only about a fifth of the opening's brightness deviation is left, and darker prompts regress more completely (slope −0.95 for night vs −0.66 for sunny, interaction p = 0.011). Dusk and night prompts may legitimately ask for darkening, so this measures the prompt's target, not a defect.
-
-![default set by the prompt](assets/fig4_prompt_sets_default.png)
-
-**Second model: LongLive 1.0** (`ll_gen.py`; Wan2.1-1.3B + LoRA, official window 12 + sink 3). The same openings regress with the same slope, but to a brighter default (≈40). That is why LongLive seemed hardly to darken real driving frames (mean L\* 47): they start closer to its default. The correction ports directly. On the 40 main prompts it reduces colour drift D by 0.70 (Self Forcing: 1.48 on held-out prompts). β = 1.5 brings no further gain on LongLive.
-
-![LongLive vs Self Forcing](assets/fig5_longlive.png)
-
-## Part 5 — Matching the prompt to the opening (preregistered, negative)
-
-If drift is the text overriding the opening, a prompt that describes the opening should drift less. We tested this with a frozen plan ([docs/preregistration_match_cn.md](docs/preregistration_match_cn.md), committed before any video was generated) and report the result in [docs/match_results_cn.md](docs/match_results_cn.md).
-- **Design.** 40 new openings: 20 NAVSIM frames spread over brightness and 20 generated frames. Qwen2.5-VL-3B captioned each opening (`caption_vlm.py`). Three prompts: generic (G); scene + lighting from the caption (M); the generic scene with the caption's lighting only (ML). G and M were each run with and without the correction. Two models, 2 seeds.
-- **Primary: not supported** on either model (Holm p ≥ 0.14).
-- **Secondary:**
-  - Content retention improves strongly (+0.10 / +0.15 DINOv2 similarity to the opening).
-  - Jitter drops.
-  - On Self Forcing, caption prompt + correction vs generic reduces the colour shift ΔE by 2.9.
-- **Why (exploratory).** The captioner's lighting words are not calibrated to brightness. Normally lit frames described as "dimly lit … early morning or late evening" darkened *more*. The 4 genuinely dark frames, which the generic prompt brightened by 16 L\*, stayed put under the caption prompt. A brightness-calibrated lighting description is the obvious next test.
-
-![matched prompts](assets/fig6_matched_prompts.png)
-
-## Part 6 — Calibrating the lighting description (preregistered)
-
-Part 5 failed because the caption's lighting words did not match the actual brightness. So the next test chose the lighting description from the opening's measured brightness instead ([docs/preregistration_calib_cn.md](docs/preregistration_calib_cn.md), committed before generation; results in [docs/calib_results_cn.md](docs/calib_results_cn.md)).
-- **Rule:** use the Part 4 lighting prompt whose Self Forcing default level is nearest to the opening's brightness.
-- **Arms:**
-  - CL: generic scene + calibrated lighting.
-  - C: VLM scene + calibrated lighting.
-  - C + correction.
-- **Pairing:** compared against the Part 5 videos on the same GPU architecture; reruns were bit-identical for all 80 openings.
-- **Results:**
-  - Primary: calibrated vs generic −2.45 L\* on Self Forcing (−26%, Holm p = 0.013). The other three primary tests point the same way but are not significant.
-  - Secondary, Self Forcing: calibrated prompt + correction vs generic, brightness drift −44% and colour shift −39%, with more content kept and less flicker.
-  - LongLive: the Self-Forcing calibration is biased by +4 L\*, so each model needs its own calibration.
-- **Follow-up on LongLive with its own calibration** ([docs/preregistration_calib_ll_cn.md](docs/preregistration_calib_ll_cn.md), [docs/calib_ll_results_cn.md](docs/calib_ll_results_cn.md)).
-  - The same words map to very different brightness in the two models: "dusk" settles at 32 L\* on LongLive and 19 on Self Forcing.
-  - With LongLive's own calibration, the primary test is still not significant (−1.55, Holm p = 0.26).
-  - The lighting-only calibrated prompt reduces drift by 34% (p = 0.009).
-  - The confirmed claim therefore remains Self Forcing only.
-
-![calibrated lighting](assets/fig7_calibrated_lighting.png)
-
-## Practical lessons about evaluating video models
-- **A resumed job can break pairing.** Our generators skip outputs that already exist, so a preempted job resumed on a different GPU type and split 4 openings across architectures. Pin each paired job to one architecture.
-- **GPU architecture changes outputs.** With bf16, the same seed gives different videos on A40, on A100/A800, and on L40S/RTX 6000 Ada (identical within an architecture). About 70% of the "paired" comparisons in Part 1 were therefore not strictly paired. That does not bias the results, but it loses efficiency. All later experiments pin each prompt to one architecture.
-- **Prompts, not seeds, carry the variance.** In Part 1 the seed variance component of end-of-video drift was tiny next to the prompt component (0.2 vs 13.7), so more prompts buy more precision than more seeds. Most published long-video results use one sample per prompt and report no uncertainty.
-
-A 9-page technical report with all parts is in [report/drift_to_default.pdf](report/drift_to_default.pdf).
-
-## Repository layout
-| Path | Contents |
+| Correction step | Legitimate transitions kept |
 |---|---|
-| `gen.py`, `features.py`, `stats_util.py` | generation with context strategies; DINOv2 / MUSIQ features; per-frame colour statistics |
-| `analyze_pilot.py`, `analyze_main.py` | Part 1 (pilot; frozen preregistered analysis) |
-| `correct_gen.py`, `correct_gen2.py` | generation with correction hooks (bit-exact with the official loop when off); v2 adds a real-image opening |
-| `latent_summary.py`, `dose_response.py`, `jacobian.py` | latent → brightness: observational fit vs interventional (per-channel) estimate |
-| `analyze_e2.py`, `analyze_confirm.py` | correction development; frozen confirmatory analysis |
-| `ctx_swap.py`, `ctx_swap2.py`, `analyze_swap.py`, `analyze_real.py`, `analyze_checks.py` | Part 3 mechanism and real-opening experiments |
-| `make_calib_prompts.py`, `analyze_calib.py` | Part 6: brightness-calibrated lighting prompts, frozen analysis |
-| `caption_vlm.py`, `analyze_match.py`, `jobs/select_openings.py` | Part 5: VLM captions → prompts, frozen analysis, opening selection |
-| `analyze_light.py`, `ll_gen.py`, `analyze_ll.py` | Part 4: lighting prompts; LongLive generation with the correction hook (run from the LongLive repo, `jobs/setup_ll.sh`, `jobs/patch_ll.py`); two-model comparison |
-| `jobs/` | environment setup on a CentOS 7 / SGE cluster (`setup_sf_env.sh`), runtime patches to Self Forcing (`patch_sf.py`) |
-| `prompts/` | all prompt sets (real-frame prompts list the NAVSIM log, not the image) |
-| `results/` | summary tables, JSON and figures for every experiment (per-video raw data omitted for size) |
-| `docs/` | lab notes in Chinese: literature review, pilot report, preregistrations, results, development log |
+| 0 | 56% (also erases tunnels and dusk) |
+| 1 | 92% |
+| 2–3 | no effect |
+
+A statistical closed-loop controller was tried first and failed; [lab note 03](docs/lab-notes/03_correction_development.md) documents why.
+
+![Paired effects of the correction on 40 held-out prompts](assets/fig_correction_confirmatory.png)
+
+The cost is flicker: jitter rises ×1.13 at β = 1 and ×1.67 at β = 1.5.
+
+### Matching the prompt to the opening (Parts 5–6)
+
+![Matched-prompt experiment: paired effects and breakdown by caption lighting](assets/fig_matched_prompts.png)
+
+Part 5: a prompt written from a Qwen2.5-VL caption of the opening keeps the scene but not its brightness. The captioner describes about half of the normally lit frames as "dimly lit, early morning or late evening". Under such a prompt those videos darken more (panel c).
+
+![Calibrated lighting: paired effects and breakdown by class](assets/fig_calibrated_lighting.png)
+
+Part 6: choosing the lighting description from measured brightness fixes this on Self Forcing. The calibration is model-specific: "dusk" settles at 19 L\* on Self Forcing and 32 on LongLive. On LongLive, the lighting-only calibrated prompt helps (−34%). Adding the VLM scene phrase cancels the gain, probably because that phrase brings its own weather words.
+
+## Claims that did not hold
+
+We report claims made during the study that were later revised or withdrawn after further checks. Details are in [lab note 05](docs/lab-notes/05_mechanism_and_real_openings.md).
+- **"The sink works by stabilising the default level."** Withdrawn: trend difference +0.5 [−2.4, 3.5].
+- **"The model follows its recent context about 75%."** True only for an artificial tone shift; for natural differences it is 90–100%.
+- **Forecasting the final brightness of a video from its early dynamics.** Out-of-sample forecasts were weak.
+- **"MUSIQ rewards collapsed videos."** Seen in the pilot, not replicated; MUSIQ is simply insensitive to this drift.
+- **"Describing the opening is enough."** Not supported (Part 5).
+
+## Lessons for evaluating video models
+
+- **The GPU architecture changes the video.** With bf16, the same seed gives bit-identical output within an architecture but different videos on A40, A100/A800 and L40S/RTX 6000 Ada. Paired comparisons must pin the architecture. In Part 1, about 70% of the pairs were not strictly paired; later parts pin it and verify by bit-exact reruns.
+- **A resumed job can silently break pairing.** A preempted multi-arm job resumed on another GPU type and split 4 openings across architectures. The data were repaired and a sensitivity analysis showed the conclusions unchanged ([lab note 07](docs/lab-notes/07_matched_prompts_results.md)).
+- **Common quality metrics miss this drift.** MUSIQ, the model behind VBench's imaging-quality score, is nearly flat across strategies that differ greatly in drift.
+- **Prompts, not seeds, carry the variance.** The seed component of end-of-video drift was 0.2 against 13.7 for prompts. More prompts buy more precision than more seeds.
 
 ## Reproducing
-1. Clone [Self Forcing](https://github.com/guandeh17/Self-Forcing) (tested at commit 33593df), download `Wan-AI/Wan2.1-T2V-1.3B` and `gdhe17/Self-Forcing/checkpoints/self_forcing_dmd.pt`, and apply `jobs/patch_sf.py` from the repo root. It adds an SDPA fallback when flash-attention is unavailable, bf16/mmap loading, and optional sink RoPE re-alignment.
-2. Environment: `jobs/setup_sf_env.sh` (PyTorch 2.5.1 + cu121, transformers 4.49, pyiqa). It was written for an old-glibc cluster; paths in `jobs/env.sh` are cluster-specific.
-3. Run the scripts from the Self Forcing root. Each script's docstring gives its arguments. One 501-frame video takes about 2.5 min on an A40/A100.
 
-Frozen files can be checked against the SHA-256 hashes at the end of each preregistration.
+**Re-checking the published analysis** needs only the summary files in this repository:
+```bash
+pip install -r requirements.txt
+python analysis/verify_preregistration.py   # frozen analysis code matches the preregistered hashes
+python report/make_figs.py                  # redraws the report figures from results/
+```
+
+**Re-running the generation** needs a GPU:
+1. Clone [Self Forcing](https://github.com/guandeh17/Self-Forcing) (tested at commit 33593df). Download `Wan-AI/Wan2.1-T2V-1.3B` and the `self_forcing_dmd.pt` checkpoint, then run `cluster/patch_sf.py` in that repository. The patch adds an SDPA fallback when flash-attention is unavailable, bf16/mmap loading, and optional sink RoPE re-alignment.
+2. For LongLive, clone [LongLive](https://github.com/NVlabs/LongLive), download `Efficient-Large-Model/LongLive-1.3B`, and run `cluster/setup_ll.sh` / `cluster/patch_ll.py`.
+3. Environment: `cluster/setup_sf_env.sh` (PyTorch 2.5.1 + cu121, transformers 4.49, pyiqa). It was written for an old-glibc SGE cluster; paths in `cluster/env.sh` are site-specific.
+4. Run the scripts in `generation/` from the model's repository root. Each script's docstring gives its arguments. One 501-frame video takes about 3 minutes on an A40, A100 or L40S.
+
+NAVSIM / nuPlan camera frames used as real openings are not redistributed. `prompts/` lists the log and frame for each.
+
+## Repository layout
+
+```
+generation/   video generation with context strategies, the correction hook, held openings, KV-cache
+              interventions, VLM captions, DINOv2/MUSIQ features, latent brightness probes
+analysis/     one script per experiment (preregistered ones frozen), opening selection, verify_preregistration.py
+prompts/      all prompt sets, including the caption and calibrated-lighting prompts
+results/      summary tables, JSON and figures for every experiment (index: results/README.md)
+report/       technical report (LaTeX + PDF) and the script that draws its figures
+docs/         preregistrations and lab notes (index: docs/README.md)
+cluster/      environment setup and runtime patches for the SGE cluster
+tools/        GIFs and contact sheets
+```
 
 ## Limitations
-- Two models, both built on Wan2.1-1.3B (Self Forcing, trained without a sink; LongLive). Preregistered results are on Self Forcing only; the lighting and LongLive experiments are exploratory with 2 seeds. 31-second videos.
-- The correction fixes colour and brightness only. Structural degradation (e.g. sky textures late in a video) remains.
-- The mechanism results are exploratory. How anchoring reduces drift is not explained, and per-video attractor estimates are too noisy for forecasting.
+
+- Both models share the Wan2.1-1.3B base, and videos are 31 seconds long.
 - Real openings are single held frames, not real video.
+- The correction acts on colour and brightness only. Structural degradation late in a video, such as sky textures, remains.
+- The lighting calibration has four discrete levels. Openings brighter than the sunny level (about 43–45 L\*) have no matching description.
 
 ## Related work
-Self Forcing ([2506.08009](https://arxiv.org/abs/2506.08009)), Self-Forcing++, LongLive, Rolling Forcing, Deep Forcing ([2512.05081](https://arxiv.org/abs/2512.05081)), FreqForcing ([2607.27110](https://arxiv.org/abs/2607.27110)), Pathwise Test-Time Correction ([2602.05871](https://arxiv.org/abs/2602.05871)), ID-Forcing ([2610.03120](https://arxiv.org/abs/2610.03120)), Stable Video Infinity, MotionStream, and Meta-ARVDM ([2503.10704](https://arxiv.org/abs/2503.10704)). The correction is closest to Pathwise TTC and FreqForcing; it is a simplification (DC-only transfer at one early step). See [docs/lit_review_cn.md](docs/lit_review_cn.md). Novelty claims here are based on a literature search up to mid-October 2026.
 
-## Acknowledgements and licences
-Code in this repository is released under the MIT licence. It drives and patches [Self Forcing](https://github.com/guandeh17/Self-Forcing) and uses [Wan2.1](https://github.com/Wan-Video/Wan2.1), [DINOv2](https://github.com/facebookresearch/dinov2) and [pyiqa](https://github.com/chaofengc/IQA-PyTorch) under their own licences. NAVSIM / nuPlan images are not redistributed. Computation ran on the University of Iowa Argon cluster.
+Self Forcing ([arXiv:2506.08009](https://arxiv.org/abs/2506.08009)) and its long-video successors use rolling windows, sinks and re-aligned positions: Self-Forcing++, LongLive, Rolling Forcing and Deep Forcing ([arXiv:2512.05081](https://arxiv.org/abs/2512.05081)). This study measures those choices with uncertainty. The correction is closest to Pathwise Test-Time Correction ([arXiv:2602.05871](https://arxiv.org/abs/2602.05871)) and FreqForcing ([arXiv:2607.27110](https://arxiv.org/abs/2607.27110)); it is a simplification that transfers only the DC tone at one early step. Also related are ID-Forcing ([arXiv:2610.03120](https://arxiv.org/abs/2610.03120)), Stable Video Infinity, MotionStream and Meta-ARVDM ([arXiv:2503.10704](https://arxiv.org/abs/2503.10704)). A literature review up to October 2026 is in [lab note 00](docs/lab-notes/00_literature_review.md).
+
+## Citation
+
+```bibtex
+@misc{wang2026drifttodefault,
+  title  = {Drift to Default: Brightness Drift in Autoregressive Video Diffusion Is Regression to a Prompt-Set Level},
+  author = {Wang, Yilin},
+  year   = {2026},
+  url    = {https://github.com/ElaineYilinW/drift-to-default}
+}
+```
+
+## License and acknowledgements
+
+The code in this repository is released under the [MIT License](LICENSE). It drives and patches [Self Forcing](https://github.com/guandeh17/Self-Forcing) and [LongLive](https://github.com/NVlabs/LongLive). It also uses [Wan2.1](https://github.com/Wan-Video/Wan2.1), [DINOv2](https://github.com/facebookresearch/dinov2), [pyiqa](https://github.com/chaofengc/IQA-PyTorch) and [Qwen2.5-VL](https://github.com/QwenLM/Qwen2.5-VL), each under its own licence. NAVSIM / nuPlan images are not redistributed. Computation ran on the University of Iowa Argon cluster.
 
 This is an independent study and is not affiliated with any company.

@@ -1,6 +1,6 @@
 # 结果：LongLive 用自己的亮度标尺校准光照描述（2026-10-21）
 
-预注册见 `docs/preregistration_calib_ll_cn.md`（生成前冻结，GitHub commit 4345e1a）。
+预注册见 `docs/preregistrations/05_calibrated_lighting_longlive.md`（生成前冻结，GitHub commit 4345e1a）。
 
 **执行情况**
 - 重新生成了 16 张开头帧的视频，其余 24 张直接复用。

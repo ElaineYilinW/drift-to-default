@@ -1,6 +1,6 @@
 # 结果：让提示词描述开头画面，能否减少漂移？（2026-10-19）
 
-预注册见 `docs/preregistration_match_cn.md`（生成前冻结，GitHub commit 43bbd4c）。
+预注册见 `docs/preregistrations/03_matched_prompts.md`（生成前冻结，GitHub commit 43bbd4c）。
 
 - **数据与执行：** 800 个视频全部完成。每个分支每个模型 80 个视频；同一模型、同一开头帧的全部分支在同一块 GPU 上运行。
 - **抢占：** 中途有 24 个任务被所在节点的课题组抢回 GPU，已自动重新提交。

@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use this work, please cite it as below."
+title: "Drift to Default: Brightness Drift in Autoregressive Video Diffusion Is Regression to a Prompt-Set Level"
+authors:
+  - family-names: Wang
+    given-names: Yilin
+    affiliation: University of Iowa
+type: software
+date-released: 2026-10-21
+url: "https://github.com/ElaineYilinW/drift-to-default"
+license: MIT
+keywords:
+  - video diffusion
+  - autoregressive video generation
+  - world models
+  - Self Forcing
+  - drift
+  - preregistration

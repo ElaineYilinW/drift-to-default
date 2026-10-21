@@ -1,6 +1,6 @@
 # 结果：按实测亮度选光照描述，能否减少漂移？（2026-10-20）
 
-预注册见 `docs/preregistration_calib_cn.md`（生成前冻结，GitHub commit d5e4c24）。
+预注册见 `docs/preregistrations/04_calibrated_lighting.md`（生成前冻结，GitHub commit d5e4c24）。
 
 **执行情况**
 - 560 个新视频全部完成。每张开头帧都固定在原来的 GPU 架构上运行。

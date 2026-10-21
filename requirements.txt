@@ -1,0 +1,8 @@
+# Analysis and figures (everything in analysis/ and report/make_figs.py)
+numpy>=1.24
+pandas>=2.0
+scipy>=1.10
+statsmodels>=0.14
+matplotlib>=3.7
+# Generation and feature extraction (generation/) need a GPU environment; see cluster/setup_sf_env.sh and cluster/setup_ll.sh.
+# Tested with: torch 2.5.1+cu121, transformers 4.49.0, peft 0.21, pyiqa, av 13, opencv-python-headless.
