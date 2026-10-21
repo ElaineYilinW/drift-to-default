@@ -17,7 +17,7 @@
 Autoregressive (causal) video diffusion models generate long videos chunk by chunk and drift over tens of seconds:
 the picture darkens, saturates or loses detail. We study this drift on Self Forcing (Wan2.1-1.3B) and LongLive with
 the design tools of clinical research: paired seeds, held-out prompts, mixed-effects models, cluster-bootstrap
-intervals and preregistered analyses. Across about \textbf{6{,}400} generated videos (mostly 31\,s) we find:
+intervals and preregistered analyses. Across about \textbf{6{,}800} generated videos (mostly 31\,s) we find:
 (i) anchoring the first frames in the KV cache (an attention sink) slows colour drift strongly, and a small rolling
 window drifts fastest without it (preregistered, 2{,}000 videos);
 (ii) brightness drift is \emph{two-way regression to a default level}: brighter openings darken and darker ones
@@ -27,7 +27,7 @@ regression slope does not ($-0.69$ vs $-0.74$);
 (iii) a training-free, content-aware correction that transfers the per-channel mean tone of an anchor-only prediction
 at one early denoising step reduces drift without harming structure (preregistered confirmation on 40 held-out prompts)
 and transfers to LongLive at half the effect;
-(iv) in a preregistered test, prompts written from an off-the-shelf VLM caption of the opening did \emph{not} reduce brightness drift on either model, although they kept 0.10--0.15 more of the opening's content (DINOv2 similarity); the captioner's lighting words are poorly calibrated to actual brightness. (v) In a second preregistered test, choosing the lighting description from the opening's measured brightness, with levels taken from (ii), reduced brightness drift against the generic prompt on Self Forcing ($-26\%$, Holm $p=0.013$); combined with the correction it cut brightness drift by 44\% and colour shift by 39\%. On LongLive the effect was smaller and not significant, because the calibration was estimated on Self Forcing.
+(iv) in a preregistered test, prompts written from an off-the-shelf VLM caption of the opening did \emph{not} reduce brightness drift on either model, although they kept 0.10--0.15 more of the opening's content (DINOv2 similarity); the captioner's lighting words are poorly calibrated to actual brightness. (v) In a second preregistered test, choosing the lighting description from the opening's measured brightness, with levels taken from (ii), reduced brightness drift against the generic prompt on Self Forcing ($-26\%$, Holm $p=0.013$); combined with the correction it cut brightness drift by 44\% and colour shift by 39\%. On LongLive the effect was smaller and not significant with the Self Forcing calibration, and also not significant (preregistered) with LongLive's own calibration, although the lighting-only calibrated prompt reduced drift there by 34\% (secondary).
 We also report what did not hold, and two evaluation pitfalls: the GPU architecture changes bf16 outputs, breaking
 seed pairing, and a popular image-quality metric is insensitive to this drift.
 \end{abstract}
@@ -126,6 +126,11 @@ model$\times$slope $p=0.59$) to a brighter default (39.9 \ci{37.5}{42.1}; $R^2=0
 seemed hardly to darken real driving frames (mean 47 \Lstar) because they start closer to its default, not because
 it regresses less. Unlike Self Forcing, LongLive darkens real openings 4.3 \Lstar{} more than generated ones of equal
 brightness ($p=0.03$).
+
+The lighting experiment repeated on LongLive (320 videos, exploratory) shows the same prompt control (lighting term
+$p\approx4\times10^{-51}$) on a different scale. The zero-drift levels are night 21.2, dusk 32.3, overcast 39.8 and
+sunny 44.8 \Lstar{}, compared with 16.0, 19.1, 33.6 and 42.9 on Self Forcing. The same words map to quite different
+brightness in the two models: ``dusk'' differs by 13 \Lstar, and LongLive's range is narrower.
 
 \paragraph{Interpretation.} Over a long rollout the model forgets the opening and returns to what the text
 describes. ``Colour drift'' in this sense is a conflict between the visual context and the text condition that the
@@ -245,6 +250,16 @@ $R^2$ 0.34).
 \item On LongLive the same predictions are biased by $+4.3$ \Lstar: its defaults are higher, so dark openings were
 still brightened under the Self-Forcing-calibrated prompts. A calibration has to be estimated per model.
 \end{itemize}
+
+\paragraph{LongLive with its own calibration (preregistered).} We reclassified the openings with LongLive's own levels
+(\S\ref{sec:default}); 16 of 40 changed class. Only these were regenerated; the rest are bit-identical by construction,
+and a rerun check confirmed 40/40 identical. The calibration was frozen and published before generation (commit 4345e1a).
+The primary test was \emph{not} supported: C vs G $-1.55$ \ci{-3.50}{0.39}, Holm $p=0.26$ (C vs M $-1.36$, $p=0.26$).
+The lighting-only prompt CL did reduce drift: $-2.50$ \ci{-4.33}{-0.82}, $p=0.009$ ($-34\%$), with $\Delta E$ $-2.34$,
+concentrated in non-sunny openings ($-3.5$). The model's own levels removed the systematic bias of the prediction
+($+4.3\to+1.0$ \Lstar). C did worse than CL ($+0.95$). A likely reason (exploratory) is that the VLM scene phrases
+carry their own weather and time words (``on a wet, rainy night'', ``under an overcast sky'') that contradict the
+calibrated lighting. So the confirmed result stays on Self Forcing; on LongLive only secondary evidence supports it.
 
 \begin{figure}[t]
 \centering

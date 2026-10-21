@@ -2,7 +2,7 @@
 
 **Colour drift in autoregressive video diffusion is regression to a default brightness set by the text prompt — measured, explained and corrected on Self Forcing (Wan2.1-1.3B) with preregistered experiments, and replicated on LongLive.**
 
-Autoregressive ("causal") video diffusion models generate long videos chunk by chunk, conditioning on their own past output through a KV cache. Over tens of seconds the picture drifts: it darkens, saturates or falls apart. This repository is an empirical study of that drift on the open [Self Forcing](https://github.com/guandeh17/Self-Forcing) model, with a replication on [LongLive](https://github.com/NVlabs/LongLive). It generates about 6,400 videos (mostly 31 s long) on a university HPC cluster and analyses them with the kind of design and statistics that are standard in clinical research but rare in this field: paired seeds, mixed-effects models, cluster-bootstrap confidence intervals, held-out prompts and frozen preregistrations.
+Autoregressive ("causal") video diffusion models generate long videos chunk by chunk, conditioning on their own past output through a KV cache. Over tens of seconds the picture drifts: it darkens, saturates or falls apart. This repository is an empirical study of that drift on the open [Self Forcing](https://github.com/guandeh17/Self-Forcing) model, with a replication on [LongLive](https://github.com/NVlabs/LongLive). It generates about 6,800 videos (mostly 31 s long) on a university HPC cluster and analyses them with the kind of design and statistics that are standard in clinical research but rare in this field: paired seeds, mixed-effects models, cluster-bootstrap confidence intervals, held-out prompts and frozen preregistrations.
 
 No model was trained. Everything is inference on public weights plus measurement.
 
@@ -27,6 +27,7 @@ No model was trained. Everything is inference on public weights plus measurement
 | 6 | The model follows the brightness of its recent context about 90–100% for natural differences, but only about 75% for an artificial tone shift. The first frames have a tiny direct effect (0.036) yet reduce drift. | Context-intervention experiments (KV-cache replay, bit-exact). | revised wording; mechanism of anchoring open |
 | 8 | **Describing the opening in the prompt (off-the-shelf VLM caption) does not reliably reduce brightness drift**, but it keeps much more of the opening's content. | Preregistered, 40 new openings × 2 models × 5 arms (800 videos): \|ΔL\| caption vs generic −1.21 [−3.09, 0.36] (Self Forcing), −0.19 [−2.00, 1.63] (LongLive), not supported; content retention +0.10 / +0.15 (p < 0.001). The captioner calls half of normally lit frames "dim", which pulls them darker. | **negative (preregistered)** |
 | 9 | **A lighting description chosen from the opening's measured brightness does reduce drift** (Self Forcing), and with the correction cuts brightness drift by 44%. | Preregistered, 560 new videos, strictly paired (80/80 bit-identical reruns): \|ΔL\| calibrated vs generic −2.45 [−4.08, −1.04], Holm p = 0.013 (Self Forcing); LongLive −1.34, n.s. (calibration estimated on Self Forcing is biased there). Calibrated vs VLM caption −1.2 on both, n.s. | **holds on Self Forcing (preregistered)** |
+| 9b | With LongLive's **own** lighting calibration the preregistered test is still not significant; the lighting-only calibrated prompt does reduce drift (−34%). | LongLive levels: night 21, dusk 32, overcast 40, sunny 45 (vs 16 / 19 / 34 / 43 on Self Forcing). C vs G −1.55 [−3.50, 0.39], Holm p = 0.26; CL vs G −2.50 [−4.33, −0.82], p = 0.009. VLM scene phrases with their own weather words likely conflict. | negative primary, positive secondary |
 | 7 | ~~Anchoring works by stabilising the default brightness.~~ ~~A simple dynamics model forecasts the final brightness.~~ | Trend difference +0.5 [−2.4, 3.5]; out-of-sample forecasts weak. | **withdrawn** |
 
 ![regression to the default brightness](assets/fig1_regression_to_default.png)
@@ -104,6 +105,11 @@ Part 5 failed because the caption's lighting words did not match the actual brig
   - Primary: calibrated vs generic −2.45 L\* on Self Forcing (−26%, Holm p = 0.013). The other three primary tests point the same way but are not significant.
   - Secondary, Self Forcing: calibrated prompt + correction vs generic, brightness drift −44% and colour shift −39%, with more content kept and less flicker.
   - LongLive: the Self-Forcing calibration is biased by +4 L\*, so each model needs its own calibration.
+- **Follow-up on LongLive with its own calibration** ([docs/preregistration_calib_ll_cn.md](docs/preregistration_calib_ll_cn.md), [docs/calib_ll_results_cn.md](docs/calib_ll_results_cn.md)).
+  - The same words map to very different brightness in the two models: "dusk" settles at 32 L\* on LongLive and 19 on Self Forcing.
+  - With LongLive's own calibration, the primary test is still not significant (−1.55, Holm p = 0.26).
+  - The lighting-only calibrated prompt reduces drift by 34% (p = 0.009).
+  - The confirmed claim therefore remains Self Forcing only.
 
 ![calibrated lighting](assets/fig7_calibrated_lighting.png)
 
@@ -112,7 +118,7 @@ Part 5 failed because the caption's lighting words did not match the actual brig
 - **GPU architecture changes outputs.** With bf16, the same seed gives different videos on A40, on A100/A800, and on L40S/RTX 6000 Ada (identical within an architecture). About 70% of the "paired" comparisons in Part 1 were therefore not strictly paired. That does not bias the results, but it loses efficiency. All later experiments pin each prompt to one architecture.
 - **Prompts, not seeds, carry the variance.** In Part 1 the seed variance component of end-of-video drift was tiny next to the prompt component (0.2 vs 13.7), so more prompts buy more precision than more seeds. Most published long-video results use one sample per prompt and report no uncertainty.
 
-An 8-page technical report with all parts is in [report/drift_to_default.pdf](report/drift_to_default.pdf).
+A 9-page technical report with all parts is in [report/drift_to_default.pdf](report/drift_to_default.pdf).
 
 ## Repository layout
 | Path | Contents |
