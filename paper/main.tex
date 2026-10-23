@@ -507,6 +507,17 @@ after the opening.
 any data, and are reported as exploratory.
 \end{itemize}
 
+\paragraph{Robustness: linearity of the response.} Is the response to the opening shift linear? We compared $\alpha$
+estimated from the $\pm8$ versions with $\alpha$ from the $\pm16$ versions, and the brighter half of the shifts
+($0,+8,+16$) with the darker half.
+\begin{itemize}
+\item For 10 of 14 configurations, the $\pm8$ and $\pm16$ estimates differ by at most 0.09, with CIs including 0.
+\item SiD and the sink-1 configuration give near-zero slopes for small shifts and positive slopes for large ones
+($+0.29$, $+0.25$).
+\item LongLive with a sink keeps a darkening better than a brightening (0.36 vs 0.04).
+\end{itemize}
+The linear law is a good first-order description, not an exact one.
+
 \paragraph{Pitfalls for evaluating video models.}
 \begin{enumerate}
 \item \textbf{The GPU architecture changes the video.} With bf16, the same seed and code give bit-identical videos

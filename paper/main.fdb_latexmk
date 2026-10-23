@@ -1,5 +1,5 @@
 # Fdb version 3
-["pdflatex"] 1792790241 "main.tex" "main.pdf" "main" 1792790242
+["pdflatex"] 1792790277 "main.tex" "main.pdf" "main" 1792790278
   "/usr/local/texlive/2021/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc" 1136849721 2900 1537cc8184ad1792082cd229ecc269f4 ""
   "/usr/local/texlive/2021/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/local/texlive/2021/texmf-dist/fonts/tfm/jknappen/ec/tcrm0900.tfm" 1136768653 1536 c4f439db76ef96a9c53bc437f35ffe20 ""
@@ -132,11 +132,11 @@
   "fig_match.pdf" 1792745351 22944 80ea224d070998d7199b47c56db608ee ""
   "fig_relax.pdf" 1792789406 32161 6f93cd13527a2ec25ed5157952c2f7d7 ""
   "fig_tradeoff.pdf" 1792745351 20506 23a6edd546bce66671922baf887936fd ""
-  "main.aux" 1792790242 12006 cc320b41133f5c6d306fddaaa32d803c "pdflatex"
-  "main.out" 1792790242 2012 e2880d8bc8c7bfe7040af8a4521530ef "pdflatex"
-  "main.tex" 1792790240 33230 c1fafd8bf60fd8f3330aef2271bb3fc9 ""
+  "main.aux" 1792790278 12131 ae900bf826f14a54b32d59f4c209a291 "pdflatex"
+  "main.out" 1792790278 2012 e2880d8bc8c7bfe7040af8a4521530ef "pdflatex"
+  "main.tex" 1792790276 33927 86fc0d3b53dc466387857adc6bc022b0 ""
   (generated)
-  "main.aux"
-  "main.log"
-  "main.out"
   "main.pdf"
+  "main.log"
+  "main.aux"
+  "main.out"
