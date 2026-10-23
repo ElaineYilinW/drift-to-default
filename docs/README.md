@@ -1,10 +1,10 @@
 # Documentation
 
-The [technical report](../report/drift_to_default.pdf) is the English write-up of the whole study. This folder holds the working documents behind it, written in Chinese as the study went along.
+The [paper draft](../paper/main.pdf) is the English write-up of the whole study (an earlier [technical report](../report/drift_to_default.pdf) covers Parts 1–6). This folder holds the working documents behind it, written in Chinese as the study went along.
 
 ## Preregistrations
 
-Each preregistration was written and frozen before any of its videos were generated. It records the hypotheses, the decision rules and the SHA-256 hashes of the analysis code. Preregistrations 03–06 were also committed to this repository before generation. English translations are in [`preregistrations/en/`](preregistrations/en/README.md); the Chinese files are the frozen, authoritative versions. To check that the published code matches the frozen versions, run `python analysis/verify_preregistration.py`.
+Each preregistration was written and frozen before any of its videos were generated. It records the hypotheses, the decision rules and the SHA-256 hashes of the analysis code. Preregistrations 03–07 were also committed to this repository before generation. English translations are in [`preregistrations/en/`](preregistrations/en/README.md); the Chinese files are the frozen, authoritative versions. To check that the published code matches the frozen versions, run `python analysis/verify_preregistration.py`.
 
 | # | Study | Primary hypotheses | Outcome |
 |---|---|---|---|
