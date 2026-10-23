@@ -396,30 +396,89 @@ A preregistered factorial study (10 strategies, 40 prompts $\times$ 4 seeds) fou
 \item the GPU architecture changes outputs, so 70\% of nominally paired comparisons were not paired.
 \end{itemize}
 
-\section{What did not hold}
-We report claims that were revised or withdrawn after checks:
+\section{Discussion: what this means for long-horizon world models}
 \begin{itemize}
-\item that MUSIQ rewards collapsed videos (it is merely insensitive);
-\item that the sink stabilises the default (trend difference $+0.5$ \ci{-2.4}{3.5});
-\item that the model follows its context by 75\% (only for artificial shifts);
-\item that early dynamics forecast the final brightness;
-\item that describing the opening suffices.
+\item \textbf{Drift is a forgetting-and-reverting process, not accumulating noise.} In every attention-based model we
+tested, a rollout forgets its opening at a model-specific rate and reverts to the default its prompt sets. The default
+is cheap to measure from a few fresh rollouts.
+\item \textbf{Two measurable numbers describe a model's long-horizon fidelity:} the share of the opening it keeps
+($\alpha$) and its default ($\mu$). Both change with the training objective even when architecture and inference are
+fixed. Reporting them would make long-video models comparable in a way that a single quality score is not.
+\item \textbf{The levers follow from the law.}
+  \begin{itemize}
+  \item Raise $\alpha$: keep the opening as a sink, or transfer the anchor's tone at an early denoising step, which
+  keeps legitimate changes because it acts only on the DC component.
+  \item Move $\mu$: describe the lighting with words whose measured default matches the opening.
+  \end{itemize}
+A world model conditioned on a real camera frame and a caption will drift toward the caption unless the caption's
+default matches the frame.
+\item \textbf{Conditioning by overlap is different.} The diffusion-forcing model kept its opening. Whether this comes
+from re-denoising overlapping frames or from other differences between SkyReels and the KV-cache models is the most
+important open question here; we report it as an exception, not a mechanism.
+\end{itemize}
+
+\section{What did not hold}
+We report claims that were revised or withdrawn after checks, and the preregistered predictions that failed.
+\begin{itemize}
+\item \textbf{Withdrawn claims:}
+  \begin{itemize}
+  \item that MUSIQ rewards collapsed videos (it is merely insensitive);
+  \item that the sink stabilises the default (trend difference $+0.5$ \ci{-2.4}{3.5});
+  \item that the model follows its context by 75\% (only for artificial shifts);
+  \item that early dynamics forecast the final brightness.
+  \end{itemize}
+\item \textbf{Failed preregistered tests:}
+  \begin{itemize}
+  \item describing the opening with a free-form caption (study 3);
+  \item calibrated lighting on LongLive (studies 4 and 5);
+  \item the sink effect on Self Forcing brightness at 31\,s (study 6). It is supported at 60\,s in study 7, but that
+  endpoint was chosen after seeing study 6.
+  \end{itemize}
+\item \textbf{A failed quantitative prediction:} the recursion predicted a Self Forcing plateau of 0.25--0.54, and the
+observed plateau was 0.58 (study 7).
+\item \textbf{Unexplained:} a sink of one latent frame retained less of the opening than no sink (exploratory).
 \end{itemize}
 
 \section{Limitations}
 \begin{itemize}
-\item All models but SkyReels share the Wan2.1-1.3B base.
-\item Openings are held images, not real video.
-\item The correction acts on colour only.
-\item Lighting calibration uses four discrete levels and cannot match openings brighter than the sunny default.
+\item All models but SkyReels share the Wan2.1-1.3B base, and only one diffusion-forcing model was tested.
+\item Horizons are 31--120\,s; openings are held images, not real video, and are continued with one generic prompt in the
+interventional studies.
+\item The statistics are global colour and texture summaries. Structural failures (objects melting, geometry drift) are
+not captured by $\alpha$.
+\item The correction acts on colour only. Lighting calibration uses four discrete levels and cannot match openings
+brighter than the sunny default.
+\item One seed per opening version in the interventional studies; precision comes from scenes and versions instead.
 \end{itemize}
 
+\begin{thebibliography}{99}\small
+\bibitem{causvid} T. Yin, Q. Zhang, R. Zhang, W. T. Freeman, F. Durand, E. Shechtman, X. Huang. From slow bidirectional to fast autoregressive video diffusion models. CVPR 2025 (arXiv:2412.07772).
+\bibitem{selfforcing} X. Huang, Z. Li, G. He, M. Zhou, E. Shechtman. Self Forcing: Bridging the train-test gap in autoregressive video diffusion. arXiv:2506.08009, 2025.
+\bibitem{diffusionforcing} B. Chen, D. Mart\'i Mons\'o, Y. Du, M. Simchowitz, R. Tedrake, V. Sitzmann. Diffusion Forcing: Next-token prediction meets full-sequence diffusion. NeurIPS 2024 (arXiv:2407.01392).
+\bibitem{wan} Wan Team. Wan: Open and advanced large-scale video generative models. arXiv:2503.20314, 2025.
+\bibitem{dmd} T. Yin et al. One-step diffusion with distribution matching distillation. CVPR 2024 (arXiv:2311.18828).
+\bibitem{sid} M. Zhou et al. Score identity distillation. ICML 2024 (arXiv:2404.04057).
+\bibitem{longlive} S. Yang et al. LongLive: Real-time interactive long video generation. 2025.
+\bibitem{rollingforcing} K. Liu et al. Rolling Forcing: Autoregressive long video diffusion in real time. 2025.
+\bibitem{deepforcing} Deep Forcing. arXiv:2512.05081, 2025.
+\bibitem{skyreels} SkyReels Team. SkyReels-V2: Infinite-length film generative model. arXiv:2504.13074, 2025.
+\bibitem{streamingllm} G. Xiao, Y. Tian, B. Chen, S. Han, M. Lewis. Efficient streaming language models with attention sinks. ICLR 2024 (arXiv:2309.17453).
+\bibitem{pathwise} Pathwise test-time correction for autoregressive video diffusion. arXiv:2602.05871, 2026.
+\bibitem{freqforcing} FreqForcing. arXiv:2607.27110, 2026.
+\bibitem{metaarvdm} Meta-ARVDM. arXiv:2503.10704, 2025.
+\bibitem{vbench} Z. Huang et al. VBench: Comprehensive benchmark suite for video generative models. CVPR 2024 (arXiv:2311.17982).
+\bibitem{musiq} J. Ke, Q. Wang, Y. Wang, P. Milanfar, F. Yang. MUSIQ: Multi-scale image quality transformer. ICCV 2021.
+\bibitem{dinov2} M. Oquab et al. DINOv2: Learning robust visual features without supervision. TMLR 2024 (arXiv:2304.07193).
+\bibitem{qwenvl} Qwen Team. Qwen2.5-VL technical report. arXiv:2502.13923, 2025.
+\bibitem{navsim} D. Dauner et al. NAVSIM: Data-driven non-reactive autonomous vehicle simulation and benchmarking. NeurIPS 2024.
+\bibitem{reinhard} E. Reinhard, M. Ashikhmin, B. Gooch, P. Shirley. Color transfer between images. IEEE CG\&A, 2001.
+\end{thebibliography}
 
 \appendix
 \section{Preregistrations, deviations and pitfalls}\label{app:prereg}
 \begin{table}[h]
 \centering\small
-\caption{The six preregistered studies. Code was frozen by SHA-256 hash before generation; studies 3--6 were also
+\caption{The seven preregistered studies. Code was frozen by SHA-256 hash before generation; studies 3--7 were also
 committed to the public repository before generation.}
 \label{tab:prereg}
 \begin{tabular}{p{0.2cm}p{4.2cm}p{5.8cm}p{3.2cm}}
@@ -465,26 +524,5 @@ produces spurious regression to the mean (Oldham's problem). Held openings are m
 interventional design removes the issue.
 \end{enumerate}
 
-\begin{thebibliography}{99}\small
-\bibitem{causvid} T. Yin, Q. Zhang, R. Zhang, W. T. Freeman, F. Durand, E. Shechtman, X. Huang. From slow bidirectional to fast autoregressive video diffusion models. CVPR 2025 (arXiv:2412.07772).
-\bibitem{selfforcing} X. Huang, Z. Li, G. He, M. Zhou, E. Shechtman. Self Forcing: Bridging the train-test gap in autoregressive video diffusion. arXiv:2506.08009, 2025.
-\bibitem{diffusionforcing} B. Chen, D. Mart\'i Mons\'o, Y. Du, M. Simchowitz, R. Tedrake, V. Sitzmann. Diffusion Forcing: Next-token prediction meets full-sequence diffusion. NeurIPS 2024 (arXiv:2407.01392).
-\bibitem{wan} Wan Team. Wan: Open and advanced large-scale video generative models. arXiv:2503.20314, 2025.
-\bibitem{dmd} T. Yin et al. One-step diffusion with distribution matching distillation. CVPR 2024 (arXiv:2311.18828).
-\bibitem{sid} M. Zhou et al. Score identity distillation. ICML 2024 (arXiv:2404.04057).
-\bibitem{longlive} S. Yang et al. LongLive: Real-time interactive long video generation. 2025.
-\bibitem{rollingforcing} K. Liu et al. Rolling Forcing: Autoregressive long video diffusion in real time. 2025.
-\bibitem{deepforcing} Deep Forcing. arXiv:2512.05081, 2025.
-\bibitem{skyreels} SkyReels Team. SkyReels-V2: Infinite-length film generative model. arXiv:2504.13074, 2025.
-\bibitem{streamingllm} G. Xiao, Y. Tian, B. Chen, S. Han, M. Lewis. Efficient streaming language models with attention sinks. ICLR 2024 (arXiv:2309.17453).
-\bibitem{pathwise} Pathwise test-time correction for autoregressive video diffusion. arXiv:2602.05871, 2026.
-\bibitem{freqforcing} FreqForcing. arXiv:2607.27110, 2026.
-\bibitem{metaarvdm} Meta-ARVDM. arXiv:2503.10704, 2025.
-\bibitem{vbench} Z. Huang et al. VBench: Comprehensive benchmark suite for video generative models. CVPR 2024 (arXiv:2311.17982).
-\bibitem{musiq} J. Ke, Q. Wang, Y. Wang, P. Milanfar, F. Yang. MUSIQ: Multi-scale image quality transformer. ICCV 2021.
-\bibitem{dinov2} M. Oquab et al. DINOv2: Learning robust visual features without supervision. TMLR 2024 (arXiv:2304.07193).
-\bibitem{qwenvl} Qwen Team. Qwen2.5-VL technical report. arXiv:2502.13923, 2025.
-\bibitem{navsim} D. Dauner et al. NAVSIM: Data-driven non-reactive autonomous vehicle simulation and benchmarking. NeurIPS 2024.
-\bibitem{reinhard} E. Reinhard, M. Ashikhmin, B. Gooch, P. Shirley. Color transfer between images. IEEE CG\&A, 2001.
-\end{thebibliography}
+
 \end{document}
