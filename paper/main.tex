@@ -268,6 +268,9 @@ differences). Fitting the recursion to the long-horizon persistence curve alone 
 This resolves an earlier puzzle: the sink's direct effect on the next chunk is tiny, yet it roughly halves drift.
 
 
+A preregistered factorial study of window and sink sizes (Appendix~\ref{sec:ctx}) already showed that a 3-frame sink cuts colour
+drift by more than half on fresh rollouts; here we ask how it does so.
+
 \paragraph{Interventional tests (preregistered, Holm over four).}
 \begin{itemize}
 \item \textbf{LongLive.} Removing the sink lowers $\alpha_L$ from 0.19 to 0.02 ($-0.17$ \ci{-0.28}{-0.06}, $p_{\text{Holm}}=0.013$).
@@ -363,7 +366,7 @@ the opening's brightness reduces $|\Delta L|$ by 26\% on Self Forcing (Holm $p =
 \item \textbf{Calibration is per model.} On LongLive, the preregistered test was not significant even with LongLive's
 own calibration; the lighting-only prompt reduces drift by 34\% (secondary).
 \end{itemize}
-(Fig.~\ref{fig:prompts}).
+(Appendix, Fig.~\ref{fig:prompts}).
 
 \paragraph{The law predicts these outcomes out of sample.} Take $\alpha$ and the generic default from the relaxation
 study (different scenes) and the lighting defaults from the lighting experiment (different openings). Then
@@ -376,25 +379,7 @@ and the calibrated prompt in the calibrated-lighting experiment:
 The law is a usable forecast of how a prompt choice will change long-horizon brightness.
 
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=\linewidth]{fig_match.pdf}\\[3pt]
-\includegraphics[width=\linewidth]{fig_calib.pdf}
-\caption{Moving $\mu$. Top: free-form VLM captions (preregistered; not supported for brightness, large content gain).
-Bottom: brightness-calibrated lighting descriptions (preregistered; supported against the generic prompt on Self
-Forcing). Paired differences with opening-cluster bootstrap 95\% CIs.}
-\label{fig:prompts}
-\end{figure}
 
-\section{Context strategies}\label{sec:ctx}
-A preregistered factorial study (10 strategies, 40 prompts $\times$ 4 seeds) found:
-\begin{itemize}
-\item a 3-frame sink cuts colour drift by 7.56 \ci{6.81}{8.32};
-\item window size matters only without a sink;
-\item RoPE re-alignment, which Self Forcing was not trained for, does not help;
-\item MUSIQ varies only between 66 and 69 across strategies whose drift differs threefold;
-\item the GPU architecture changes outputs, so 70\% of nominally paired comparisons were not paired.
-\end{itemize}
 
 \section{Discussion: what this means for long-horizon world models}
 \begin{itemize}
@@ -475,6 +460,17 @@ brighter than the sunny default.
 \end{thebibliography}
 
 \appendix
+\section{Context strategies (preregistration 1)}\label{sec:ctx}
+A preregistered factorial study (10 strategies, 40 prompts $\times$ 4 seeds) found:
+\begin{itemize}
+\item a 3-frame sink cuts colour drift by 7.56 \ci{6.81}{8.32};
+\item window size matters only without a sink;
+\item RoPE re-alignment, which Self Forcing was not trained for, does not help;
+\item MUSIQ varies only between 66 and 69 across strategies whose drift differs threefold;
+\item the GPU architecture changes outputs, so 70\% of nominally paired comparisons were not paired.
+\end{itemize}
+
+
 \section{Preregistrations, deviations and pitfalls}\label{app:prereg}
 \begin{table}[h]
 \centering\small
@@ -506,6 +502,16 @@ after the opening.
 \item Exploratory configurations (sink 1; correction on LongLive and CausVid) were added after freezing and before
 any data, and are reported as exploratory.
 \end{itemize}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\linewidth]{fig_match.pdf}\\[3pt]
+\includegraphics[width=\linewidth]{fig_calib.pdf}
+\caption{Moving $\mu$. Top: free-form VLM captions (preregistered; not supported for brightness, large content gain).
+Bottom: brightness-calibrated lighting descriptions (preregistered; supported against the generic prompt on Self
+Forcing). Paired differences with opening-cluster bootstrap 95\% CIs.}
+\label{fig:prompts}
+\end{figure}
 
 \paragraph{Robustness: linearity of the response.} Is the response to the opening shift linear? We compared $\alpha$
 estimated from the $\pm8$ versions with $\alpha$ from the $\pm16$ versions, and the brighter half of the shifts
