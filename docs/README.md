@@ -4,7 +4,7 @@ The [technical report](../report/drift_to_default.pdf) is the English write-up o
 
 ## Preregistrations
 
-Each preregistration was written and frozen before any of its videos were generated. English translations are in [`preregistrations/en/`](preregistrations/en/README.md); the Chinese files are the frozen, authoritative versions. It records the hypotheses, the decision rules and the SHA-256 hashes of the analysis code. Preregistrations 03–05 were also committed to this repository before generation. To check that the published code matches the frozen versions, run `python analysis/verify_preregistration.py`.
+Each preregistration was written and frozen before any of its videos were generated. It records the hypotheses, the decision rules and the SHA-256 hashes of the analysis code. Preregistrations 03–06 were also committed to this repository before generation. English translations are in [`preregistrations/en/`](preregistrations/en/README.md); the Chinese files are the frozen, authoritative versions. To check that the published code matches the frozen versions, run `python analysis/verify_preregistration.py`.
 
 | # | Study | Primary hypotheses | Outcome |
 |---|---|---|---|
