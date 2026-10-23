@@ -1,4 +1,5 @@
-"""Exploratory copy of sky_gen.py (frozen) with --addnoise (history-noise level, default 20) exposed, for the
+"""Exploratory copy of sky_gen.py (frozen) with --addnoise (history-noise level, default 20) and --overlap (overlap_history,
+default 17) exposed, for the
 SkyReels mechanism check. Original description:
 Held-opening generation with SkyReels-V2 Diffusion Forcing 1.3B (diffusers), for the relaxation study.
 
@@ -25,6 +26,7 @@ p.add_argument("--model", default="/Users/ywang906/vdrift/models/skyreels_df_1p3
 p.add_argument("--steps", type=int, default=30)
 p.add_argument("--guidance", type=float, default=6.0)
 p.add_argument("--addnoise", type=float, default=20.0)
+p.add_argument("--overlap", type=int, default=17, help="overlap_history (4k+1 frames)")
 p.add_argument("--init_image", default="")
 p.add_argument("--open_dL", type=float, default=0.0)
 p.add_argument("--open_da", type=float, default=0.0)
@@ -103,7 +105,7 @@ for vt, dL, da, db, seed in JOBS:
     g = torch.Generator(device=dev).manual_seed(seed)
     t1 = time.time()
     kw = dict(prompt=prompt, height=Hh, width=Ww, num_inference_steps=a.steps, guidance_scale=a.guidance,
-              generator=g, base_num_frames=97, overlap_history=17, addnoise_condition=a.addnoise, ar_step=0, output_type="np")
+              generator=g, base_num_frames=97, overlap_history=a.overlap, addnoise_condition=a.addnoise, ar_step=0, output_type="np")
     if VIDEO is not None:
         frames = pipe(video=VIDEO, num_frames=n_new, **kw).frames[0]
     else:
