@@ -352,7 +352,17 @@ the opening's brightness reduces $|\Delta L|$ by 26\% on Self Forcing (Holm $p =
 \item \textbf{Calibration is per model.} On LongLive, the preregistered test was not significant even with LongLive's
 own calibration; the lighting-only prompt reduces drift by 34\% (secondary).
 \end{itemize}
-(Fig.~\ref{fig:prompts}). \todo{Out-of-sample prediction of these outcomes from $\alpha$ and $\mu$.}
+(Fig.~\ref{fig:prompts}).
+
+\paragraph{The law predicts these outcomes out of sample.} Take $\alpha$ and the generic default from the relaxation
+study (different scenes) and the lighting defaults from the lighting experiment (different openings). Then
+$\Delta L \approx (1-\alpha)(\mu - L_{\text{open}})$ predicts the 31-s brightness change of every opening under the generic
+and the calibrated prompt in the calibrated-lighting experiment:
+\begin{itemize}
+\item correlation 0.82 on Self Forcing and 0.77 on LongLive, mean absolute error 3.8 \Lstar;
+\item the mean benefit of calibration is overpredicted ($-4.5$ predicted vs $-3.2$ and $-2.8$ observed).
+\end{itemize}
+The law is a usable forecast of how a prompt choice will change long-horizon brightness.
 
 
 \begin{figure}[t]
