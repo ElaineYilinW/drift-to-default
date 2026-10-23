@@ -122,6 +122,16 @@ Part 5: a prompt written from a Qwen2.5-VL caption of the opening keeps the scen
 
 Part 6: choosing the lighting description from measured brightness fixes this on Self Forcing. The calibration is model-specific: "dusk" settles at 19 L\* on Self Forcing and 32 on LongLive. On LongLive, the lighting-only calibrated prompt helps (−34%). Adding the VLM scene phrase cancels the gain, probably because that phrase brings its own weather words.
 
+## Measuring α and μ for your own model
+
+The two numbers in the law are cheap to measure for any autoregressive video model that can continue a given first chunk.
+
+1. **Pick openings.** Choose 10–24 opening images. For each one, write versions shifted in CIELAB L\* by −16, 0 and +16 (`--open_dL` in `generation/hold_gen.py`; for other code bases, copy the 6-line shift in its `init_latent_from_image`).
+2. **Continue them.** Continue every version for 30–60 s with one prompt and one seed. Keep all versions of an opening in one job on one GPU architecture (`generation/arch_guard.py`).
+3. **Estimate α.** α is the within-opening slope of end brightness (last 2 s) on opening brightness: `analysis/analyze_relax.py` or `analysis/analyze_long.py`.
+4. **Estimate μ.** μ is where a few fresh rollouts of the same prompt end. In our 10 configurations it agreed with the zero-drift level from step 3 at r = 0.93.
+5. **Predict a prompt change.** The expected long-horizon change is (1 − α)(μ − opening), with μ measured for each candidate prompt.
+
 ## Claims that did not hold
 
 We report claims made during the study that were later revised or withdrawn after further checks. Details are in [lab note 05](docs/lab-notes/05_mechanism_and_real_openings.md).
