@@ -1,9 +1,10 @@
 # Drift to Default
 
-**Brightness drift in autoregressive video diffusion is regression to a default level set by the text prompt. This repository measures it, explains it and reduces it without training, using preregistered experiments on two open models.**
+**Long autoregressive video rollouts relax to a default set by the prompt. This repository measures how much of an opening survives across 13 configurations of five open models, explains it with an equilibrium between the attention sink and the prompt, and tests two training-free levers. It reports seven preregistered studies, including the hypotheses that failed.**
 
-[![Technical report](https://img.shields.io/badge/report-PDF-b31b1b)](report/drift_to_default.pdf)
-[![Preregistered](https://img.shields.io/badge/preregistered-5%20studies-2a78d6)](docs/README.md#preregistrations)
+[![Paper draft](https://img.shields.io/badge/paper-PDF-b31b1b)](paper/main.pdf)
+[![Technical report](https://img.shields.io/badge/report-PDF-6e6e6e)](report/drift_to_default.pdf)
+[![Preregistered](https://img.shields.io/badge/preregistered-7%20studies-2a78d6)](docs/README.md#preregistrations)
 [![License: MIT](https://img.shields.io/badge/license-MIT-lightgrey)](LICENSE)
 
 <p align="center">
@@ -22,17 +23,26 @@ This study treats drift as a measurement problem. It uses the design tools of cl
 - mixed-effects models and cluster-bootstrap confidence intervals;
 - analysis plans and code frozen before the data existed.
 
-About **6,800 videos**, most of them 31 seconds long, were generated on a university GPU cluster. No model was trained; everything is inference on public weights followed by measurement.
+About **9,600 videos**, most of them 31 seconds long, were generated on a university GPU cluster. No model was trained; everything is inference on public weights followed by measurement.
 
 ## Key findings
 
+The core result is an equilibrium law. After a long rollout, a statistic such as brightness or colour settles at
+
+&nbsp;&nbsp;&nbsp;&nbsp;**x<sub>∞</sub> ≈ α · x<sub>opening</sub> + (1 − α) · μ<sub>prompt</sub>**
+
+- **α** is the share of the opening that is kept. A sink and the correction raise it.
+- **μ** is the default the prompt pulls toward. Calibrated prompts move it toward the opening.
+
 | | Finding | Evidence | Status |
 |---|---|---|---|
-| 1 | **Anchoring the first frames slows drift.** An attention sink of 3 frames strongly reduces colour drift. A small rolling window drifts fastest without one. | 2,000 videos, 40 prompts × 4 seeds × 10 context strategies. Sink 3 vs 0: drift D −7.56 [−8.32, −6.81]. Window × sink interaction +5.71 [+4.21, +7.22]. | Preregistered, supported |
-| 2 | **Drift is two-way regression to a default brightness, and the prompt sets the default.** Openings brighter than the default darken; darker ones brighten. After 31 s about 22% of the opening's deviation is left. | Brightness change = 22.8 − 0.69 × opening brightness (R² 0.82). Default level by prompt: sunny 43, overcast 34, dusk 19, night 16 L\* (Self Forcing). Same slope on LongLive, different scale: 45, 40, 32, 21. | Exploratory, two models |
-| 3 | **A training-free, content-aware correction reduces drift without structural harm.** It keeps legitimate changes such as entering a tunnel. | 40 held-out prompts × 4 seeds: D −1.48 [−1.76, −1.19]. Structure drift non-inferior. 83–93% of legitimate brightness transitions kept. On LongLive about half the effect. | Preregistered, supported |
-| 4 | **Describing the opening with a free-form VLM caption does not reduce brightness drift**, though it keeps more of the opening's content. | Caption vs generic prompt: −1.21 [−3.09, +0.36] on Self Forcing, −0.19 on LongLive. Content retention +0.10 / +0.15. The captioner calls normally lit scenes "dim". | Preregistered, not supported |
-| 5 | **A lighting description chosen from measured brightness does reduce drift**, if it is calibrated to the model. | Self Forcing: −2.45 [−4.08, −1.04] vs generic (−26%, Holm p = 0.013). With the correction: −44% brightness drift, −39% colour shift. LongLive with its own calibration: primary −1.55, n.s.; lighting-only prompt −34% (p = 0.009). | Preregistered, supported on Self Forcing |
+| 1 | **Every attention-based model relaxes toward a default.** The share of a shifted opening that survives 31 s is 0.02–0.67. It depends strongly on the training objective even with identical architecture. | Within-scene shifts of 24 openings × 13 configurations (2,184 videos): Self Forcing SiD 0.12, CausVid 0.15, LongLive 0.19, DMD 0.28, SiD-v2 0.35, Rolling Forcing 0.53, GAN 0.67. Colour temperature behaves alike. | Preregistered study |
+| 2 | **The default is set by the prompt, and it is where a fresh rollout ends.** | Zero-drift level vs fresh-start end, 10 configurations: r = 0.93. Lighting prompts: sunny 43, overcast 34, dusk 19, night 16 L\* (Self Forcing); 45 / 40 / 32 / 21 on LongLive. | Exploratory |
+| 3 | **An attention sink holds a fixed share of the opening; without it the opening is forgotten.** The fitted per-chunk sink weight matches a direct KV-cache measurement. | At 60 s: Self Forcing 0.58 vs 0.03 (+0.55 [0.45, 0.65]); CausVid 0.23 vs 0.04 (+0.19 [0.14, 0.24]); LongLive at 31 s 0.19 vs 0.02. Fitted w<sub>s</sub> 0.060 [0.021, 0.097] vs replay 0.053 [0.040, 0.066]. Self Forcing brightness was not significant at the earlier 31-s endpoint (slow forgetting). | Preregistered (06, 07); 1 of 4 failed in 06 |
+| 4 | **Diffusion forcing is the exception.** SkyReels-V2, which continues by re-denoising overlapping frames, keeps its opening. | α = 1.09 at 10 s, 0.96 at 20 s; unchanged without CFG, with 3× history noise, or with 10 steps. | Secondary + exploratory |
+| 5 | **A training-free, content-aware correction raises α, reduces drift and keeps legitimate changes.** Post-hoc colour matching does not. | Colour drift D −1.48 [−1.76, −1.19] on 40 held-out prompts; α +0.12 [0.05, 0.20]; legitimate transitions kept 83–93% vs 7–12% for post-hoc matching. | Preregistered (02, 06) |
+| 6 | **Moving μ: a lighting description calibrated to the opening's measured brightness reduces drift; a free-form VLM caption does not.** The law predicts these outcomes out of sample. | Calibrated vs generic −26% (Holm p = 0.013, Self Forcing); caption n.s. on both models; LongLive with its own calibration n.s. (lighting-only −34%, secondary). Predicted vs observed r = 0.82 / 0.77. | Preregistered (03–05): 1 supported, 2 failed |
+| 7 | **Context strategies:** a sink cuts colour drift, and window size matters only without one. | 2,000 videos: D −7.56 [−8.32, −6.81]. | Preregistered (01) |
 
 ![Brightness change after 31 seconds against the brightness of the opening frame](assets/fig_default_brightness.png)
 <sub>Brightness change after 31 s against the brightness of a held opening frame. (a) Real NAVSIM and model-generated openings fall on one line. (b) Four lighting prompts set four default levels. (c) Two models: same slope, different default.</sub>
@@ -49,6 +59,8 @@ Every experiment compares arms on the **same openings or prompts, with the same 
 | 4 | Does the prompt set the default? Does it replicate? | 40 openings × 4 lighting prompts; LongLive replication | ~1,250 | — | [06](docs/lab-notes/06_prompt_default_and_longlive.md) |
 | 5 | Does describing the opening help? | 40 new openings × 5 arms × 2 models | 800 | [03](docs/preregistrations/03_matched_prompts.md) | [07](docs/lab-notes/07_matched_prompts_results.md) |
 | 6 | Does a brightness-calibrated description help? | Same openings, 3 new arms, calibrated per model | ~670 | [04](docs/preregistrations/04_calibrated_lighting.md), [05](docs/preregistrations/05_calibrated_lighting_longlive.md) | [08](docs/lab-notes/08_calibrated_lighting_results.md), [09](docs/lab-notes/09_calibrated_lighting_longlive_results.md) |
+| 7 | How much of an opening survives, across models? | 24 scenes × 7 shifted openings × 13 configurations, + fresh starts, + 120-s subset; SkyReels on 12 scenes | ~2,500 | [06](docs/preregistrations/06_relaxation.md) | [11](docs/lab-notes/11_relaxation_exploratory_addendum.md), [12](docs/lab-notes/12_skyreels_mechanism.md), [13](docs/lab-notes/13_relaxation_results.md) |
+| 8 | Does the sink hold the opening at 60 s? | 24 scenes × 3 openings × sink on/off × Self Forcing, CausVid | 288 | [07](docs/preregistrations/07_long_horizon_sink.md) | [14](docs/lab-notes/14_long_horizon_sink_results.md) |
 
 **Metrics.** For each prompt, 10 fresh 5-second generations define the model's own normal output. Drift is measured against that reference.
 - **D:** Mahalanobis distance of per-frame colour statistics (Lab means, saturation, sharpness).
@@ -56,6 +68,18 @@ Every experiment compares arms on the **same openings or prompts, with the same 
 - **Held-opening experiments:** the brightness change \|ΔL\| and colour shift ΔE between the opening and the last 2 seconds.
 
 ## Results
+
+### Relaxation across models (Parts 7–8)
+
+![Persistence of a shifted opening across 13 configurations, over time, and at 60 s](assets/fig_relax.png)
+
+<p align="center"><img src="assets/fig_default_fresh.png" width="45%" alt="zero-drift level vs fresh-start end"></p>
+
+- **Shifted openings.** Each of 24 scenes was shifted in brightness and colour and continued by every model. The persistence α is the slope of the end value on the opening value within a scene.
+- **Sink.** With a sink, a fixed share is held for at least 60–120 s; without it the opening is forgotten (panel c).
+- **Default.** The default each model relaxes to equals where its fresh rollouts end (bottom figure).
+- **The exception.** SkyReels' diffusion-forcing continuation does not relax at all.
+- **Mechanism.** A linear chunk-recursion model (`analysis/ar_equilibrium.py`) reproduces the curves. Its fitted sink weight matches the bit-exact KV-cache replay measurement. Details: [lab note 13](docs/lab-notes/13_relaxation_results.md).
 
 ### Context strategies (Part 1)
 
@@ -83,6 +107,10 @@ A statistical closed-loop controller was tried first and failed; [lab note 03](d
 ![Paired effects of the correction on 40 held-out prompts](assets/fig_correction_confirmatory.png)
 
 The cost is flicker: jitter rises ×1.13 at β = 1 and ×1.67 at β = 1.5.
+
+Compared with post-hoc colour matching to the anchor, only the content-aware correction both reduces drift and keeps legitimate brightness changes ([lab note 10](docs/lab-notes/10_baselines_attributes_theory.md)). In the relaxation study it raises α from 0.28 to 0.41.
+
+![Drift reduction vs legitimate transitions kept](assets/fig_tradeoff.png)
 
 ### Matching the prompt to the opening (Parts 5–6)
 
@@ -127,6 +155,8 @@ python report/make_figs.py                  # redraws the report figures from re
 
 NAVSIM / nuPlan camera frames used as real openings are not redistributed. `prompts/` lists the log and frame for each.
 
+The paper draft is [paper/main.pdf](paper/main.pdf); an earlier technical report is in [report/](report/drift_to_default.pdf).
+
 ## Repository layout
 
 ```
@@ -135,7 +165,8 @@ generation/   video generation with context strategies, the correction hook, hel
 analysis/     one script per experiment (preregistered ones frozen), opening selection, verify_preregistration.py
 prompts/      all prompt sets, including the caption and calibrated-lighting prompts
 results/      summary tables, JSON and figures for every experiment (index: results/README.md)
-report/       technical report (LaTeX + PDF) and the script that draws its figures
+paper/        paper draft (LaTeX + PDF)
+report/       earlier technical report and the scripts that draw all figures
 docs/         preregistrations and lab notes (index: docs/README.md)
 cluster/      environment setup and runtime patches for the SGE cluster
 tools/        GIFs and contact sheets

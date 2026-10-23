@@ -45,7 +45,7 @@ prompt's per-chunk pull is equally small.
   \end{itemize}
 \end{itemize}
 Every comparison is paired by seed on one GPU architecture. Seven analyses were preregistered with hashed code, and we
-report all their outcomes, including three that failed.
+report all their outcomes, including the three primary hypotheses or studies that failed.
 \end{abstract}
 
 \section{Introduction}
@@ -233,8 +233,8 @@ the conditioning mechanism, not autoregression itself, decides whether a model r
 \includegraphics[width=\linewidth]{fig_relax.pdf}
 \caption{Relaxation study (preregistration 06). (a) Persistence of a within-scene shift of the opening at 31\,s (24
 scenes; SkyReels at 20\,s, 12 scenes, hollow marker). (b) Persistence over time for the sink and correction contrasts.
-(c) Long-horizon subset (6 scenes, 120\,s; bands are scene-bootstrap 95\% CIs): with a sink, about half of the opening
-is held indefinitely; without one, it is forgotten by 60\,s.}
+(c) Preregistration 07 (24 scenes, 60\,s; bands are scene-bootstrap 95\% CIs): with a sink a fixed share of the
+opening is held; without one it is forgotten.}
 \label{fig:relax}
 \end{figure}
 \begin{figure}[t]
@@ -276,7 +276,18 @@ This resolves an earlier puzzle: the sink's direct effect on the next chunk is t
 \item \textbf{Self Forcing, brightness: not supported at 31\,s} ($-0.06$ \ci{-0.17}{0.05}). Its window forgets slowly
 ($w_w\approx0.9$), so at 31\,s the sink-less run had not yet forgotten. In the preregistered long-horizon subset (6
 scenes, 120\,s), the sink holds 0.44--0.54 from 60\,s on, while without it persistence is $-0.10$ to $-0.07$. The
-difference is $+0.56$ \ci{0.34}{0.75} at 118\,s (Fig.~\ref{fig:relax}c). \todo{Preregistration 07: confirmation at 60\,s on 24 scenes, Self Forcing and CausVid.}
+difference is $+0.56$ \ci{0.34}{0.75} at 118\,s.
+\end{itemize}
+
+\paragraph{Confirmation at 60\,s (preregistration 07).} We then tested the sink at 60\,s on all 24 scenes, for Self Forcing
+and for CausVid (288 videos, Fig.~\ref{fig:relax}c).
+\begin{itemize}
+\item \textbf{Self Forcing:} with a sink, 0.58 of the opening remains; without one, 0.03. Difference $+0.55$ \ci{0.45}{0.65},
+$p_{\text{Holm}} < 10^{-9}$.
+\item \textbf{CausVid:} 0.23 vs 0.04, difference $+0.19$ \ci{0.14}{0.24}, $p_{\text{Holm}} < 10^{-6}$.
+\item \textbf{Quantitative predictions.} Without a sink, Self Forcing's persistence fell from 0.24 at 30\,s to 0.03 at 60\,s,
+as predicted. With a sink, the plateau of 0.58 lies just above the band the recursion predicted, \ci{0.25}{0.54}: the
+model gets the shape right and the level slightly low.
 \end{itemize}
 
 \paragraph{Fitting the recursion.} Fitted to the 120-s curve, the model gives:
@@ -421,7 +432,7 @@ committed to the public repository before generation.}
 4 & Calibrated lighting (560 videos) & calibrated $<$ caption; calibrated $<$ generic & supported vs generic (SF) \\
 5 & Calibrated lighting, LongLive's own levels & same, LongLive & not supported \\
 6 & Relaxation (2,184 + 36 videos) & sink raises $\alpha$ (two models); correction raises $\alpha$; sink raises $\alpha_b$ & 3 of 4 supported (SF brightness not at 31\,s) \\
-7 & Sink retention at 60\,s (288 videos) & sink raises $\alpha$ at 60\,s (SF, CausVid) & \todo{} \\
+7 & Sink retention at 60\,s (288 videos) & sink raises $\alpha$ at 60\,s (SF, CausVid) & supported (both) \\
 \bottomrule
 \end{tabular}
 \end{table}

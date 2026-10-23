@@ -14,7 +14,7 @@ plt.rcParams.update({"font.size": 9, "axes.edgecolor": "#c3c2b7", "axes.labelcol
                      "ytick.color": MUTED, "axes.spines.top": False, "axes.spines.right": False})
 res = json.load(open(f"{R}/results/corr/relax_out/relax_results.json"))
 supp = json.load(open(f"{R}/results/corr/relax_supp_out/relax_supp.json"))
-long = json.load(open(f"{R}/results/corr/relax_out/long_curves.json"))
+long = json.load(open(f"{R}/results/corr/long60_out/curves.json"))
 NAME = {"sf_s3": "Self Forcing DMD", "sf_s0": "SF, no sink", "sf_s1": "SF, sink 1 (expl.)", "sf_ttc": "SF + correction",
         "sid_s3": "SF-SiD", "sidv2_s3": "SF-SiD v2", "gan_s3": "SF-GAN", "sf10s_s3": "SF-10s", "cv_s3": "CausVid",
         "cv_ttc": "CausVid + corr. (expl.)", "ll_s3": "LongLive", "ll_s0": "LongLive, no sink",
@@ -52,14 +52,15 @@ ax.legend(frameon=False, fontsize=7.5, ncol=2)
 ax.set_title("(b) the first 31 s (3-s moving average)", fontsize=9.5, loc="left")
 
 ax = fig.add_subplot(2, 2, 4)
-for c, col in (("sf_s3", "#2a78d6"), ("sf_s0", "#184f95"), ("ll_s3", "#eb6834")):
+for c, col, lab in (("sf60_s3", "#2a78d6", "Self Forcing"), ("sf60_s0", "#184f95", "SF, no sink"),
+                    ("cv60_s3", "#1baf7a", "CausVid"), ("cv60_s0", "#0d6b49", "CausVid, no sink")):
     v = long[c]
-    ax.plot(v["t"], v["mean"], color=col, lw=1.8, label=NAME[c])
-    ax.fill_between(v["t"], v["lo"], v["hi"], color=col, alpha=.15, lw=0)
+    ax.plot(v["t"], v["mean"], color=col, lw=1.8, label=lab, ls="-" if c.endswith("s3") else "--")
+    ax.fill_between(v["t"], v["lo"], v["hi"], color=col, alpha=.12, lw=0)
 ax.axhline(0, color=MUTED, lw=.8)
 ax.set_xlabel("seconds"), ax.set_ylabel("persistence α(t)")
-ax.legend(frameon=False, fontsize=7.5)
-ax.set_title("(c) 120 s: the sink holds about half (6 scenes)", fontsize=9.5, loc="left")
+ax.legend(frameon=False, fontsize=7.5, ncol=2)
+ax.set_title("(c) 60 s, 24 scenes (prereg. 07): the sink holds a share", fontsize=9.5, loc="left")
 fig.tight_layout()
 fig.savefig(f"{R}/report/fig_relax.pdf")
 
