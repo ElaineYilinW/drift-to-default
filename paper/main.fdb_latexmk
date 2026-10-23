@@ -1,5 +1,5 @@
 # Fdb version 3
-["pdflatex"] 1792745359 "main.tex" "main.pdf" "main" 1792745360
+["pdflatex"] 1792776927 "main.tex" "main.pdf" "main" 1792776928
   "/usr/local/texlive/2021/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc" 1136849721 2900 1537cc8184ad1792082cd229ecc269f4 ""
   "/usr/local/texlive/2021/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/local/texlive/2021/texmf-dist/fonts/tfm/jknappen/ec/tcrm0900.tfm" 1136768653 1536 c4f439db76ef96a9c53bc437f35ffe20 ""
@@ -128,13 +128,15 @@
   "/usr/local/texlive/2021/texmf.cnf" 1616695596 577 4c1911a7228e554c6032256d3cf5567d ""
   "fig_calib.pdf" 1792745351 23617 e427e3c68bd82f5dd7549cb4114c4c99 ""
   "fig_default.pdf" 1792745351 30091 7d1e29a424fb865c80f2673f6eefb694 ""
+  "fig_default_fresh.pdf" 1792776917 20089 f5c68241ae5ca8539490fc6f7abd459f ""
   "fig_match.pdf" 1792745351 22944 80ea224d070998d7199b47c56db608ee ""
+  "fig_relax.pdf" 1792776917 31773 a2828c5b501b512398043b961253eaab ""
   "fig_tradeoff.pdf" 1792745351 20506 23a6edd546bce66671922baf887936fd ""
-  "main.aux" 1792745360 9957 a0b9f481f9ea6cba3caea48f51f93423 "pdflatex"
-  "main.out" 1792745360 1661 a5e17c95b128b4046da18e3cdc48d60a "pdflatex"
-  "main.tex" 1792745358 24221 d17064e85fc62d6eb033a047156a727c ""
+  "main.aux" 1792776928 11623 48fde919174af17683f63663c01fb17f "pdflatex"
+  "main.out" 1792776928 1661 a5e17c95b128b4046da18e3cdc48d60a "pdflatex"
+  "main.tex" 1792776927 29249 a3e8d972011304fd647c84d20e0a2f42 ""
   (generated)
   "main.pdf"
-  "main.log"
   "main.aux"
+  "main.log"
   "main.out"

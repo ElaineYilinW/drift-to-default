@@ -16,28 +16,36 @@
 
 \begin{abstract}
 Autoregressive video diffusion models generate long videos chunk by chunk, conditioned on their own output, and drift
-over tens of seconds. We show that this drift is not a random walk but \emph{relaxation}. The colour and texture
-statistics of a rollout move from those of its opening toward a default set by the text prompt, and the long-run state
-is an equilibrium between two pulls:
+over tens of seconds. We show that in models that read their past through attention, this drift is
+\emph{relaxation}: the colour and texture statistics of a rollout move from those of its opening toward a default, and
+the long-run state is an equilibrium,
 \[
-x_\infty \approx \alpha\, x_{\text{open}} + (1-\alpha)\,\mu_{\text{prompt}}.
+x_\infty \approx \alpha\, x_{\text{open}} + (1-\alpha)\,\mu.
 \]
 \begin{itemize}
-\item \textbf{Generality.} About 22--40\% of an opening's deviation survives 31\,s. This holds for brightness, colour,
-saturation, contrast and sharpness, across \todo{9} model configurations spanning DMD, SiD, GAN, LongLive, CausVid,
-Rolling Forcing and SkyReels diffusion forcing. The default $\mu_{\text{prompt}}$ moves with the lighting described in
-the prompt (16--45 \Lstar) and differs between models for the same words.
-\item \textbf{Mechanism.} An attention sink keeps the opening in the context and sets $\alpha$. Fitted to the observed
-persistence curves, a linear chunk-recursion model recovers the sink's per-chunk weight that we measure directly by
-bit-exact KV-cache replay (0.05). The sink's tiny direct weight still sets the equilibrium because the prompt's
-per-chunk pull is equally small.
-\item \textbf{Two levers.} Raising $\alpha$ with a training-free, content-aware correction reduces drift and keeps
-83--93\% of legitimate brightness changes; post-hoc colour matching keeps 7--12\%. Moving $\mu_{\text{prompt}}$ toward
-the opening with a lighting description calibrated to measured brightness reduces drift by 26\% on Self Forcing; a
-free-form VLM caption does not.
+\item \textbf{Generality.} We shift the brightness and colour of the same opening and measure how much survives. In 13
+configurations of five open models (Self Forcing with DMD, SiD and GAN objectives, CausVid, LongLive, Rolling Forcing),
+the share $\alpha$ is between 0.02 and 0.67 at 31\,s. The share depends strongly on the training objective even when
+the architecture is identical.
+\item \textbf{The default.} The default $\mu$ is where a fresh rollout of the same prompt ends ($r=0.93$ across
+configurations). It moves with the lighting described in the prompt (16--45 \Lstar) and differs between models for the
+same words.
+\item \textbf{An exception.} A diffusion-forcing model that continues by re-denoising overlapping frames (SkyReels-V2)
+does not relax ($\alpha\approx1$), whatever its guidance, history noise or number of steps.
+\item \textbf{Mechanism.} An attention sink keeps a fixed share of the opening for at least 120\,s; without it the
+opening is forgotten. A linear chunk-recursion model fitted to these curves recovers the sink's per-chunk weight that we
+measure directly by bit-exact KV-cache replay ($\approx0.05$). A tiny weight still sets the equilibrium because the
+prompt's per-chunk pull is equally small.
+\item \textbf{Two levers.}
+  \begin{itemize}
+  \item \emph{Raise $\alpha$:} a training-free, content-aware correction increases $\alpha$ (+0.12), reduces drift, and
+  keeps 83--93\% of legitimate brightness changes; post-hoc colour matching keeps 7--12\%.
+  \item \emph{Move $\mu$:} a lighting description calibrated to the opening's measured brightness reduces drift by 26\%
+  on Self Forcing; a free-form VLM caption does not.
+  \end{itemize}
 \end{itemize}
-All experiments use paired seeds on a pinned GPU architecture. Six analyses were preregistered with hashed code, and we
-report the two that failed.
+Every comparison is paired by seed on one GPU architecture. Seven analyses were preregistered with hashed code, and we
+report all their outcomes, including three that failed.
 \end{abstract}
 
 \section{Introduction}
@@ -70,8 +78,8 @@ seeds pinned to one GPU architecture, and preregistration. It also exposes three
   \item a standard image-quality metric is blind to drift.
   \end{itemize}
 \item The relaxation law, $x_\infty \approx \alpha x_{\text{open}} + (1-\alpha)\mu_{\text{prompt}}$. We establish it
-interventionally, by shifting the brightness and colour of the same opening, across \todo{9} model configurations and
-six statistics.
+interventionally, by shifting the brightness and colour of the same opening, across 13 configurations of five models,
+with an exception for diffusion forcing that points to the conditioning mechanism.
 \item A quantitative mechanism. Long-horizon persistence curves and direct KV-cache interventions give consistent
 per-chunk weights, which explains how a sink with a tiny weight sets the equilibrium.
 \item Two practical levers matching the two terms of the law, both evaluated in preregistered tests against
@@ -198,9 +206,43 @@ log sharpness & 0.37 & -0.91 & 0.23 & -0.94 \\
 openings follow one line. (b) Four lighting prompts set four defaults. (c) Two models: same slope, different default.}
 \label{fig:default}
 \end{figure}
-\paragraph{Interventional evidence across models.} \todo{Relaxation study (preregistered): 24 scenes $\times$ 7
-opening versions $\times$ 9 configurations. Within-scene $\alpha_L$, $\alpha_b$ per configuration; H1--H4; table of
-$\alpha$, half-life and default level per model; fresh-start comparison; long-horizon subset.}
+\paragraph{Interventional evidence across models (preregistered).} Observational regressions compare different scenes,
+whose content differs along with their brightness. We therefore shifted the opening \emph{within} each of 24 scenes (12
+NAVSIM, 12 generated): \Lstar{} by $-16, -8, 0, +8, +16$ and $b^*$ by $\pm12$. Each was continued for 31\,s by 13
+configurations (Table~\ref{tab:models}); every configuration of a scene ran in one job on one GPU architecture. The
+persistence $\alpha$ is the within-scene slope of the end value on the opening value. Fig.~\ref{fig:relax}a shows the
+results.
+\begin{itemize}
+\item \textbf{Every attention-based model relaxes.} $\alpha_L$ ranges from 0.02 (LongLive without a sink) to 0.67
+(Self Forcing GAN); colour temperature behaves alike.
+\item \textbf{The training objective matters even with everything else fixed.} Five Self Forcing checkpoints share
+architecture, context and sampler, yet $\alpha_L$ ranges from 0.12 (SiD) to 0.67 (GAN) and the default from 17 to 47
+\Lstar.
+\item \textbf{The default is the end of a fresh rollout.} Across 10 configurations, the zero-drift level estimated from
+the shifted openings correlates $r=0.93$ with where prompt-only fresh starts end (Fig.~\ref{fig:defaultfresh}). A model's
+default can therefore be measured from a few cheap fresh rollouts.
+\item \textbf{Diffusion forcing is the exception.} SkyReels-V2-DF keeps the opening: $\alpha_L = 1.09$ \ci{1.02}{1.16} at
+10\,s and $0.96$ \ci{0.86}{1.07} at 20\,s (12 scenes). In an exploratory check, removing classifier-free guidance,
+tripling the history noise, or cutting to 10 steps all left $\alpha\approx1$. Its continuation re-denoises 17
+overlapping frames, a pixel-level constraint, whereas the KV-cache models only attend to their past. We conjecture that
+the conditioning mechanism, not autoregression itself, decides whether a model relaxes.
+\end{itemize}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{fig_relax.pdf}
+\caption{Relaxation study (preregistration 06). (a) Persistence of a within-scene shift of the opening at 31\,s (24
+scenes; SkyReels at 20\,s, 12 scenes, hollow marker). (b) Persistence over time for the sink and correction contrasts.
+(c) Long-horizon subset (6 scenes, 120\,s; bands are scene-bootstrap 95\% CIs): with a sink, about half of the opening
+is held indefinitely; without one, it is forgotten by 60\,s.}
+\label{fig:relax}
+\end{figure}
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.48\linewidth]{fig_default_fresh.pdf}
+\caption{The zero-drift level from shifted openings equals the end brightness of fresh rollouts of the same prompt.}
+\label{fig:defaultfresh}
+\end{figure}
 
 \section{Mechanism: an equilibrium between the anchor and the prompt}\label{sec:mech}
 Model a chunk's mean statistic as a linear recursion:
@@ -224,7 +266,34 @@ differences). Fitting the recursion to the long-horizon persistence curve alone 
 \item LongLive: $w_s = 0.054$, $w_w = 0.81$.
 \end{itemize}
 This resolves an earlier puzzle: the sink's direct effect on the next chunk is tiny, yet it roughly halves drift.
-\todo{Interventional test with sink 0 vs 3 from the relaxation study.}
+
+
+\paragraph{Interventional tests (preregistered, Holm over four).}
+\begin{itemize}
+\item \textbf{LongLive.} Removing the sink lowers $\alpha_L$ from 0.19 to 0.02 ($-0.17$ \ci{-0.28}{-0.06}, $p_{\text{Holm}}=0.013$).
+\item \textbf{Self Forcing, colour.} Removing the sink lowers $\alpha_b$ from 0.25 to $-0.01$ ($-0.26$
+\ci{-0.34}{-0.18}, $p<0.001$).
+\item \textbf{Self Forcing, brightness: not supported at 31\,s} ($-0.06$ \ci{-0.17}{0.05}). Its window forgets slowly
+($w_w\approx0.9$), so at 31\,s the sink-less run had not yet forgotten. In the preregistered long-horizon subset (6
+scenes, 120\,s), the sink holds 0.44--0.54 from 60\,s on, while without it persistence is $-0.10$ to $-0.07$. The
+difference is $+0.56$ \ci{0.34}{0.75} at 118\,s (Fig.~\ref{fig:relax}c). \todo{Preregistration 07: confirmation at 60\,s on 24 scenes, Self Forcing and CausVid.}
+\end{itemize}
+
+\paragraph{Fitting the recursion.} Fitted to the 120-s curve, the model gives:
+\begin{itemize}
+\item Self Forcing: $w_s = 0.060$ \ci{0.021}{0.097}, $w_w = 0.86$, $\alpha_\infty = 0.42$ \ci{0.25}{0.54}. KV-cache
+replay measured $0.053$ \ci{0.040}{0.066}.
+\item LongLive: $w_s = 0.034$ \ci{0.027}{0.045}.
+\item Ordering on the 31-s curves: the fitted sink weights follow the order of $\alpha$ (GAN 0.11, SiD and Rolling
+Forcing 0.08, CausVid 0.05, LongLive 0.02).
+\end{itemize}
+Two caveats:
+\begin{itemize}
+\item From a 31-s curve alone, Self Forcing's sink weight is not identifiable, because the plateau is not reached yet.
+\item Both long curves dip near 30\,s and then recover, which the first-order model does not capture. With six scenes
+this may be noise.
+\end{itemize}
+
 
 \section{Two levers}\label{sec:levers}
 \paragraph{Raising $\alpha$: a content-aware correction.} At denoising step 1 of 4, the noisy chunk is run once more
@@ -241,6 +310,10 @@ reaches similar $D$ ($-0.89$, $-1.58$) but keeps only 7\% / 12\% of legitimate t
 do nothing.
 \item \textbf{Cost and transfer.} The correction costs one forward pass per chunk and some flicker. On LongLive it
 reduces $D$ by half as much.
+\item \textbf{It works by raising $\alpha$.} In the relaxation study the correction raises Self Forcing's
+persistence from 0.28 to 0.41 ($+0.12$ \ci{0.05}{0.20}, preregistered). In exploratory runs it does the same on
+CausVid ($+0.09$ \ci{0.03}{0.14}), and on LongLive the estimate is $+0.06$ \ci{-0.06}{0.18}. It is therefore an
+artificial strengthening of the sink's pull, restricted to the DC tone.
 \end{itemize}
 
 
@@ -337,7 +410,8 @@ committed to the public repository before generation.}
 3 & Caption prompts (800 videos) & caption $<$ generic; +correction $<$ caption & not supported \\
 4 & Calibrated lighting (560 videos) & calibrated $<$ caption; calibrated $<$ generic & supported vs generic (SF) \\
 5 & Calibrated lighting, LongLive's own levels & same, LongLive & not supported \\
-6 & Relaxation (interventional) & sink raises $\alpha$ (two models); correction raises $\alpha$; sink raises $\alpha_b$ & \todo{} \\
+6 & Relaxation (2,184 + 36 videos) & sink raises $\alpha$ (two models); correction raises $\alpha$; sink raises $\alpha_b$ & 3 of 4 supported (SF brightness not at 31\,s) \\
+7 & Sink retention at 60\,s (288 videos) & sink raises $\alpha$ at 60\,s (SF, CausVid) & \todo{} \\
 \bottomrule
 \end{tabular}
 \end{table}

@@ -674,8 +674,8 @@ INPUT /usr/local/texlive/2021/texmf-dist/fonts/tfm/public/cm/cmr12.tfm
 INPUT /usr/local/texlive/2021/texmf-dist/fonts/tfm/public/cm/cmbx12.tfm
 INPUT /usr/local/texlive/2021/texmf-dist/fonts/tfm/public/cm/cmti10.tfm
 INPUT /usr/local/texlive/2021/texmf-dist/fonts/tfm/jknappen/ec/tcrm1000.tfm
-INPUT /usr/local/texlive/2021/texmf-dist/fonts/tfm/public/cm/cmbx10.tfm
 INPUT /usr/local/texlive/2021/texmf-var/fonts/map/pdftex/updmap/pdftex.map
+INPUT /usr/local/texlive/2021/texmf-dist/fonts/tfm/public/cm/cmbx10.tfm
 INPUT /usr/local/texlive/2021/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm
 INPUT /usr/local/texlive/2021/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam10.tfm
 INPUT /usr/local/texlive/2021/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam7.tfm
@@ -687,6 +687,16 @@ INPUT ./fig_default.pdf
 INPUT fig_default.pdf
 INPUT ./fig_default.pdf
 INPUT ./fig_default.pdf
+INPUT ./fig_relax.pdf
+INPUT ./fig_relax.pdf
+INPUT fig_relax.pdf
+INPUT ./fig_relax.pdf
+INPUT ./fig_relax.pdf
+INPUT ./fig_default_fresh.pdf
+INPUT ./fig_default_fresh.pdf
+INPUT fig_default_fresh.pdf
+INPUT ./fig_default_fresh.pdf
+INPUT ./fig_default_fresh.pdf
 INPUT ./fig_tradeoff.pdf
 INPUT ./fig_tradeoff.pdf
 INPUT fig_tradeoff.pdf
