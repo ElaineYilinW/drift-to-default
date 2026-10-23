@@ -4,7 +4,7 @@ The [technical report](../report/drift_to_default.pdf) is the English write-up o
 
 ## Preregistrations
 
-Each preregistration was written and frozen before any of its videos were generated. It records the hypotheses, the decision rules and the SHA-256 hashes of the analysis code. Preregistrations 03–05 were also committed to this repository before generation. To check that the published code matches the frozen versions, run `python analysis/verify_preregistration.py`.
+Each preregistration was written and frozen before any of its videos were generated. English translations are in [`preregistrations/en/`](preregistrations/en/README.md); the Chinese files are the frozen, authoritative versions. It records the hypotheses, the decision rules and the SHA-256 hashes of the analysis code. Preregistrations 03–05 were also committed to this repository before generation. To check that the published code matches the frozen versions, run `python analysis/verify_preregistration.py`.
 
 | # | Study | Primary hypotheses | Outcome |
 |---|---|---|---|
@@ -13,6 +13,7 @@ Each preregistration was written and frozen before any of its videos were genera
 | [03](preregistrations/03_matched_prompts.md) | Prompts written from a VLM caption of the opening | Caption prompt reduces brightness drift; correction adds to it | Not supported |
 | [04](preregistrations/04_calibrated_lighting.md) | Lighting description chosen from measured brightness | Calibrated prompt beats the caption prompt and the generic prompt | Supported vs generic on Self Forcing; not supported otherwise |
 | [05](preregistrations/05_calibrated_lighting_longlive.md) | Same, with LongLive's own calibration | Calibrated prompt beats the generic prompt and the caption prompt on LongLive | Not supported (the lighting-only prompt helps as a secondary result) |
+| [06](preregistrations/06_relaxation.md) | Relaxation: shifted openings × 11 model configurations | A sink raises the opening's persistence (two models); the correction raises it; same for colour | Running |
 
 ## Lab notes
 
