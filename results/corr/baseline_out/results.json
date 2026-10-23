@@ -1,0 +1,292 @@
+{
+ "counts": {
+  "none": 160,
+  "ttc_s1": 160,
+  "ttc_s1_b15": 160,
+  "phmean": 160,
+  "phreinhard": 160
+ },
+ "gpus": {
+  "NVIDIA A100 80GB PCIe": 440,
+  "NVIDIA A800 40GB Active": 136
+ },
+ "tests": {
+  "D:ttc_s1": {
+   "est": -1.4766608640380334,
+   "se": 0.14634616512548898,
+   "ci": [
+    -1.7634993476839917,
+    -1.189822380392075
+   ],
+   "boot_ci": [
+    -1.8202146706223372,
+    -1.1458607084929089
+   ],
+   "mean_none": 5.782136821430261,
+   "mean_arm": 4.305475957392228,
+   "n": 320,
+   "p": 3.052508099037626e-24,
+   "family": "primary",
+   "p_holm": 9.157524297112878e-24,
+   "supported": true
+  },
+  "D:ttc_s1_b15": {
+   "est": -1.779692066012201,
+   "se": 0.1705981984262661,
+   "ci": [
+    -2.1140645349276825,
+    -1.4453195970967196
+   ],
+   "boot_ci": [
+    -2.259285475289278,
+    -1.3536112528643962
+   ],
+   "mean_none": 5.782136821430261,
+   "mean_arm": 4.002444755418057,
+   "n": 320,
+   "p": 8.849647341759282e-26,
+   "family": "primary",
+   "p_holm": 3.539858936703713e-25,
+   "supported": true
+  },
+  "D:phmean": {
+   "est": -0.8932481334386684,
+   "se": 0.20087502546259214,
+   "ci": [
+    -1.286963183345349,
+    -0.4995330835319878
+   ],
+   "boot_ci": [
+    -1.4045650237654406,
+    -0.37952671101531904
+   ],
+   "mean_none": 5.782136821430261,
+   "mean_arm": 4.888888687991592,
+   "n": 320,
+   "p": 4.358241544847571e-06,
+   "family": "primary",
+   "p_holm": 4.358241544847571e-06,
+   "supported": true
+  },
+  "D:phreinhard": {
+   "est": -1.5756338308745814,
+   "se": 0.197245706204151,
+   "ci": [
+    -1.9622354150347174,
+    -1.1890322467144454
+   ],
+   "boot_ci": [
+    -2.1316930784462063,
+    -1.0155098454833453
+   ],
+   "mean_none": 5.782136821430261,
+   "mean_arm": 4.2065029905556806,
+   "n": 320,
+   "p": 6.847375515399781e-16,
+   "family": "primary",
+   "p_holm": 1.3694751030799562e-15,
+   "supported": true
+  },
+  "zL:ttc_s1": {
+   "est": 1.0820704048439844,
+   "se": 0.12210748404626891,
+   "ci": [
+    0.8427397361132973,
+    1.3214010735746715
+   ],
+   "boot_ci": [
+    0.7305389352881763,
+    1.4665359674361096
+   ],
+   "mean_none": -2.188167002125804,
+   "mean_arm": -1.10609659728182,
+   "n": 320,
+   "p": 3.942918398318799e-19,
+   "family": "secondary",
+   "p_holm": 3.942918398318799e-19,
+   "supported": true
+  },
+  "zL:ttc_s1_b15": {
+   "est": 1.3158440634220967,
+   "se": 0.1353682890169399,
+   "ci": [
+    1.0505222169488946,
+    1.5811659098952988
+   ],
+   "boot_ci": [
+    0.9335272910222278,
+    1.7474553411834193
+   ],
+   "mean_none": -2.188167002125804,
+   "mean_arm": -0.872322938703707,
+   "n": 320,
+   "p": 1.2331419548715038e-22,
+   "family": "secondary",
+   "p_holm": 2.4662839097430076e-22,
+   "supported": true
+  },
+  "zL:phmean": {
+   "est": 1.548609295002111,
+   "se": 0.1490098311397702,
+   "ci": [
+    1.2565500259681615,
+    1.8406685640360607
+   ],
+   "boot_ci": [
+    1.0266477210245104,
+    2.0550361177074046
+   ],
+   "mean_none": -2.188167002125804,
+   "mean_arm": -0.6395577071236929,
+   "n": 320,
+   "p": 1.3388210670787484e-25,
+   "family": "secondary",
+   "p_holm": 5.355284268314994e-25,
+   "supported": true
+  },
+  "zL:phreinhard": {
+   "est": 1.530026449110007,
+   "se": 0.1503778658911768,
+   "ci": [
+    1.2352858319633007,
+    1.8247670662567135
+   ],
+   "boot_ci": [
+    1.0348701684759154,
+    2.092372075001874
+   ],
+   "mean_none": -2.188167002125804,
+   "mean_arm": -0.6581405530157957,
+   "n": 320,
+   "p": 1.2879977618220169e-24,
+   "family": "secondary",
+   "p_holm": 3.863993285466051e-24,
+   "supported": true
+  },
+  "K:ttc_s1": {
+   "est": -0.001947699051205263,
+   "se": 0.054782598314090866,
+   "ci": [
+    -0.10932159174682335,
+    0.10542619364441283
+   ],
+   "boot_ci": [
+    -0.10881550573348335,
+    0.10728766308176381
+   ],
+   "mean_none": 2.077235752331407,
+   "mean_arm": 2.0752880532802016,
+   "n": 320,
+   "family": "secondary-noninferiority",
+   "margin": 0.3,
+   "noninferior": true
+  },
+  "K:ttc_s1_b15": {
+   "est": 0.008019921244439112,
+   "se": 0.04734651040511556,
+   "ci": [
+    -0.08477923914958739,
+    0.1008190816384656
+   ],
+   "boot_ci": [
+    -0.07029981100298882,
+    0.08501035938178714
+   ],
+   "mean_none": 2.077235752331407,
+   "mean_arm": 2.085255673575846,
+   "n": 320,
+   "family": "secondary-noninferiority",
+   "margin": 0.3,
+   "noninferior": true
+  }
+ },
+ "flicker_ratio_vs_none": {
+  "jitter": {
+   "none": 1.0,
+   "phmean": 0.153,
+   "phreinhard": 0.132,
+   "ttc_s1": 1.128,
+   "ttc_s1_b15": 1.671
+  },
+  "boundary": {
+   "none": 1.0,
+   "phmean": 0.12,
+   "phreinhard": 0.105,
+   "ttc_s1": 1.318,
+   "ttc_s1_b15": 2.402
+  }
+ },
+ "controls": {
+  "transition_none_meanabs_dL": {
+   "cfm_canyon_out": 11.59,
+   "cfm_cloud_cover": 9.65,
+   "cfm_garage_in": 9.05,
+   "cfm_garage_out": 26.73,
+   "cfm_meadow_out": 10.64,
+   "cfm_sunset_mountains": 3.93,
+   "cfm_underpass": 15.24,
+   "cfm_warehouse_in": 18.24
+  },
+  "valid": [
+   "cfm_canyon_out",
+   "cfm_cloud_cover",
+   "cfm_garage_in",
+   "cfm_garage_out",
+   "cfm_meadow_out",
+   "cfm_underpass",
+   "cfm_warehouse_in"
+  ],
+  "ttc_s1": {
+   "kept_by_prompt": {
+    "cfm_canyon_out": 1.51,
+    "cfm_cloud_cover": 0.67,
+    "cfm_garage_in": 1.02,
+    "cfm_garage_out": 0.58,
+    "cfm_meadow_out": 1.47,
+    "cfm_sunset_mountains": 0.28,
+    "cfm_underpass": 0.81,
+    "cfm_warehouse_in": 0.83
+   },
+   "median_kept_valid": 0.8279647666409151
+  },
+  "ttc_s1_b15": {
+   "kept_by_prompt": {
+    "cfm_canyon_out": 1.48,
+    "cfm_cloud_cover": 0.77,
+    "cfm_garage_in": 1.07,
+    "cfm_garage_out": 0.83,
+    "cfm_meadow_out": 1.71,
+    "cfm_sunset_mountains": 0.15,
+    "cfm_underpass": 0.93,
+    "cfm_warehouse_in": 0.9
+   },
+   "median_kept_valid": 0.929221290675958
+  },
+  "phmean": {
+   "kept_by_prompt": {
+    "cfm_canyon_out": 0.36,
+    "cfm_cloud_cover": 0.04,
+    "cfm_garage_in": 0.03,
+    "cfm_garage_out": 0.36,
+    "cfm_meadow_out": 0.41,
+    "cfm_sunset_mountains": 0.0,
+    "cfm_underpass": 0.04,
+    "cfm_warehouse_in": 0.07
+   },
+   "median_kept_valid": 0.07001417505504293
+  },
+  "phreinhard": {
+   "kept_by_prompt": {
+    "cfm_canyon_out": 0.18,
+    "cfm_cloud_cover": 0.02,
+    "cfm_garage_in": 0.05,
+    "cfm_garage_out": 0.14,
+    "cfm_meadow_out": 0.24,
+    "cfm_sunset_mountains": 0.01,
+    "cfm_underpass": 0.09,
+    "cfm_warehouse_in": 0.12
+   },
+   "median_kept_valid": 0.12246693679561807
+  }
+ }
+}
