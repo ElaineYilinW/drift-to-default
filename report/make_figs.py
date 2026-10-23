@@ -120,3 +120,34 @@ axs[2].set_title("(c) Self Forcing, by calibrated class", fontsize=9.5, loc="lef
 fig.tight_layout()
 fig.savefig(f"{R}/report/fig_calib.pdf")
 print("ok calib")
+
+# correction trade-off: drift reduction vs legitimate transitions kept
+fig, axs = plt.subplots(1, 2, figsize=(9.5, 3.6))
+b = json.load(open(f"{R}/results/corr/baseline_out/results.json"))
+pts = [("none", 0.0, 1.0, MUTED), ("correction β=1", b["tests"]["D:ttc_s1"]["est"], b["controls"]["ttc_s1"]["median_kept_valid"], "#2a78d6"),
+       ("correction β=1.5", b["tests"]["D:ttc_s1_b15"]["est"], b["controls"]["ttc_s1_b15"]["median_kept_valid"], "#2a78d6"),
+       ("post-hoc mean", b["tests"]["D:phmean"]["est"], b["controls"]["phmean"]["median_kept_valid"], "#eb6834"),
+       ("post-hoc Reinhard", b["tests"]["D:phreinhard"]["est"], b["controls"]["phreinhard"]["median_kept_valid"], "#eb6834")]
+for name, x, y, c in pts:
+    axs[0].scatter(x, y, s=60, color=c, zorder=3)
+    axs[0].annotate(name, (x, y), textcoords="offset points", xytext=(6, -3), fontsize=8)
+axs[0].set_xlabel("change in colour drift D (held-out prompts)"), axs[0].set_ylabel("legitimate transitions kept")
+axs[0].set_title("(a) preregistered confirmation set", fontsize=9.5, loc="left")
+axs[0].set_xlim(-2.1, 0.5), axs[0].set_ylim(-0.05, 1.1)
+e = json.load(open(f"{R}/results/corr/e3_out/e2_summary.json"))
+lab = {"ttc_s0": "step 0", "ttc_s01": "steps 0+1", "ttc_s1": "step 1", "ttc_s1_b15": "step 1, β1.5", "ttc_s1_b2": "step 1, β2",
+       "ttc_s2": "step 2", "ttc_s3": "step 3", "luma_s3_a02": "brightness controller"}
+for k, name in lab.items():
+    v = e[k]
+    c = "#eb6834" if k.startswith("luma") else "#2a78d6"
+    axs[1].scatter(v["D_end"]["diff"], v["control_kept_median"], s=50, color=c, zorder=3)
+    axs[1].annotate(name, (v["D_end"]["diff"], v["control_kept_median"]), textcoords="offset points", xytext=(5, -3), fontsize=7.5)
+axs[1].scatter(0, 1, s=50, color=MUTED)
+axs[1].set_xlabel("change in colour drift D (development set)")
+axs[1].set_title("(b) the denoising step is a knob", fontsize=9.5, loc="left")
+axs[1].set_ylim(-0.15, 1.15)
+for ax in axs:
+    ax.axhline(1, color=GRID, lw=.8), ax.axvline(0, color=GRID, lw=.8)
+fig.tight_layout()
+fig.savefig(f"{R}/report/fig_tradeoff.pdf")
+print("ok tradeoff")
