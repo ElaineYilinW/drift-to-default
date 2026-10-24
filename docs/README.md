@@ -4,7 +4,7 @@ The [paper draft](../paper/main.pdf) is the English write-up of the whole study 
 
 ## Preregistrations
 
-Each preregistration was written and frozen before any of its videos were generated. It records the hypotheses, the decision rules and the SHA-256 hashes of the analysis code. Preregistrations 03–09 were also committed to this repository before generation. English translations are in [`preregistrations/en/`](preregistrations/en/README.md); the Chinese files are the frozen, authoritative versions. To check that the published code matches the frozen versions, run `python analysis/verify_preregistration.py`.
+Each preregistration was written and frozen before any of its videos were generated. It records the hypotheses, the decision rules and the SHA-256 hashes of the analysis code. Preregistrations 03–10 were also committed to this repository before generation. English translations are in [`preregistrations/en/`](preregistrations/en/README.md); the Chinese files are the frozen, authoritative versions. To check that the published code matches the frozen versions, run `python analysis/verify_preregistration.py`.
 
 | # | Study | Primary hypotheses | Outcome |
 |---|---|---|---|
@@ -17,6 +17,7 @@ Each preregistration was written and frozen before any of its videos were genera
 | [07](preregistrations/07_long_horizon_sink.md) | Sink retention at 60 s, Self Forcing and CausVid | A sink raises the opening's persistence at 60 s on both | Supported (both) |
 | [08](preregistrations/08_skyreels_overlap.md) | SkyReels overlap: does a weaker overlap constraint make diffusion forcing relax? | Persistence lower with 5 than with 17 overlapping frames | Supported |
 | [09](preregistrations/09_content_relaxation.md) | Content: does scene content (snow, desert, forest, ...) relax to the prompt's default? | Class score lower under the generic prompt; the sink keeps content | Running |
+| [10](preregistrations/10_persistence_atlas.md) | Atlas: persistence of every model at 60 s; does sink size or sink position matter? | Deeper sink keeps more; any sink keeps some; LongLive's sink at 60 s; re-rotation (two-sided) | Running |
 
 ## Lab notes
 
