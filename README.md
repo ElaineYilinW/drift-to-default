@@ -1,6 +1,6 @@
 # Drift to Default
 
-**Long autoregressive video rollouts relax to a default set by the prompt. This repository measures how much of an opening survives across 13 configurations of five open models, explains it with an equilibrium between the attention sink and the prompt, and tests two training-free levers. It reports eight preregistered studies, including the hypotheses that failed.**
+**Long autoregressive video rollouts relax to a default set by the prompt. This repository measures how much of an opening survives across 14 configurations of four KV-cache model families (plus SkyReels-V2), explains it with an equilibrium between the attention sink and the prompt, and tests two training-free levers. It reports eight preregistered studies, including the hypotheses that failed.**
 
 [![Paper draft](https://img.shields.io/badge/paper-PDF-b31b1b)](paper/main.pdf)
 [![Technical report](https://img.shields.io/badge/report-PDF-6e6e6e)](report/drift_to_default.pdf)
@@ -36,7 +36,7 @@ The core result is an equilibrium law. After a long rollout, a statistic such as
 
 | | Finding | Evidence | Status |
 |---|---|---|---|
-| 1 | **Every attention-based model relaxes toward a default.** The share of a shifted opening that survives 31 s is 0.02–0.67. It depends strongly on the training objective even with identical architecture. | Within-scene shifts of 24 openings × 13 configurations (2,184 videos): Self Forcing SiD 0.12, CausVid 0.15, LongLive 0.19, DMD 0.28, SiD-v2 0.35, Rolling Forcing 0.53, GAN 0.67. Colour temperature behaves alike. | Preregistered study |
+| 1 | **Every attention-based model relaxes toward a default.** The share of a shifted opening that survives 31 s is 0.02–0.67. It depends strongly on the training objective even with identical architecture. | Within-scene shifts of 24 openings × 14 configurations (2,352 videos): Self Forcing SiD 0.12, CausVid 0.15, LongLive 0.19, DMD 0.28, SiD-v2 0.35, Rolling Forcing 0.53, GAN 0.67. Colour temperature behaves alike. | Preregistered study |
 | 2 | **The default is set by the prompt, and it is where a fresh rollout ends.** | Zero-drift level vs fresh-start end, 10 configurations: r = 0.93. Lighting prompts: sunny 43, overcast 34, dusk 19, night 16 L\* (Self Forcing); 45 / 40 / 32 / 21 on LongLive. | Exploratory |
 | 3 | **An attention sink holds a fixed share of the opening; without it the opening is forgotten.** The fitted per-chunk sink weight matches a direct KV-cache measurement. | At 60 s: Self Forcing 0.58 vs 0.03 (+0.55 [0.45, 0.65]); CausVid 0.23 vs 0.04 (+0.19 [0.14, 0.24]); LongLive at 31 s 0.19 vs 0.02. Fitted w<sub>s</sub> 0.060 [0.021, 0.097] vs replay 0.053 [0.040, 0.066]. Self Forcing brightness was not significant at the earlier 31-s endpoint (slow forgetting). | Preregistered (06, 07); 1 of 4 failed in 06 |
 | 4 | **Diffusion forcing is the exception that confirms the mechanism.** SkyReels-V2, which continues by re-denoising 17 overlapping frames, keeps its opening. With 5 overlapping frames it relaxes. | α ≈ 1 at 10–20 s; unchanged without CFG, with 3× history noise, or with 10 steps. Overlap 5 vs 17: 0.77 vs 1.01 at 15–20 s, −0.24 [−0.40, −0.09], p = 0.014 (12 new scenes). | Preregistered (08) |
@@ -59,7 +59,7 @@ Every experiment compares arms on the **same openings or prompts, with the same 
 | 4 | Does the prompt set the default? Does it replicate? | 40 openings × 4 lighting prompts; LongLive replication | ~1,250 | — | [06](docs/lab-notes/06_prompt_default_and_longlive.md) |
 | 5 | Does describing the opening help? | 40 new openings × 5 arms × 2 models | 800 | [03](docs/preregistrations/03_matched_prompts.md) | [07](docs/lab-notes/07_matched_prompts_results.md) |
 | 6 | Does a brightness-calibrated description help? | Same openings, 3 new arms, calibrated per model | ~670 | [04](docs/preregistrations/04_calibrated_lighting.md), [05](docs/preregistrations/05_calibrated_lighting_longlive.md) | [08](docs/lab-notes/08_calibrated_lighting_results.md), [09](docs/lab-notes/09_calibrated_lighting_longlive_results.md) |
-| 7 | How much of an opening survives, across models? | 24 scenes × 7 shifted openings × 13 configurations, + fresh starts, + 120-s subset; SkyReels on 12 scenes | ~2,500 | [06](docs/preregistrations/06_relaxation.md) | [11](docs/lab-notes/11_relaxation_exploratory_addendum.md), [12](docs/lab-notes/12_skyreels_mechanism.md), [13](docs/lab-notes/13_relaxation_results.md) |
+| 7 | How much of an opening survives, across models? | 24 scenes × 7 shifted openings × 14 configurations, + fresh starts, + 120-s subset; SkyReels on 12 scenes | ~2,500 | [06](docs/preregistrations/06_relaxation.md) | [11](docs/lab-notes/11_relaxation_exploratory_addendum.md), [12](docs/lab-notes/12_skyreels_mechanism.md), [13](docs/lab-notes/13_relaxation_results.md) |
 | 8 | Does the sink hold the opening at 60 s? | 24 scenes × 3 openings × sink on/off × Self Forcing, CausVid | 288 | [07](docs/preregistrations/07_long_horizon_sink.md) | [14](docs/lab-notes/14_long_horizon_sink_results.md) |
 | 9 | Does a weaker overlap make diffusion forcing relax? | 12 new scenes × overlap 5 / 17 × ±16 L\*, 20 s, SkyReels | 48 | [08](docs/preregistrations/08_skyreels_overlap.md) | [12](docs/lab-notes/12_skyreels_mechanism.md), [15](docs/lab-notes/15_skyreels_overlap_results.md) |
 
@@ -72,7 +72,7 @@ Every experiment compares arms on the **same openings or prompts, with the same 
 
 ### Relaxation across models (Parts 7–8)
 
-![Persistence of a shifted opening across 13 configurations, over time, and at 60 s](assets/fig_relax.png)
+![Persistence of a shifted opening across 14 configurations, over time, and at 60 s](assets/fig_relax.png)
 
 <p align="center"><img src="assets/fig_default_fresh.png" width="45%" alt="zero-drift level vs fresh-start end"></p>
 
@@ -109,7 +109,7 @@ A statistical closed-loop controller was tried first and failed; [lab note 03](d
 
 The cost is flicker: jitter rises ×1.13 at β = 1 and ×1.67 at β = 1.5.
 
-Compared with post-hoc colour matching to the anchor, only the content-aware correction both reduces drift and keeps legitimate brightness changes ([lab note 10](docs/lab-notes/10_baselines_attributes_theory.md)). In the relaxation study it raises α from 0.28 to 0.41.
+Compared with post-hoc colour matching to the anchor, only the content-aware correction both reduces drift and keeps legitimate brightness changes ([lab note 10](docs/lab-notes/10_baselines_attributes_theory.md)). In the relaxation study it raises α from 0.28 to 0.40.
 
 ![Drift reduction vs legitimate transitions kept](assets/fig_tradeoff.png)
 
@@ -144,7 +144,7 @@ We report claims made during the study that were later revised or withdrawn afte
 
 ## Lessons for evaluating video models
 
-- **The GPU architecture changes the video.** With bf16, the same seed gives bit-identical output within an architecture but different videos on A40, A100/A800 and L40S/RTX 6000 Ada. Paired comparisons must pin the architecture. In Part 1, about 70% of the pairs were not strictly paired; later parts pin it and verify by bit-exact reruns.
+- **The GPU architecture changes the video.** With bf16, the same seed gives bit-identical output within an architecture but different videos on A40, A100/A800 and L40S/RTX 6000 Ada. Paired comparisons must pin the architecture. In Part 1, 62% of the nominal pairs ran on different architectures; later parts pin it and verify by bit-exact reruns.
 - **A resumed job can silently break pairing.** A preempted multi-arm job resumed on another GPU type and split 4 openings across architectures. The data were repaired and a sensitivity analysis showed the conclusions unchanged ([lab note 07](docs/lab-notes/07_matched_prompts_results.md)).
 - **Common quality metrics miss this drift.** MUSIQ, the model behind VBench's imaging-quality score, is nearly flat across strategies that differ greatly in drift.
 - **Prompts, not seeds, carry the variance.** The seed component of end-of-video drift was 0.2 against 13.7 for prompts. More prompts buy more precision than more seeds.

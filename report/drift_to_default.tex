@@ -70,7 +70,7 @@ Three experiments were preregistered with SHA-256 hashes of the analysis code (\
 \S\ref{sec:match}); the rest is labelled exploratory.
 
 \paragraph{A pitfall: the GPU changes the video.} With bf16, the same seed gives bit-identical videos within a GPU
-architecture but different videos on A40, on A100/A800 and on L40S/RTX 6000 Ada. On a shared cluster, about 70\% of the
+architecture but different videos on A40, on A100/A800 and on L40S/RTX 6000 Ada. On a shared cluster, 62\% of the
 ``paired'' comparisons in our first experiment ran on different architectures. This does not bias the comparison, but
 it loses the variance reduction that pairing is meant to give. All later experiments run every arm of a prompt in one
 job on one GPU.
@@ -94,7 +94,7 @@ more precision than more seeds.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=.92\linewidth]{../assets/fig2_context_strategies.png}
+\includegraphics[width=.92\linewidth]{../assets/fig_context_strategies.png}
 \caption{Colour drift D and DINOv2 drift K at the end of 31-second videos for 10 context strategies (Self Forcing,
 40 prompts $\times$ 4 seeds; means with prompt-cluster bootstrap 95\% CIs).}
 \label{fig:ctx}
@@ -176,7 +176,7 @@ $\beta{=}1.5$ brings no further gain.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=.8\linewidth]{../assets/fig3_correction_confirmatory.png}
+\includegraphics[width=.8\linewidth]{../assets/fig_correction_confirmatory.png}
 \caption{Preregistered confirmation of the correction on Self Forcing: paired effects on 40 held-out prompts
 $\times$ 4 seeds with prompt-cluster bootstrap 95\% CIs.}
 \label{fig:corr}

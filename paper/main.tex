@@ -23,9 +23,9 @@ the long-run state is an equilibrium,
 x_\infty \approx \alpha\, x_{\text{open}} + (1-\alpha)\,\mu.
 \]
 \begin{itemize}
-\item \textbf{Generality.} We shift the brightness and colour of the same opening and measure how much survives. In 13
-configurations of five open models (Self Forcing with DMD, SiD and GAN objectives, CausVid, LongLive, Rolling Forcing),
-the share $\alpha$ is between 0.02 and 0.67 at 31\,s. The share depends strongly on the training objective even when
+\item \textbf{Generality.} We shift the brightness and colour of the same opening and measure how much survives. In 14
+configurations of four KV-cache model families (Self Forcing with DMD, SiD and GAN objectives, CausVid, LongLive,
+Rolling Forcing), the share $\alpha$ is between 0.02 and 0.67 at 31\,s. The share depends strongly on the training objective even when
 the architecture is identical.
 \item \textbf{The default.} The default $\mu$ is where a fresh rollout of the same prompt ends ($r=0.93$ across
 configurations). It moves with the lighting described in the prompt (16--45 \Lstar) and differs between models for the
@@ -72,14 +72,14 @@ otherwise look unrelated:
 \paragraph{Contributions.}
 \begin{enumerate}
 \item A measurement protocol for long-video drift: self-referenced metrics, held and \emph{perturbed} openings, paired
-seeds pinned to one GPU architecture, and preregistration. It also exposes three evaluation pitfalls:
+seeds pinned to one GPU architecture, and preregistration. It also exposes evaluation pitfalls (Appendix~\ref{app:prereg}), among them:
   \begin{itemize}
   \item the GPU architecture changes bf16 outputs;
   \item resumed jobs silently break pairing;
   \item a standard image-quality metric is blind to drift.
   \end{itemize}
 \item The relaxation law, $x_\infty \approx \alpha x_{\text{open}} + (1-\alpha)\mu_{\text{prompt}}$. We establish it
-interventionally, by shifting the brightness and colour of the same opening, across 13 configurations of five models,
+interventionally, by shifting the brightness and colour of the same opening, across 14 configurations of four KV-cache model families,
 with an exception for diffusion forcing that points to the conditioning mechanism.
 \item A quantitative mechanism. Long-horizon persistence curves and direct KV-cache interventions give consistent
 per-chunk weights, which explains how a sink with a tiny weight sets the equilibrium.
@@ -153,13 +153,14 @@ $b^*$ by $\pm$12.
 
 \paragraph{Metrics.} For each video we record per-frame Lab means, saturation, \Lstar{} contrast and Laplacian
 sharpness. The \emph{persistence} $\alpha$ is the within-scene slope of the end value (last 2\,s) on the opening value.
-For prompt-only rollouts, drift is measured against 10 fresh 5-second generations of the same prompt: $D$ is the
+For prompt-only rollouts, drift is measured against 10 (Self Forcing) or 5 (LongLive) fresh 5-second generations of the same prompt: $D$ is the
 Mahalanobis distance of colour statistics and $K$ the DINOv2 nearest-neighbour distance.
 
 \paragraph{Statistics.} Seeds are paired across arms, and every arm of a scene runs in one job on one GPU
-architecture. We use mixed models or seed-averaged paired differences, with scene-cluster bootstrap intervals and Holm
-correction within each preregistered family. Each preregistration froze its code by SHA-256 hash before generation, and
-the last four were committed publicly first.
+architecture. We use mixed models or seed-averaged paired differences with Holm correction within each preregistered family;
+intervals are Wald intervals from the mixed models in studies 1--2 (as preregistered) and scene- or opening-cluster
+bootstrap intervals elsewhere. Each preregistration froze its code by SHA-256 hash before generation, and
+studies 3--8 were also committed publicly before generation.
 
 \section{Drift is relaxation toward a prompt-set default}\label{sec:relax}
 \paragraph{Observational evidence.} Across 40 held openings with a generic prompt, the change of every statistic over
@@ -169,9 +170,11 @@ the last four were committed publicly first.
 \Delta L = 22.8 - 0.69\,L_{\text{open}}, \quad R^2 = 0.82.
 \]
 \begin{itemize}
-\item Only 22--40\% of an opening's deviation survives.
-\item Real and generated openings fall on the same line ($p=0.80$), so real frames ``drift more'' only because they are
-brighter.
+\item Only about a third of an opening's deviation survives (31\% for Self Forcing brightness; 22--54\% across
+statistics and models, Table~\ref{tab:attr}).
+\item On Self Forcing, real and generated openings fall on the same line ($p=0.80$), so real frames ``drift more'' only
+because they are brighter. On LongLive, generated openings end $4.3$ \Lstar{} brighter than real ones at equal opening
+brightness ($p=0.03$).
 \end{itemize}
 
 \paragraph{The default is set by the prompt.} Continuing the same openings under four lighting prompts gives four
@@ -209,8 +212,8 @@ openings follow one line. (b) Four lighting prompts set four defaults. (c) Two m
 \end{figure}
 \paragraph{Interventional evidence across models (preregistered).} Observational regressions compare different scenes,
 whose content differs along with their brightness. We therefore shifted the opening \emph{within} each of 24 scenes (12
-NAVSIM, 12 generated): \Lstar{} by $-16, -8, 0, +8, +16$ and $b^*$ by $\pm12$. Each was continued for 31\,s by 13
-configurations (Table~\ref{tab:models}); every configuration of a scene ran in one job on one GPU architecture. The
+NAVSIM, 12 generated): \Lstar{} by $-16, -8, 0, +8, +16$ and $b^*$ by $\pm12$. Each was continued for 31\,s by 14
+configurations (11 preregistered, 3 exploratory; Table~\ref{tab:models}); every configuration of a scene ran in one job on one GPU architecture. The
 persistence $\alpha$ is the within-scene slope of the end value on the opening value. Fig.~\ref{fig:relax}a shows the
 results.
 \begin{itemize}
@@ -230,7 +233,7 @@ constraint makes SkyReels relax:
 \begin{itemize}
 \item \textbf{Exploratory (4 scenes):} with 5 overlapping frames, $\alpha$ at 20\,s fell from 0.89 to 0.52; with 9
 frames it was unchanged.
-\item \textbf{Preregistered confirmation (study 8; 12 new scenes, both overlaps in one job per scene):} at 15--20\,s,
+\item \textbf{Preregistered confirmation (study 8; 12 scenes not used in the exploratory check, both overlaps in one job per scene):} at 15--20\,s,
 $\alpha = 0.77$ with 5 frames vs $1.01$ with 17. The difference is $-0.24$ \ci{-0.40}{-0.09}, $p=0.014$, and is
 negative in 11 of 12 scenes. With 5 frames, persistence falls steadily from 1.09 at 5\,s to 0.71 at 20\,s.
 \end{itemize}
@@ -266,15 +269,11 @@ equilibrium share is
 \]
 The share is large whenever the prompt's pull is as weak as the sink's.
 
-\paragraph{Two independent measurements agree.} Bit-exact KV-cache replay lets us shift only the sink or only the
+\paragraph{Direct measurement of the weights.} Bit-exact KV-cache replay lets us shift only the sink or only the
 window and regenerate the next chunk from identical noise. It measures $w_s = 0.053$ \ci{0.040}{0.066} for synthetic
 tone shifts, $0.036$ in a dose-response design, and $w_w \approx 0.76$ (synthetic) to $0.90$--$0.99$ (natural
-differences). Fitting the recursion to the long-horizon persistence curve alone gives:
-\begin{itemize}
-\item Self Forcing: $w_s = 0.049$ \ci{0.005}{0.069}, $w_w = 0.85$, $\alpha_\infty = 0.32$;
-\item LongLive: $w_s = 0.054$, $w_w = 0.81$.
-\end{itemize}
-This resolves an earlier puzzle: the sink's direct effect on the next chunk is tiny, yet it roughly halves drift.
+differences). Below we fit the recursion to the persistence curves of the relaxation study and compare.
+
 
 
 A preregistered factorial study of window and sink sizes (Appendix~\ref{sec:ctx}) already showed that a 3-frame sink cuts colour
@@ -287,7 +286,7 @@ drift by more than half on fresh rollouts; here we ask how it does so.
 \ci{-0.34}{-0.18}, $p<0.001$).
 \item \textbf{Self Forcing, brightness: not supported at 31\,s} ($-0.06$ \ci{-0.17}{0.05}). Its window forgets slowly
 ($w_w\approx0.9$), so at 31\,s the sink-less run had not yet forgotten. In the preregistered long-horizon subset (6
-scenes, 120\,s), the sink holds 0.44--0.54 from 60\,s on, while without it persistence is $-0.10$ to $-0.07$. The
+scenes, 120\,s), the sink holds 0.44--0.54 from 60\,s on, while without it persistence is $-0.11$ to $-0.07$. The
 difference is $+0.56$ \ci{0.34}{0.75} at 118\,s.
 \end{itemize}
 
@@ -305,10 +304,13 @@ model gets the shape right and the level slightly low.
 \paragraph{Fitting the recursion.} Fitted to the 120-s curve, the model gives:
 \begin{itemize}
 \item Self Forcing: $w_s = 0.060$ \ci{0.021}{0.097}, $w_w = 0.86$, $\alpha_\infty = 0.42$ \ci{0.25}{0.54}. KV-cache
-replay measured $0.053$ \ci{0.040}{0.066}.
+replay measured $0.053$ \ci{0.040}{0.066}. The two measurements agree, which resolves an earlier puzzle: the sink's
+direct effect on the next chunk is tiny, yet it holds about half of the opening, because the prompt's pull ($w_p\approx0.08$)
+is equally small.
 \item LongLive: $w_s = 0.034$ \ci{0.027}{0.045}.
-\item Ordering on the 31-s curves: the fitted sink weights follow the order of $\alpha$ (GAN 0.11, SiD and Rolling
-Forcing 0.08, CausVid 0.05, LongLive 0.02).
+\item On the 31-s curves, every configuration with a sink gets a positive sink weight (GAN 0.11, SiD and Rolling
+Forcing 0.08, CausVid 0.05, LongLive 0.02). The share kept depends on both weights, $\alpha_\infty = w_s/(1-w_w)$:
+SiD has a sizeable sink weight but a short memory ($w_w = 0.64$), so it keeps little.
 \end{itemize}
 Two caveats:
 \begin{itemize}
@@ -334,7 +336,7 @@ do nothing.
 \item \textbf{Cost and transfer.} The correction costs one forward pass per chunk and some flicker. On LongLive it
 reduces $D$ by half as much.
 \item \textbf{It works by raising $\alpha$.} In the relaxation study the correction raises Self Forcing's
-persistence from 0.28 to 0.41 ($+0.12$ \ci{0.05}{0.20}, preregistered). In exploratory runs it does the same on
+persistence from 0.28 to 0.40 ($+0.12$ \ci{0.05}{0.20}, preregistered). In exploratory runs it does the same on
 CausVid ($+0.09$ \ci{0.03}{0.14}), and on LongLive the estimate is $+0.06$ \ci{-0.06}{0.18}. It is therefore an
 artificial strengthening of the sink's pull, restricted to the DC tone.
 \end{itemize}
@@ -343,7 +345,8 @@ artificial strengthening of the sink's pull, restricted to the DC tone.
 \begin{table}[t]
 \centering\small
 \caption{Correction versus post-hoc colour matching on the preregistered confirmation set (40 held-out prompts
-$\times$ 4 seeds; transitions: 8 held-out prompts with legitimate brightness changes).}
+$\times$ 4 seeds; transitions: 8 held-out prompts with legitimate brightness changes, 7 of which met the preregistered
+minimum change).}
 \label{tab:baselines}
 \begin{tabular}{lcccc}
 \toprule
@@ -418,7 +421,7 @@ withdrawn; Appendix~\ref{app:failed} lists them all.
 \section{Limitations}
 \begin{itemize}
 \item All models but SkyReels share the Wan2.1-1.3B base, and only one diffusion-forcing model was tested.
-\item Horizons are 31--120\,s; openings are held images, not real video, and are continued with one generic prompt in the
+\item Horizons are 10--120\,s; openings are held images, not real video, and are continued with one generic prompt in the
 interventional studies.
 \item The statistics are global colour and texture summaries. Structural failures (objects melting, geometry drift) are
 not captured by $\alpha$.
@@ -458,12 +461,13 @@ We report claims that were revised or withdrawn after checks, and the preregiste
   \begin{itemize}
   \item that MUSIQ rewards collapsed videos (it is merely insensitive);
   \item that the sink stabilises the default (trend difference $+0.5$ \ci{-2.4}{3.5});
-  \item that the model follows its context by 75\% (only for artificial shifts);
+  \item that the model follows its context by 76\% (only for artificial shifts);
   \item that early dynamics forecast the final brightness.
   \end{itemize}
 \item \textbf{Failed preregistered tests:}
   \begin{itemize}
   \item describing the opening with a free-form caption (study 3);
+  \item calibrated vs caption prompt on Self Forcing ($-1.24$ \ci{-2.54}{0.12}, Holm $p=0.25$; study 4);
   \item calibrated lighting on LongLive (studies 4 and 5);
   \item the sink effect on Self Forcing brightness at 31\,s (study 6). It is supported at 60\,s in study 7, but that
   endpoint was chosen after seeing study 6.
@@ -481,7 +485,7 @@ A preregistered factorial study (10 strategies, 40 prompts $\times$ 4 seeds) fou
 \item window size matters only without a sink;
 \item RoPE re-alignment, which Self Forcing was not trained for, does not help;
 \item MUSIQ varies only between 66 and 69 across strategies whose drift differs threefold;
-\item the GPU architecture changes outputs, so 70\% of nominally paired comparisons were not paired.
+\item the GPU architecture changes outputs, so 62\% of nominally paired comparisons ran on different architectures.
 \end{itemize}
 
 
@@ -500,7 +504,7 @@ committed to the public repository before generation.}
 3 & Caption prompts (800 videos) & caption $<$ generic; +correction $<$ caption & not supported \\
 4 & Calibrated lighting (560 videos) & calibrated $<$ caption; calibrated $<$ generic & supported vs generic (SF) \\
 5 & Calibrated lighting, LongLive's own levels & same, LongLive & not supported \\
-6 & Relaxation (2,184 + 36 videos) & sink raises $\alpha$ (two models); correction raises $\alpha$; sink raises $\alpha_b$ & 3 of 4 supported (SF brightness not at 31\,s) \\
+6 & Relaxation (2,352 + 36 videos) & sink raises $\alpha$ (two models); correction raises $\alpha$; sink raises $\alpha_b$ & 3 of 4 supported (SF brightness not at 31\,s) \\
 7 & Sink retention at 60\,s (288 videos) & sink raises $\alpha$ at 60\,s (SF, CausVid) & supported (both) \\
 8 & SkyReels overlap (48 videos) & fewer overlapping frames lower $\alpha$ & supported \\
 \bottomrule
@@ -532,9 +536,9 @@ Forcing). Paired differences with opening-cluster bootstrap 95\% CIs.}
 estimated from the $\pm8$ versions with $\alpha$ from the $\pm16$ versions, and the brighter half of the shifts
 ($0,+8,+16$) with the darker half.
 \begin{itemize}
-\item For 10 of 14 configurations, the $\pm8$ and $\pm16$ estimates differ by at most 0.09, with CIs including 0.
-\item SiD and the sink-1 configuration give near-zero slopes for small shifts and positive slopes for large ones
-($+0.29$, $+0.25$).
+\item For 12 of 14 configurations, the $\pm8$ and $\pm16$ estimates differ by at most 0.09, with CIs including 0.
+\item SiD and the sink-1 configuration give near-zero slopes for small shifts ($-0.10$, $-0.15$) and positive slopes for
+large ones (0.18, 0.10).
 \item LongLive with a sink keeps a darkening better than a brightening (0.36 vs 0.04).
 \end{itemize}
 The linear law is a good first-order description, not an exact one.
@@ -549,7 +553,8 @@ wherever it lands.
 \item \textbf{Popular quality metrics miss drift.} MUSIQ, used by VBench for imaging quality, barely moves across
 strategies that differ threefold in colour drift.
 \item \textbf{Natural variation is too small to estimate persistence.} Within a prompt, seeds start only about 2
-\Lstar{} apart, so within-prompt slopes of end on start brightness have confidence intervals of $\pm0.4$. Controlled
+\Lstar{} apart, so within-prompt slopes of end on start brightness have confidence intervals of about $\pm0.4$
+(\texttt{results/corr/attr\_out/part1\_within\_prompt\_alpha.json}). Controlled
 shifts of $\pm16$ \Lstar{} are needed.
 \item \textbf{Change-on-baseline regressions can mislead.} Regressing change on an opening value measured with error
 produces spurious regression to the mean (Oldham's problem). Held openings are measured almost without error, and the
