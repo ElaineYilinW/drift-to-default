@@ -409,27 +409,8 @@ to the default. It also passes errors forward unchanged. Whether overlap conditi
 error accumulation is the most important open question here.
 \end{itemize}
 
-\section{What did not hold}
-We report claims that were revised or withdrawn after checks, and the preregistered predictions that failed.
-\begin{itemize}
-\item \textbf{Withdrawn claims:}
-  \begin{itemize}
-  \item that MUSIQ rewards collapsed videos (it is merely insensitive);
-  \item that the sink stabilises the default (trend difference $+0.5$ \ci{-2.4}{3.5});
-  \item that the model follows its context by 75\% (only for artificial shifts);
-  \item that early dynamics forecast the final brightness.
-  \end{itemize}
-\item \textbf{Failed preregistered tests:}
-  \begin{itemize}
-  \item describing the opening with a free-form caption (study 3);
-  \item calibrated lighting on LongLive (studies 4 and 5);
-  \item the sink effect on Self Forcing brightness at 31\,s (study 6). It is supported at 60\,s in study 7, but that
-  endpoint was chosen after seeing study 6.
-  \end{itemize}
-\item \textbf{A failed quantitative prediction:} the recursion predicted a Self Forcing plateau of 0.25--0.54, and the
-observed plateau was 0.58 (study 7).
-\item \textbf{Unexplained:} a sink of one latent frame retained less of the opening than no sink (exploratory).
-\end{itemize}
+Three preregistered studies or primary tests failed, one quantitative prediction missed, and four earlier claims were
+withdrawn; Appendix~\ref{app:failed} lists them all.
 
 \section{Limitations}
 \begin{itemize}
@@ -467,6 +448,29 @@ brighter than the sunny default.
 \end{thebibliography}
 
 \appendix
+\section{What did not hold}\label{app:failed}
+We report claims that were revised or withdrawn after checks, and the preregistered predictions that failed.
+\begin{itemize}
+\item \textbf{Withdrawn claims:}
+  \begin{itemize}
+  \item that MUSIQ rewards collapsed videos (it is merely insensitive);
+  \item that the sink stabilises the default (trend difference $+0.5$ \ci{-2.4}{3.5});
+  \item that the model follows its context by 75\% (only for artificial shifts);
+  \item that early dynamics forecast the final brightness.
+  \end{itemize}
+\item \textbf{Failed preregistered tests:}
+  \begin{itemize}
+  \item describing the opening with a free-form caption (study 3);
+  \item calibrated lighting on LongLive (studies 4 and 5);
+  \item the sink effect on Self Forcing brightness at 31\,s (study 6). It is supported at 60\,s in study 7, but that
+  endpoint was chosen after seeing study 6.
+  \end{itemize}
+\item \textbf{A failed quantitative prediction:} the recursion predicted a Self Forcing plateau of 0.25--0.54, and the
+observed plateau was 0.58 (study 7).
+\item \textbf{Unexplained:} a sink of one latent frame retained less of the opening than no sink (exploratory).
+\end{itemize}
+
+
 \section{Context strategies (preregistration 1)}\label{sec:ctx}
 A preregistered factorial study (10 strategies, 40 prompts $\times$ 4 seeds) found:
 \begin{itemize}
