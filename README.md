@@ -1,10 +1,10 @@
 # Drift to Default
 
-**Long autoregressive video rollouts relax to a default set by the prompt. This repository measures how much of an opening survives across 13 configurations of five open models, explains it with an equilibrium between the attention sink and the prompt, and tests two training-free levers. It reports seven preregistered studies, including the hypotheses that failed.**
+**Long autoregressive video rollouts relax to a default set by the prompt. This repository measures how much of an opening survives across 13 configurations of five open models, explains it with an equilibrium between the attention sink and the prompt, and tests two training-free levers. It reports eight preregistered studies, including the hypotheses that failed.**
 
 [![Paper draft](https://img.shields.io/badge/paper-PDF-b31b1b)](paper/main.pdf)
 [![Technical report](https://img.shields.io/badge/report-PDF-6e6e6e)](report/drift_to_default.pdf)
-[![Preregistered](https://img.shields.io/badge/preregistered-7%20studies-2a78d6)](docs/README.md#preregistrations)
+[![Preregistered](https://img.shields.io/badge/preregistered-8%20studies-2a78d6)](docs/README.md#preregistrations)
 [![License: MIT](https://img.shields.io/badge/license-MIT-lightgrey)](LICENSE)
 
 <p align="center">
@@ -39,7 +39,7 @@ The core result is an equilibrium law. After a long rollout, a statistic such as
 | 1 | **Every attention-based model relaxes toward a default.** The share of a shifted opening that survives 31 s is 0.02–0.67. It depends strongly on the training objective even with identical architecture. | Within-scene shifts of 24 openings × 13 configurations (2,184 videos): Self Forcing SiD 0.12, CausVid 0.15, LongLive 0.19, DMD 0.28, SiD-v2 0.35, Rolling Forcing 0.53, GAN 0.67. Colour temperature behaves alike. | Preregistered study |
 | 2 | **The default is set by the prompt, and it is where a fresh rollout ends.** | Zero-drift level vs fresh-start end, 10 configurations: r = 0.93. Lighting prompts: sunny 43, overcast 34, dusk 19, night 16 L\* (Self Forcing); 45 / 40 / 32 / 21 on LongLive. | Exploratory |
 | 3 | **An attention sink holds a fixed share of the opening; without it the opening is forgotten.** The fitted per-chunk sink weight matches a direct KV-cache measurement. | At 60 s: Self Forcing 0.58 vs 0.03 (+0.55 [0.45, 0.65]); CausVid 0.23 vs 0.04 (+0.19 [0.14, 0.24]); LongLive at 31 s 0.19 vs 0.02. Fitted w<sub>s</sub> 0.060 [0.021, 0.097] vs replay 0.053 [0.040, 0.066]. Self Forcing brightness was not significant at the earlier 31-s endpoint (slow forgetting). | Preregistered (06, 07); 1 of 4 failed in 06 |
-| 4 | **Diffusion forcing is the exception.** SkyReels-V2, which continues by re-denoising overlapping frames, keeps its opening. | α = 1.09 at 10 s, 0.96 at 20 s; unchanged without CFG, with 3× history noise, or with 10 steps. | Secondary + exploratory |
+| 4 | **Diffusion forcing is the exception that confirms the mechanism.** SkyReels-V2, which continues by re-denoising 17 overlapping frames, keeps its opening. With 5 overlapping frames it relaxes. | α ≈ 1 at 10–20 s; unchanged without CFG, with 3× history noise, or with 10 steps. Overlap 5 vs 17: 0.77 vs 1.01 at 15–20 s, −0.24 [−0.40, −0.09], p = 0.014 (12 new scenes). | Preregistered (08) |
 | 5 | **A training-free, content-aware correction raises α, reduces drift and keeps legitimate changes.** Post-hoc colour matching does not. | Colour drift D −1.48 [−1.76, −1.19] on 40 held-out prompts; α +0.12 [0.05, 0.20]; legitimate transitions kept 83–93% vs 7–12% for post-hoc matching. | Preregistered (02, 06) |
 | 6 | **Moving μ: a lighting description calibrated to the opening's measured brightness reduces drift; a free-form VLM caption does not.** The law predicts these outcomes out of sample. | Calibrated vs generic −26% (Holm p = 0.013, Self Forcing); caption n.s. on both models; LongLive with its own calibration n.s. (lighting-only −34%, secondary). Predicted vs observed r = 0.82 / 0.77. | Preregistered (03–05): 1 supported, 2 failed |
 | 7 | **Context strategies:** a sink cuts colour drift, and window size matters only without one. | 2,000 videos: D −7.56 [−8.32, −6.81]. | Preregistered (01) |
@@ -61,6 +61,7 @@ Every experiment compares arms on the **same openings or prompts, with the same 
 | 6 | Does a brightness-calibrated description help? | Same openings, 3 new arms, calibrated per model | ~670 | [04](docs/preregistrations/04_calibrated_lighting.md), [05](docs/preregistrations/05_calibrated_lighting_longlive.md) | [08](docs/lab-notes/08_calibrated_lighting_results.md), [09](docs/lab-notes/09_calibrated_lighting_longlive_results.md) |
 | 7 | How much of an opening survives, across models? | 24 scenes × 7 shifted openings × 13 configurations, + fresh starts, + 120-s subset; SkyReels on 12 scenes | ~2,500 | [06](docs/preregistrations/06_relaxation.md) | [11](docs/lab-notes/11_relaxation_exploratory_addendum.md), [12](docs/lab-notes/12_skyreels_mechanism.md), [13](docs/lab-notes/13_relaxation_results.md) |
 | 8 | Does the sink hold the opening at 60 s? | 24 scenes × 3 openings × sink on/off × Self Forcing, CausVid | 288 | [07](docs/preregistrations/07_long_horizon_sink.md) | [14](docs/lab-notes/14_long_horizon_sink_results.md) |
+| 9 | Does a weaker overlap make diffusion forcing relax? | 12 new scenes × overlap 5 / 17 × ±16 L\*, 20 s, SkyReels | 48 | [08](docs/preregistrations/08_skyreels_overlap.md) | [12](docs/lab-notes/12_skyreels_mechanism.md), [15](docs/lab-notes/15_skyreels_overlap_results.md) |
 
 **Metrics.** For each prompt, 10 fresh 5-second generations define the model's own normal output. Drift is measured against that reference.
 - **D:** Mahalanobis distance of per-frame colour statistics (Lab means, saturation, sharpness).
@@ -78,7 +79,7 @@ Every experiment compares arms on the **same openings or prompts, with the same 
 - **Shifted openings.** Each of 24 scenes was shifted in brightness and colour and continued by every model. The persistence α is the slope of the end value on the opening value within a scene.
 - **Sink.** With a sink, a fixed share is held for at least 60–120 s; without it the opening is forgotten (panel c).
 - **Default.** The default each model relaxes to equals where its fresh rollouts end (bottom figure).
-- **The exception.** SkyReels' diffusion-forcing continuation does not relax at all.
+- **The exception.** SkyReels' diffusion-forcing continuation does not relax with its default 17-frame overlap. It does relax with a 5-frame overlap (preregistration 08), so the hard pixel-level overlap is what protects it.
 - **Mechanism.** A linear chunk-recursion model (`analysis/ar_equilibrium.py`) reproduces the curves. Its fitted sink weight matches the bit-exact KV-cache replay measurement. Details: [lab note 13](docs/lab-notes/13_relaxation_results.md).
 
 ### Context strategies (Part 1)

@@ -15,7 +15,7 @@ Each preregistration was written and frozen before any of its videos were genera
 | [05](preregistrations/05_calibrated_lighting_longlive.md) | Same, with LongLive's own calibration | Calibrated prompt beats the generic prompt and the caption prompt on LongLive | Not supported (the lighting-only prompt helps as a secondary result) |
 | [06](preregistrations/06_relaxation.md) | Relaxation: shifted openings × 11 model configurations | A sink raises the opening's persistence (two models); the correction raises it; same for colour | 3 of 4 supported (Self Forcing brightness not at 31 s) |
 | [07](preregistrations/07_long_horizon_sink.md) | Sink retention at 60 s, Self Forcing and CausVid | A sink raises the opening's persistence at 60 s on both | Supported (both) |
-| [08](preregistrations/08_skyreels_overlap.md) | SkyReels overlap: does a weaker overlap constraint make diffusion forcing relax? | Persistence lower with 5 than with 17 overlapping frames | Running |
+| [08](preregistrations/08_skyreels_overlap.md) | SkyReels overlap: does a weaker overlap constraint make diffusion forcing relax? | Persistence lower with 5 than with 17 overlapping frames | Supported |
 
 ## Lab notes
 
@@ -36,5 +36,6 @@ Each preregistration was written and frozen before any of its videos were genera
 | [12](lab-notes/12_skyreels_mechanism.md) | SkyReels mechanism | Diffusion forcing does not relax; not explained by CFG, history noise or steps |
 | [13](lab-notes/13_relaxation_results.md) | Relaxation: results | Preregistration 06 results across 13 configurations |
 | [14](lab-notes/14_long_horizon_sink_results.md) | Sink at 60 s: results | Preregistration 07 results |
+| [15](lab-notes/15_skyreels_overlap_results.md) | SkyReels overlap: results | Preregistration 08: a 5-frame overlap makes diffusion forcing relax |
 
 The lab notes use the folder and file names from before the repository was reorganised (for example `analyze_match.py` without its `analysis/` folder). [`results/README.md`](../results/README.md) maps every experiment to its script, its output folder and its note.

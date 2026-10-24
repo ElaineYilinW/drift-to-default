@@ -30,8 +30,9 @@ the architecture is identical.
 \item \textbf{The default.} The default $\mu$ is where a fresh rollout of the same prompt ends ($r=0.93$ across
 configurations). It moves with the lighting described in the prompt (16--45 \Lstar) and differs between models for the
 same words.
-\item \textbf{An exception.} A diffusion-forcing model that continues by re-denoising overlapping frames (SkyReels-V2)
-does not relax ($\alpha\approx1$), whatever its guidance, history noise or number of steps.
+\item \textbf{An exception that confirms the mechanism.} A diffusion-forcing model that continues by re-denoising 17
+overlapping frames (SkyReels-V2) does not relax ($\alpha\approx1$), whatever its guidance, history noise or number of
+steps. With only 5 overlapping frames it does ($-0.24$, preregistered).
 \item \textbf{Mechanism.} An attention sink keeps a fixed share of the opening for at least 120\,s; without it the
 opening is forgotten. A linear chunk-recursion model fitted to these curves recovers the sink's per-chunk weight that we
 measure directly by bit-exact KV-cache replay ($\approx0.05$). A tiny weight still sets the equilibrium because the
@@ -44,7 +45,7 @@ prompt's per-chunk pull is equally small.
   on Self Forcing; a free-form VLM caption does not.
   \end{itemize}
 \end{itemize}
-Every comparison is paired by seed on one GPU architecture. Seven analyses were preregistered with hashed code, and we
+Every comparison is paired by seed on one GPU architecture. Eight studies were preregistered with hashed code, and we
 report all their outcomes, including the three primary hypotheses or studies that failed.
 \end{abstract}
 
@@ -224,14 +225,16 @@ default can therefore be measured from a few cheap fresh rollouts.
 \item \textbf{Diffusion forcing is the exception.} SkyReels-V2-DF keeps the opening: $\alpha_L = 1.09$ \ci{1.02}{1.16} at
 10\,s and $0.96$ \ci{0.86}{1.07} at 20\,s (12 scenes). In an exploratory check, removing classifier-free guidance,
 tripling the history noise, or cutting to 10 steps all left $\alpha\approx1$. Its continuation re-denoises 17
-overlapping frames, a pixel-level constraint, whereas the KV-cache models only attend to their past. When we weakened
-that constraint to 5 overlapping frames (exploratory, 4 scenes), SkyReels began to relax:
+overlapping frames, a pixel-level constraint, whereas the KV-cache models only attend to their past. Weakening that
+constraint makes SkyReels relax:
 \begin{itemize}
-\item $\alpha$ at 20\,s fell from 0.89 to 0.52;
-\item 3 of the 4 scenes dropped by 0.5--0.6;
-\item with 9 overlapping frames, $\alpha$ was unchanged (0.87).
+\item \textbf{Exploratory (4 scenes):} with 5 overlapping frames, $\alpha$ at 20\,s fell from 0.89 to 0.52; with 9
+frames it was unchanged.
+\item \textbf{Preregistered confirmation (study 8; 12 new scenes, both overlaps in one job per scene):} at 15--20\,s,
+$\alpha = 0.77$ with 5 frames vs $1.01$ with 17. The difference is $-0.24$ \ci{-0.40}{-0.09}, $p=0.014$, and is
+negative in 11 of 12 scenes. With 5 frames, persistence falls steadily from 1.09 at 5\,s to 0.71 at 20\,s.
 \end{itemize}
-The conditioning mechanism, not autoregression itself, appears to decide whether a model relaxes.
+The conditioning mechanism, not autoregression or diffusion forcing as such, decides whether a model relaxes.
 \end{itemize}
 
 \begin{figure}[t]
@@ -403,9 +406,9 @@ fixed. Reporting them would make long-video models comparable in a way that a si
   \end{itemize}
 A world model conditioned on a real camera frame and a caption will drift toward the caption unless the caption's
 default matches the frame.
-\item \textbf{Conditioning by overlap is different.} The diffusion-forcing model kept its opening. Weakening its overlap
-constraint made it relax in a small exploratory test, so a hard pixel-level overlap seems to protect against reversion
-to the default. It also passes errors forward unchanged. Whether overlap conditioning trades drift-to-default for
+\item \textbf{Conditioning by overlap is different.} The diffusion-forcing model kept its opening, and weakening its
+overlap constraint made it relax (preregistered). A hard pixel-level overlap therefore protects against reversion to
+the default. It also passes errors forward unchanged. Whether overlap conditioning trades drift-to-default for
 error accumulation is the most important open question here.
 \end{itemize}
 
@@ -485,7 +488,7 @@ A preregistered factorial study (10 strategies, 40 prompts $\times$ 4 seeds) fou
 \section{Preregistrations, deviations and pitfalls}\label{app:prereg}
 \begin{table}[h]
 \centering\small
-\caption{The seven preregistered studies. Code was frozen by SHA-256 hash before generation; studies 3--7 were also
+\caption{The eight preregistered studies. Code was frozen by SHA-256 hash before generation; studies 3--8 were also
 committed to the public repository before generation.}
 \label{tab:prereg}
 \begin{tabular}{p{0.2cm}p{4.2cm}p{5.8cm}p{3.2cm}}
@@ -499,6 +502,7 @@ committed to the public repository before generation.}
 5 & Calibrated lighting, LongLive's own levels & same, LongLive & not supported \\
 6 & Relaxation (2,184 + 36 videos) & sink raises $\alpha$ (two models); correction raises $\alpha$; sink raises $\alpha_b$ & 3 of 4 supported (SF brightness not at 31\,s) \\
 7 & Sink retention at 60\,s (288 videos) & sink raises $\alpha$ at 60\,s (SF, CausVid) & supported (both) \\
+8 & SkyReels overlap (48 videos) & fewer overlapping frames lower $\alpha$ & supported \\
 \bottomrule
 \end{tabular}
 \end{table}
