@@ -4,7 +4,7 @@ The [paper draft](../paper/main.pdf) is the English write-up of the whole study 
 
 ## Preregistrations
 
-Each preregistration was written and frozen before any of its videos were generated. It records the hypotheses, the decision rules and the SHA-256 hashes of the analysis code. Preregistrations 03–12 were also committed to this repository before generation. English translations are in [`preregistrations/en/`](preregistrations/en/README.md); the Chinese files are the frozen, authoritative versions. To check that the published code matches the frozen versions, run `python analysis/verify_preregistration.py`.
+Each preregistration was written and frozen before any of its videos were generated. It records the hypotheses, the decision rules and the SHA-256 hashes of the analysis code. Preregistrations 03–13 were also committed to this repository before generation. English translations are in [`preregistrations/en/`](preregistrations/en/README.md); the Chinese files are the frozen, authoritative versions. To check that the published code matches the frozen versions, run `python analysis/verify_preregistration.py`.
 
 | # | Study | Primary hypotheses | Outcome |
 |---|---|---|---|
@@ -20,6 +20,7 @@ Each preregistration was written and frozen before any of its videos were genera
 | [10](preregistrations/10_persistence_atlas.md) | Atlas: persistence of every model at 60 s; does sink size or sink position matter? | Deeper sink keeps more; any sink keeps some; LongLive's sink at 60 s; re-rotation (two-sided) | Running |
 | [11](preregistrations/11_framepack_channels.md) | FramePack (non-Wan): does it relax, and which route of the opening (context or conditioning) sets the default? | Keeps most; the conditioning route moves the default and adds persistence | Running |
 | [12](preregistrations/12_prompt_generality.md) | Prompt generality: sink effects under four non-driving prompts; does persistence depend on the prompt? | Sinks keep more (Self Forcing, LongLive); persistence differs between prompts | Running |
+| [13](preregistrations/13_deep_sink_baseline.md) | Deep-sink baseline: do deeper sinks reduce drift, and at what cost to legitimate changes? | Lower colour drift with sink 6 and sink 9 | Running |
 
 ## Lab notes
 

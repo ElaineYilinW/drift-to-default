@@ -1,6 +1,6 @@
 # Preregistrations: English translations
 
-These files are English translations of the twelve preregistrations in the parent folder. The originals are in Chinese and were frozen, with SHA-256 hashes recorded, before data collection. The Chinese files are the authoritative versions. If a translation and its original disagree, the original wins.
+These files are English translations of the thirteen preregistrations in the parent folder. The originals are in Chinese and were frozen, with SHA-256 hashes recorded, before data collection. The Chinese files are the authoritative versions. If a translation and its original disagree, the original wins.
 
 Hashes, file paths, commands and formulas are copied verbatim from the originals. File names and paths inside the documents (for example `docs/preregistration_cn.md`) are the names used at freezing time.
 
@@ -18,3 +18,4 @@ Hashes, file paths, commands and formulas are copied verbatim from the originals
 | [`10_persistence_atlas.md`](10_persistence_atlas.md) | [`../10_persistence_atlas.md`](../10_persistence_atlas.md) | Persistence of all models at 60 s; sink size and sink position encoding (re-rotation) on Self Forcing (2026-10-24). |
 | [`11_framepack_channels.md`](11_framepack_channels.md) | [`../11_framepack_channels.md`](../11_framepack_channels.md) | FramePack (HunyuanVideo-based, non-Wan): persistence, and the opening's context vs conditioning routes (2026-10-24). |
 | [`12_prompt_generality.md`](12_prompt_generality.md) | [`../12_prompt_generality.md`](../12_prompt_generality.md) | Relaxation and the sink effect under four non-driving prompts; does persistence depend on the prompt? (2026-10-24). |
+| [`13_deep_sink_baseline.md`](13_deep_sink_baseline.md) | [`../13_deep_sink_baseline.md`](../13_deep_sink_baseline.md) | Deeper attention sinks (6, 9 frames) as a training-free baseline for the content-aware correction (2026-10-24). |
