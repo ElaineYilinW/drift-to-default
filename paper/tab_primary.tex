@@ -1,0 +1,39 @@
+% Every preregistered primary test, in order of freezing. Estimates are differences in the preregistered unit;
+% intervals are 95% (Wald for studies 1-2 as preregistered, bootstrap otherwise); p is Holm-adjusted within the study.
+\begin{table}[h]
+\centering\scriptsize
+\caption{All preregistered primary tests and their outcomes. Units: $D$, $K$ drift metrics; $|\Delta L|$ in \Lstar{};
+$\alpha$ persistence. Arms: G generic prompt, M VLM caption of the opening, C calibrated lighting plus caption, ttc
+content-aware correction.}
+\label{tab:primary}
+\begin{tabular}{@{}llllll@{}}
+\toprule
+Study & Test & Model & Estimate [95\% CI] & $p_{\text{Holm}}$ & Outcome \\
+\midrule
+1 Context & sink 3 vs none, $D$ & SF & $-7.56$ \ci{-8.32}{-6.81} & $<0.001$ & supported \\
+  & sink 3 vs none, $K$ & SF & $-0.90$ \ci{-1.04}{-0.76} & $<0.001$ & supported \\
+  & window $\times$ sink, $D$ & SF & $+5.71$ \ci{4.21}{7.22} & $<0.001$ & supported \\
+  & window $\times$ sink, $K$ & SF & $+0.67$ \ci{0.38}{0.95} & $<0.001$ & supported \\
+2 Correction & ttc $\beta{=}1$, $D$ & SF & $-1.48$ \ci{-1.76}{-1.19} & $<10^{-23}$ & supported \\
+  & ttc $\beta{=}1.5$, $D$ & SF & $-1.78$ \ci{-2.11}{-1.45} & $<10^{-24}$ & supported \\
+3 Caption & M $-$ G, $|\Delta L|$ & SF & $-1.21$ \ci{-3.09}{0.36} & 0.58 & not supported \\
+  & M+ttc $-$ M, $|\Delta L|$ & SF & $-1.00$ \ci{-1.89}{-0.12} & 0.14 & not supported \\
+  & M $-$ G, $|\Delta L|$ & LL & $-0.19$ \ci{-2.00}{1.63} & 1.0 & not supported \\
+  & M+ttc $-$ M, $|\Delta L|$ & LL & $-0.36$ \ci{-1.48}{0.75} & 1.0 & not supported \\
+4 Calibrated & C $-$ M, $|\Delta L|$ & SF & $-1.24$ \ci{-2.54}{0.12} & 0.25 & not supported \\
+  & C $-$ G, $|\Delta L|$ & SF & $-2.45$ \ci{-4.08}{-1.04} & 0.013 & supported \\
+  & C $-$ M, $|\Delta L|$ & LL & $-1.15$ \ci{-2.59}{0.29} & 0.26 & not supported \\
+  & C $-$ G, $|\Delta L|$ & LL & $-1.34$ \ci{-3.19}{0.55} & 0.26 & not supported \\
+5 Calibrated (LL scale) & C $-$ M, $|\Delta L|$ & LL & $-1.36$ \ci{-3.06}{0.32} & 0.26 & not supported \\
+  & C $-$ G, $|\Delta L|$ & LL & $-1.55$ \ci{-3.50}{0.39} & 0.26 & not supported \\
+6 Relaxation & no sink $-$ sink, $\alpha_L$ (31\,s) & SF & $-0.06$ \ci{-0.17}{0.05} & 0.34 & not supported \\
+  & no sink $-$ sink, $\alpha_L$ (31\,s) & LL & $-0.17$ \ci{-0.28}{-0.06} & 0.013 & supported \\
+  & ttc $-$ none, $\alpha_L$ (31\,s) & SF & $+0.12$ \ci{0.05}{0.20} & 0.013 & supported \\
+  & no sink $-$ sink, $\alpha_b$ (31\,s) & SF & $-0.26$ \ci{-0.34}{-0.18} & $<0.001$ & supported \\
+7 Sink at 60\,s & sink $-$ no sink, $\alpha_L$ & SF & $+0.55$ \ci{0.45}{0.65} & $<10^{-9}$ & supported \\
+  & sink $-$ no sink, $\alpha_L$ & CausVid & $+0.19$ \ci{0.14}{0.24} & $<10^{-6}$ & supported \\
+8 Overlap & 5 $-$ 17 frames, $\alpha_L$ (20\,s) & SkyReels & $-0.24$ \ci{-0.40}{-0.09} & 0.014 & supported \\
+%NEWROWS
+\bottomrule
+\end{tabular}
+\end{table}
