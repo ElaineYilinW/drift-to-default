@@ -86,9 +86,25 @@ if at:
 
 # ---- content (preregistration 09) ----------------------------------------------------------------------------------
 ct = load("corr/content_out/content_results.json")
+TILES = os.path.join(os.path.dirname(__file__), "tiles")
 if ct:
-    fig = plt.figure(figsize=(10.5, 3.6))
-    ax = fig.add_subplot(1, 3, 1)
+    from PIL import Image
+    fig = plt.figure(figsize=(10.5, 6.4))
+    rows = [("ctsnow0_mis_sf60_s3", "snow\ncity prompt"), ("ctsnow0_mat_sf60_s3", "snow\nsnow prompt"),
+            ("ctdesert0_mis_sf60_s3", "desert\ncity prompt"), ("ctsnow0_mis_sf60_s0", "snow, no sink\ncity prompt")]
+    gs = fig.add_gridspec(len(rows), 4, left=0.07, right=0.56, top=0.96, bottom=0.47, wspace=0.03, hspace=0.05)
+    for i, (r, lab) in enumerate(rows):
+        for j, tt in enumerate((0, 10, 30, 60)):
+            a_ = fig.add_subplot(gs[i, j])
+            a_.imshow(Image.open(f"{TILES}/content/{r}_s0__t{tt}.jpg"))
+            a_.set_xticks([]), a_.set_yticks([])
+            for s in a_.spines.values():
+                s.set_visible(False)
+            if i == 0:
+                a_.set_title("opening" if tt == 0 else f"{tt} s", fontsize=8)
+            if j == 0:
+                a_.set_ylabel(lab, fontsize=6.8)
+    ax = fig.add_axes([0.64, 0.53, 0.34, 0.42])
     for c, col in (("sf60_s3", BLUE), ("sf60_s0", GREY), ("ll_s3", ORANGE), ("ll_s0", RUST)):
         for arm, ls in (("mis", "-"), ("mat", ":")):
             v = ct["kappa"].get(c, {}).get(arm, {})
@@ -102,9 +118,11 @@ if ct:
     ax.axhline(1, color=GRID, lw=.8)
     ax.set_xlabel("seconds after the opening")
     ax.set_ylabel("content persistence κ(t)")
-    ax.legend(fontsize=6.5, ncol=1)
+    ax.set_ylim(-0.42, 1.12)
+    ax.set_yticks([0, 0.2, 0.4, 0.6, 0.8, 1.0])
+    ax.legend(fontsize=6.3, ncol=3, loc="lower center", columnspacing=0.9, handlelength=1.8)
     ax.set_title("(a) scene class over time", fontsize=9, loc="left")
-    ax = fig.add_subplot(1, 3, 2)
+    ax = fig.add_axes([0.13, 0.07, 0.33, 0.30])
     cfgs = [c for c in ("sf60_s3", "sf60_s0", "ll_s3", "ll_s0", "cv_s3", "gan_s3", "sid_s3", "rf") if c in ct["kappa"]]
     for i, c in enumerate(cfgs):
         for arm, col, dy in (("mis", BLUE, -0.15), ("mat", GREEN, 0.15)):
@@ -113,13 +131,17 @@ if ct:
                 errbar(ax, v["mean"], i + dy, v["ci"], color=col,
                        label={"mis": "generic city prompt", "mat": "class prompt"}[arm] if i == 0 else None)
     ax.set_yticks(range(len(cfgs)), [NAME[c] for c in cfgs], fontsize=7.5)
-    ax.invert_yaxis()
     ax.axvline(0, color=MUTED, lw=.8)
     ax.axvline(1, color=GRID, lw=.8)
     ax.set_xlabel("content persistence κ at 30 s")
-    ax.legend(fontsize=6.8, loc="lower right")
-    ax.set_title("(b) the prompt sets the content default", fontsize=9, loc="left")
-    ax = fig.add_subplot(1, 3, 3)
+    v0 = ct["kappa"][cfgs[0]]
+    ax.annotate("generic\ncity prompt", (v0["mis"]["30"]["mean"], -0.15), xytext=(0, 9), textcoords="offset points",
+                ha="center", fontsize=6.6, color=BLUE)
+    ax.annotate("class\nprompt", (v0["mat"]["30"]["mean"], 0.15), xytext=(0, 14), textcoords="offset points",
+                ha="center", fontsize=6.6, color=GREEN)
+    ax.set_ylim(len(cfgs) - 0.5, -1.0)
+    ax.set_title("(b) the prompt sets the content default", fontsize=9, loc="left", pad=16)
+    ax = fig.add_axes([0.64, 0.07, 0.34, 0.30])
     pairs = ct.get("spearman_kappa_alphaL", {}).get("pairs") if "spearman_kappa_alphaL" in ct else None
     if rel:
         xs, ys, ls_ = [], [], []
@@ -135,7 +157,6 @@ if ct:
         ax.set_title(f"(c) content vs tone persistence" + (f" (ρ = {sp['rho']:.2f})" if sp else ""), fontsize=9, loc="left")
     ax.set_xlabel("brightness persistence α_L at 31 s (study 06)")
     ax.set_ylabel("content persistence κ at 30 s")
-    fig.tight_layout()
     fig.savefig(f"{O}/fig_content.pdf")
     print("ok content")
 

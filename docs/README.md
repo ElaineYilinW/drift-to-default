@@ -16,7 +16,7 @@ Each preregistration was written and frozen before any of its videos were genera
 | [06](preregistrations/06_relaxation.md) | Relaxation: shifted openings × 11 model configurations | A sink raises the opening's persistence (two models); the correction raises it; same for colour | 3 of 4 supported (Self Forcing brightness not at 31 s) |
 | [07](preregistrations/07_long_horizon_sink.md) | Sink retention at 60 s, Self Forcing and CausVid | A sink raises the opening's persistence at 60 s on both | Supported (both) |
 | [08](preregistrations/08_skyreels_overlap.md) | SkyReels overlap: does a weaker overlap constraint make diffusion forcing relax? | Persistence lower with 5 than with 17 overlapping frames | Supported |
-| [09](preregistrations/09_content_relaxation.md) | Content: does scene content (snow, desert, forest, ...) relax to the prompt's default? | Class score lower under the generic prompt; the sink keeps content | Running |
+| [09](preregistrations/09_content_relaxation.md) | Content: does scene content (snow, desert, forest, ...) relax to the prompt's default? | Class score lower under the generic prompt; the sink keeps content | 2 of 3 supported: content relaxes to the prompt's default; Self Forcing's sink keeps content at 60 s, LongLive's does not |
 | [10](preregistrations/10_persistence_atlas.md) | Atlas: persistence of every model at 60 s; does sink size or sink position matter? | Deeper sink keeps more; any sink keeps some; LongLive's sink at 60 s; re-rotation (two-sided) | Running |
 | [11](preregistrations/11_framepack_channels.md) | FramePack (non-Wan): does it relax, and which route of the opening (context or conditioning) sets the default? | Keeps most; the conditioning route moves the default and adds persistence | Running |
 | [12](preregistrations/12_prompt_generality.md) | Prompt generality: sink effects under four non-driving prompts; does persistence depend on the prompt? | Sinks keep more (Self Forcing, LongLive); persistence differs between prompts | Running |
@@ -44,5 +44,6 @@ Each preregistration was written and frozen before any of its videos were genera
 | [14](lab-notes/14_long_horizon_sink_results.md) | Sink at 60 s: results | Preregistration 07 results |
 | [15](lab-notes/15_skyreels_overlap_results.md) | SkyReels overlap: results | Preregistration 08: a 5-frame overlap makes diffusion forcing relax |
 | [16](lab-notes/16_prompt_pull_results.md) | Prompt pull measured by replay (study 14) | w_p = 0.088, as predicted; triples by 30 s |
+| [17](lab-notes/17_content_relaxation_results.md) | Scene content relaxes (study 9) | Snow, desert, forest openings become city under a city prompt; the sink brings content back late |
 
 The lab notes use the folder and file names from before the repository was reorganised (for example `analyze_match.py` without its `analysis/` folder). [`results/README.md`](../results/README.md) maps every experiment to its script, its output folder and its note.
