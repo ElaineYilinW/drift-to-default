@@ -224,8 +224,14 @@ default can therefore be measured from a few cheap fresh rollouts.
 \item \textbf{Diffusion forcing is the exception.} SkyReels-V2-DF keeps the opening: $\alpha_L = 1.09$ \ci{1.02}{1.16} at
 10\,s and $0.96$ \ci{0.86}{1.07} at 20\,s (12 scenes). In an exploratory check, removing classifier-free guidance,
 tripling the history noise, or cutting to 10 steps all left $\alpha\approx1$. Its continuation re-denoises 17
-overlapping frames, a pixel-level constraint, whereas the KV-cache models only attend to their past. We conjecture that
-the conditioning mechanism, not autoregression itself, decides whether a model relaxes.
+overlapping frames, a pixel-level constraint, whereas the KV-cache models only attend to their past. When we weakened
+that constraint to 5 overlapping frames (exploratory, 4 scenes), SkyReels began to relax:
+\begin{itemize}
+\item $\alpha$ at 20\,s fell from 0.89 to 0.52;
+\item 3 of the 4 scenes dropped by 0.5--0.6;
+\item with 9 overlapping frames, $\alpha$ was unchanged (0.87).
+\end{itemize}
+The conditioning mechanism, not autoregression itself, appears to decide whether a model relaxes.
 \end{itemize}
 
 \begin{figure}[t]
@@ -397,9 +403,10 @@ fixed. Reporting them would make long-video models comparable in a way that a si
   \end{itemize}
 A world model conditioned on a real camera frame and a caption will drift toward the caption unless the caption's
 default matches the frame.
-\item \textbf{Conditioning by overlap is different.} The diffusion-forcing model kept its opening. Whether this comes
-from re-denoising overlapping frames or from other differences between SkyReels and the KV-cache models is the most
-important open question here; we report it as an exception, not a mechanism.
+\item \textbf{Conditioning by overlap is different.} The diffusion-forcing model kept its opening. Weakening its overlap
+constraint made it relax in a small exploratory test, so a hard pixel-level overlap seems to protect against reversion
+to the default. It also passes errors forward unchanged. Whether overlap conditioning trades drift-to-default for
+error accumulation is the most important open question here.
 \end{itemize}
 
 \section{What did not hold}
