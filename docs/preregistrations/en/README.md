@@ -1,6 +1,6 @@
 # Preregistrations: English translations
 
-These files are English translations of the ten preregistrations in the parent folder. The originals are in Chinese and were frozen, with SHA-256 hashes recorded, before data collection. The Chinese files are the authoritative versions. If a translation and its original disagree, the original wins.
+These files are English translations of the eleven preregistrations in the parent folder. The originals are in Chinese and were frozen, with SHA-256 hashes recorded, before data collection. The Chinese files are the authoritative versions. If a translation and its original disagree, the original wins.
 
 Hashes, file paths, commands and formulas are copied verbatim from the originals. File names and paths inside the documents (for example `docs/preregistration_cn.md`) are the names used at freezing time.
 
@@ -16,3 +16,4 @@ Hashes, file paths, commands and formulas are copied verbatim from the originals
 | [`08_skyreels_overlap.md`](08_skyreels_overlap.md) | [`../08_skyreels_overlap.md`](../08_skyreels_overlap.md) | Whether fewer overlapping history frames make SkyReels-V2 diffusion forcing relax (2026-10-23). |
 | [`09_content_relaxation.md`](09_content_relaxation.md) | [`../09_content_relaxation.md`](../09_content_relaxation.md) | Whether scene content (snow, desert, forest, ...) relaxes to the prompt's default, measured with CLIP across 8 configurations (2026-10-24). |
 | [`10_persistence_atlas.md`](10_persistence_atlas.md) | [`../10_persistence_atlas.md`](../10_persistence_atlas.md) | Persistence of all models at 60 s; sink size and sink position encoding (re-rotation) on Self Forcing (2026-10-24). |
+| [`11_framepack_channels.md`](11_framepack_channels.md) | [`../11_framepack_channels.md`](../11_framepack_channels.md) | FramePack (HunyuanVideo-based, non-Wan): persistence, and the opening's context vs conditioning routes (2026-10-24). |
