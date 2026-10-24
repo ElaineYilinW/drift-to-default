@@ -4,7 +4,7 @@ The [paper draft](../paper/main.pdf) is the English write-up of the whole study 
 
 ## Preregistrations
 
-Each preregistration was written and frozen before any of its videos were generated. It records the hypotheses, the decision rules and the SHA-256 hashes of the analysis code. Preregistrations 03–07 were also committed to this repository before generation. English translations are in [`preregistrations/en/`](preregistrations/en/README.md); the Chinese files are the frozen, authoritative versions. To check that the published code matches the frozen versions, run `python analysis/verify_preregistration.py`.
+Each preregistration was written and frozen before any of its videos were generated. It records the hypotheses, the decision rules and the SHA-256 hashes of the analysis code. Preregistrations 03–08 were also committed to this repository before generation. English translations are in [`preregistrations/en/`](preregistrations/en/README.md); the Chinese files are the frozen, authoritative versions. To check that the published code matches the frozen versions, run `python analysis/verify_preregistration.py`.
 
 | # | Study | Primary hypotheses | Outcome |
 |---|---|---|---|
@@ -15,6 +15,7 @@ Each preregistration was written and frozen before any of its videos were genera
 | [05](preregistrations/05_calibrated_lighting_longlive.md) | Same, with LongLive's own calibration | Calibrated prompt beats the generic prompt and the caption prompt on LongLive | Not supported (the lighting-only prompt helps as a secondary result) |
 | [06](preregistrations/06_relaxation.md) | Relaxation: shifted openings × 11 model configurations | A sink raises the opening's persistence (two models); the correction raises it; same for colour | 3 of 4 supported (Self Forcing brightness not at 31 s) |
 | [07](preregistrations/07_long_horizon_sink.md) | Sink retention at 60 s, Self Forcing and CausVid | A sink raises the opening's persistence at 60 s on both | Supported (both) |
+| [08](preregistrations/08_skyreels_overlap.md) | SkyReels overlap: does a weaker overlap constraint make diffusion forcing relax? | Persistence lower with 5 than with 17 overlapping frames | Running |
 
 ## Lab notes
 
