@@ -21,7 +21,7 @@ Each preregistration was written and frozen before any of its videos were genera
 | [11](preregistrations/11_framepack_channels.md) | FramePack (non-Wan): does it relax, and which route of the opening (context or conditioning) sets the default? | Keeps most; the conditioning route moves the default and adds persistence | Running |
 | [12](preregistrations/12_prompt_generality.md) | Prompt generality: sink effects under four non-driving prompts; does persistence depend on the prompt? | Sinks keep more (Self Forcing, LongLive); persistence differs between prompts | Running |
 | [13](preregistrations/13_deep_sink_baseline.md) | Deep-sink baseline: do deeper sinks reduce drift, and at what cost to legitimate changes? | Lower colour drift with sink 6 and sink 9 | Running |
-| [14](preregistrations/14_prompt_pull_replay.md) | Prompt pull: measure w_p by swapping only the text conditioning for one chunk | w_p > 0, in [0.04, 0.14] as the recursion predicts | Running |
+| [14](preregistrations/14_prompt_pull_replay.md) | Prompt pull: measure w_p by swapping only the text conditioning for one chunk | w_p > 0, in [0.04, 0.14] as the recursion predicts | Supported: 0.088 [0.045, 0.149], in the band; not time-invariant (0.26 at 30 s) |
 
 ## Lab notes
 
@@ -43,5 +43,6 @@ Each preregistration was written and frozen before any of its videos were genera
 | [13](lab-notes/13_relaxation_results.md) | Relaxation: results | Preregistration 06 results across 13 configurations |
 | [14](lab-notes/14_long_horizon_sink_results.md) | Sink at 60 s: results | Preregistration 07 results |
 | [15](lab-notes/15_skyreels_overlap_results.md) | SkyReels overlap: results | Preregistration 08: a 5-frame overlap makes diffusion forcing relax |
+| [16](lab-notes/16_prompt_pull_results.md) | Prompt pull measured by replay (study 14) | w_p = 0.088, as predicted; triples by 30 s |
 
 The lab notes use the folder and file names from before the repository was reorganised (for example `analyze_match.py` without its `analysis/` folder). [`results/README.md`](../results/README.md) maps every experiment to its script, its output folder and its note.

@@ -190,7 +190,8 @@ if dc:
     for c, v in P.items():
         col = ORANGE if c in LONG else BLUE
         ax.scatter(v["alpha"], v["offset"], s=26, color=col)
-        ax.annotate(NAME.get(c, c), (v["alpha"], v["offset"]), textcoords="offset points", xytext=(3, 2), fontsize=6.3)
+        off = {"sf_s3": (-30, 6), "sidv2_s3": (4, 4), "sf10s_s3": (4, -9), "ll_s0": (4, 3), "ll_s3": (4, -8)}.get(c, (3, 2))
+        ax.annotate({"sf_s3": "SF-DMD"}.get(c, NAME.get(c, c)), (v["alpha"], v["offset"]), textcoords="offset points", xytext=off, fontsize=6.3)
     ax.scatter([], [], color=ORANGE, s=26, label="trained for long rollouts")
     ax.scatter([], [], color=BLUE, s=26, label="trained on 5–10-s clips")
     ax.axhline(0, color=MUTED, lw=.8)
@@ -201,3 +202,38 @@ if dc:
     fig.tight_layout()
     fig.savefig(f"{O}/fig_decomposition.pdf")
     print("ok decomposition")
+
+# ---- prompt pull (preregistration 14) ------------------------------------------------------------------------------
+ps = load("corr/pswap_out/pswap_results.json")
+if ps:
+    fig, ax = plt.subplots(1, 2, figsize=(7.4, 2.9))
+    ax[0].axhspan(0.04, 0.14, color=GRID, alpha=.6, lw=0, label="predicted by the 120-s fit")
+    for s, col, lab, dx in (("3", BLUE, "sink 3", -0.25), ("0", GREY, "no sink", 0.25)):
+        v = ps["w_p"][s]
+        ks = sorted(int(k) for k in v)
+        x = np.array([k * 0.75 for k in ks]) + dx
+        m = np.array([v[str(k)]["mean"] for k in ks])
+        lo = np.array([v[str(k)]["ci"][0] for k in ks])
+        hi = np.array([v[str(k)]["ci"][1] for k in ks])
+        ax[0].errorbar(x, m, yerr=[m - lo, hi - m], fmt="o-", color=col, ms=4, lw=1.3, label=lab)
+    ax[0].set_xlabel("time of the swapped chunk (s)")
+    ax[0].set_ylabel("prompt pull $w_p$ per chunk")
+    ax[0].set_xticks([6, 15, 30])
+    ax[0].legend(fontsize=6.8, loc="upper left")
+    ax[0].set_title("(a) the prompt's per-chunk pull", fontsize=9, loc="left")
+    MU = {"sunny": 42.9, "overcast": 33.6, "dusk": 19.1, "night": 16.0}
+    for k, mk in (("8", "o"), ("20", "s"), ("40", "^")):
+        r = ps["ratio"]["3"][k]
+        xs = [MU[b] - 33.1 for b in r]
+        ax[1].scatter(xs, [r[b] * (MU[b] - 33.1) for b in r], marker=mk, color=BLUE, s=22,
+                      label={"8": "6 s", "20": "15 s", "40": "30 s"}[k])
+    pl = ps["placebo_overcast_dL"]["3"]
+    ax[1].scatter([0.5] * 3, [pl[k]["mean"] for k in ("8", "20", "40")], marker="x", color=ORANGE, s=22, label="overcast (placebo)")
+    ax[1].axhline(0, color=MUTED, lw=.8), ax[1].axvline(0, color=MUTED, lw=.8)
+    ax[1].set_xlabel("default of swapped prompt − generic (L*)")
+    ax[1].set_ylabel("change of the chunk (L*)")
+    ax[1].legend(fontsize=6.8, loc="upper left")
+    ax[1].set_title("(b) one swapped chunk, sink 3", fontsize=9, loc="left")
+    fig.tight_layout()
+    fig.savefig(f"{O}/fig_pswap.pdf")
+    print("ok pswap")
