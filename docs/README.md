@@ -45,5 +45,6 @@ Each preregistration was written and frozen before any of its videos were genera
 | [15](lab-notes/15_skyreels_overlap_results.md) | SkyReels overlap: results | Preregistration 08: a 5-frame overlap makes diffusion forcing relax |
 | [16](lab-notes/16_prompt_pull_results.md) | Prompt pull measured by replay (study 14) | w_p = 0.088, as predicted; triples by 30 s |
 | [17](lab-notes/17_content_relaxation_results.md) | Scene content relaxes (study 9) | Snow, desert, forest openings become city under a city prompt; the sink brings content back late |
+| [18](lab-notes/18_review_analyses.md) | Exploratory re-analyses for an internal review | Drift = forgetting + attractor offset; persistence depends on the prompt; study 7 holds on independent scenes |
 
 The lab notes use the folder and file names from before the repository was reorganised (for example `analyze_match.py` without its `analysis/` folder). [`results/README.md`](../results/README.md) maps every experiment to its script, its output folder and its note.
