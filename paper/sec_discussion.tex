@@ -1,0 +1,23 @@
+%=====================================================================================================================
+\section{Discussion}\label{sec:discussion}
+Any autoregressive sampler with finite memory that is ergodic under a fixed conditioning will eventually forget its
+initial state and settle into a conditioning-dependent stationary distribution, so that video rollouts relax is
+expected. What we measure is \emph{how much} is kept and \emph{what} decides it, and three answers hold across the
+models we tested. The long-run share depends on how the opening enters the computation: attention to a key--value
+cache alone forgets it completely, while a permanent anchor (a sink, a per-segment context prefix, overlapping frames)
+holds a share; over 20\,s these anchors keep similar amounts, except that a 17-frame overlap keeps nearly everything, and
+a sink's long-run effect hinges on its rotary position. The stationary state is set by the conditioning, for tone and for scene content, although
+models differ in which parts of the conditioning carry tone. And the stationary state of models trained on short clips
+is offset from where the same prompt starts; long-rollout training removes the offset but not the forgetting.
+
+For world models, this means that a model conditioned on a real frame and a description drifts toward the
+description's default unless it re-conditions on the frame. Persistence at a stated horizon and the default with its
+offset are cheap to measure with our protocol and would make long-video models comparable where a single quality score
+does not. Anchors that keep the opening also pass its errors forward, and positional bursts can bring a forgotten
+opening back; keeping the opening's content while forgetting its errors is the open problem.
+
+\paragraph{Limitations.} Six of the seven models share the Wan2.1-1.3B architecture; FramePack, the only other base, ran
+for 20\,s. The content study, the prompt dependence, the recursion and the decomposition rest on Wan-based models, and
+the world model collapses after 20--30\,s. Interventions shift global tone or select a scene class (CLIP scores are a
+coarse proxy for content); openings are held images; each configuration of a scene uses one seed; Holm correction is
+applied within studies only; the correction was not compared with Pathwise test-time correction or FreqForcing.

@@ -1,565 +1,190 @@
 \documentclass[10pt]{article}
 \usepackage[margin=1in]{geometry}
-\usepackage{graphicx,booktabs,amsmath,amssymb,hyperref,xcolor,caption,microtype,multirow}
+\usepackage{graphicx,booktabs,amsmath,amssymb,hyperref,xcolor,caption,microtype,multirow,enumitem}
 \hypersetup{colorlinks=true,linkcolor=blue!50!black,urlcolor=blue!50!black,citecolor=blue!50!black}
 \captionsetup{font=small,labelfont=bf}
+\setlist{itemsep=1pt,topsep=2pt}
 \newcommand{\Lstar}{L$^{*}$}
 \newcommand{\ci}[2]{[#1,\,#2]}
-\newcommand{\todo}[1]{\textcolor{red}{[#1]}}
+\newcommand{\pend}[1]{\textcolor{red}{#1}}
 
-\title{Drift to Default: Long Autoregressive Video Rollouts Relax\\ to a Prompt-Set State}
-\author{Yilin Wang\\ University of Iowa}
+\title{Drift to Default: How Autoregressive Video Rollouts\\ Forget Their Opening}
+\author{Anonymous authors}
 \date{}
 
 \begin{document}
 \maketitle
 
 \begin{abstract}
-Autoregressive video diffusion models generate long videos chunk by chunk, conditioned on their own output, and drift
-over tens of seconds. We show that in models that read their past through attention, this drift is
-\emph{relaxation}: the colour and texture statistics of a rollout move from those of its opening toward a default, and
-the long-run state is an equilibrium,
-\[
-x_\infty \approx \alpha\, x_{\text{open}} + (1-\alpha)\,\mu.
-\]
-\begin{itemize}
-\item \textbf{Generality.} We shift the brightness and colour of the same opening and measure how much survives. In 14
-configurations of four KV-cache model families (Self Forcing with DMD, SiD and GAN objectives, CausVid, LongLive,
-Rolling Forcing), the share $\alpha$ is between 0.02 and 0.67 at 31\,s. The share depends strongly on the training objective even when
-the architecture is identical.
-\item \textbf{The default.} The default $\mu$ is where a fresh rollout of the same prompt ends ($r=0.93$ across
-configurations). It moves with the lighting described in the prompt (16--45 \Lstar) and differs between models for the
-same words.
-\item \textbf{An exception that confirms the mechanism.} A diffusion-forcing model that continues by re-denoising 17
-overlapping frames (SkyReels-V2) does not relax ($\alpha\approx1$), whatever its guidance, history noise or number of
-steps. With only 5 overlapping frames it does ($-0.24$, preregistered).
-\item \textbf{Mechanism.} An attention sink keeps a fixed share of the opening for at least 120\,s; without it the
-opening is forgotten. A linear chunk-recursion model fitted to these curves recovers the sink's per-chunk weight that we
-measure directly by bit-exact KV-cache replay ($\approx0.05$). A tiny weight still sets the equilibrium because the
-prompt's per-chunk pull is equally small.
-\item \textbf{Two levers.}
-  \begin{itemize}
-  \item \emph{Raise $\alpha$:} a training-free, content-aware correction increases $\alpha$ (+0.12), reduces drift, and
-  keeps 83--93\% of legitimate brightness changes; post-hoc colour matching keeps 7--12\%.
-  \item \emph{Move $\mu$:} a lighting description calibrated to the opening's measured brightness reduces drift by 26\%
-  on Self Forcing; a free-form VLM caption does not.
-  \end{itemize}
-\end{itemize}
-Every comparison is paired by seed on one GPU architecture. Eight studies were preregistered with hashed code, and we
-report all their outcomes, including the three primary hypotheses or studies that failed.
+Autoregressive video diffusion models generate long videos chunk by chunk and drift over tens of seconds. We measure
+drift by intervention: we shift the brightness, colour or scene class of the same opening frame and measure how much of
+the shift survives. In fifteen preregistered studies on seven open models (six built on the Wan2.1-1.3B architecture,
+one on the 13B HunyuanVideo), rollouts \emph{relax}: global tone and scene content move from the opening toward a
+default set by the conditioning, keeping a share $\alpha$ that depends on the model, the prompt and the horizon. Under
+a generic city prompt, openings of six scene classes lose 39--93\% of their class evidence within 30\,s. What decides
+the long-run share is how the opening is held. Attention to a key--value cache alone forgets it completely; an
+attention sink holds a share that grows with its depth and hinges on its absolute rotary position: re-aligning the
+sink's positions cuts persistence at 60\,s from 0.61 to 0.16 and removes periodic bursts in which the opening, including
+its scene content, returns. Re-denoising overlapping frames holds nearly all of it over 20\,s until the overlap is
+shrunk. A linear chunk recursion predicted the prompt's per-chunk pull (0.08); bit-exact cache replay measured 0.088
+\ci{0.045}{0.149}, but the recursion holds only for about 20\,s and does not account for the positional effects. In an
+exploratory analysis, drift separates into forgetting the opening and an offset of the default from where the same
+prompt starts, near zero for models trained on long rollouts. A content-aware correction and a deeper sink both reduce
+drift without training; the correction keeps more legitimate brightness changes in some prompts. We report all 42
+preregistered primary tests, 15 of which failed.
 \end{abstract}
 
+%=====================================================================================================================
 \section{Introduction}
-Causal (autoregressive) video diffusion models~\cite{causvid,selfforcing} make streaming, open-ended generation
-possible and underlie interactive world models. Their known weakness is drift: over tens of seconds the picture
-darkens, saturates, loses texture or collapses. Many recent methods target this failure, through rolling windows,
-attention sinks, re-aligned positions, longer self-rollouts and test-time
-correction~\cite{longlive,rollingforcing,deepforcing,pathwise,freqforcing}. They are usually evaluated with one sample
-per prompt, an aggregate quality score and no uncertainty. What drift actually \emph{is} has not been measured.
+Autoregressive video diffusion models generate a video chunk by chunk, each chunk conditioned on the model's own
+earlier output~\cite{diffusionforcing,causvid,selfforcing}. This makes streaming and open-ended generation possible and
+is the basis of interactive world models~\cite{gamengen,diamond,vista}. It also makes them drift: over tens of seconds
+the picture darkens or saturates, loses texture, and its content wanders. A growing family of methods targets this
+failure with rolling windows, attention sinks, re-aligned positions, longer self-rollouts and test-time
+correction~\cite{longlive,rollingforcing,deepforcing,selfforcingpp,pathwise,freqforcing,lol}. Most report a few samples
+per prompt and an aggregate quality score. What drift \emph{is}, in quantitative terms, is rarely measured.
 
-We treat drift as a measurement problem and borrow the design tools of clinical research: paired seeds, controlled
-interventions, held-out prompts, cluster-bootstrap intervals and preregistered analyses. Our central finding is
-simple. A long rollout \emph{relaxes}: every low-level statistic moves from its opening value toward a default set by
-the prompt, and a sink holds back a fixed share of the opening. This one picture explains several observations that
-otherwise look unrelated:
-\begin{itemize}
-\item why sinks reduce drift;
-\item why real camera frames ``drift more'' than generated ones;
-\item why a test-time correction that copies the anchor's tone works but over-corrects at early denoising steps;
-\item why describing the opening in the prompt fails while calibrating the lighting words succeeds.
-\end{itemize}
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{fig_teaser.pdf}
+\caption{Relaxation. Left: a generated mountain-road opening, darkened or brightened by 16~\Lstar{} before encoding,
+continued for 60\,s under a generic city prompt by Self Forcing DMD with and without an attention sink. The scene turns
+into a city street in all three runs; without a sink the colours also blow out. Right: mean brightness over the 24
+scenes of study 7 for the three versions of each opening (3-s moving average). Without a sink the versions converge to
+one default; with a sink they stay apart by a share that fluctuates around half.}
+\label{fig:teaser}
+\end{figure}
+
+We measure it by intervention. We hold an opening frame, shift its brightness, colour or scene content \emph{within}
+a scene, let the model continue, and ask how much of the shift survives. The answer has the same form in every model
+we tested: the rollout \emph{relaxes}. It moves from its opening toward a default state set by the conditioning, and
+keeps a model-specific share $\alpha$ of where it started,
+\begin{equation}
+x_\infty \approx \alpha\,x_{\text{open}} + (1-\alpha)\,\mu .
+\label{eq:law}
+\end{equation}
+Written this way the law is just a linear response, and much of the paper is about which parts of it carry content.
+Three findings do.
+
+\textbf{What survives in the long run depends on how the opening is held, not on autoregression as such.} Models
+that read the opening only through a key--value cache forget it completely. An attention sink holds a share that grows
+with its depth and hinges on its absolute rotary position, which also produces periodic bursts in which the opening
+returns. Re-denoising overlapping frames holds nearly all of it over 20\,s until the overlap is shrunk.
+
+\textbf{The default is set by the conditioning.} Lighting words move the default brightness by up to 27~\Lstar, and
+scene words decide whether a snowy, desert or forest opening stays or becomes a city street within 30\,s. Which parts of
+the conditioning carry tone differs between models.
+
+\textbf{Drift has two separable parts} (exploratory): forgetting the opening, $(1-\alpha)(x_{\text{open}}-\mu)$, and an
+offset of the default itself from where the same prompt starts, which is small in the two models trained for long
+rollouts and 4--11~\Lstar{} in models trained on short clips.
+
+A linear chunk recursion, $\alpha_\infty = w_s/(w_s+w_p)$ with per-chunk pulls of the sink and the prompt, predicted
+$w_p\approx0.08$; bit-exact replay of the key--value cache measured 0.088. It describes the first 20\,s, not the
+positional effects that follow. Training-free levers act on either term: an early-step tone correction, a deeper sink,
+and lighting words calibrated to a model's measured defaults, each with its own cost.
 
 \paragraph{Contributions.}
 \begin{enumerate}
-\item A measurement protocol for long-video drift: self-referenced metrics, held and \emph{perturbed} openings, paired
-seeds pinned to one GPU architecture, and preregistration. It also exposes evaluation pitfalls (Appendix~\ref{app:prereg}), among them:
-  \begin{itemize}
-  \item the GPU architecture changes bf16 outputs;
-  \item resumed jobs silently break pairing;
-  \item a standard image-quality metric is blind to drift.
-  \end{itemize}
-\item The relaxation law, $x_\infty \approx \alpha x_{\text{open}} + (1-\alpha)\mu_{\text{prompt}}$. We establish it
-interventionally, by shifting the brightness and colour of the same opening, across 14 configurations of four KV-cache model families,
-with an exception for diffusion forcing that points to the conditioning mechanism.
-\item A quantitative mechanism. Long-horizon persistence curves and direct KV-cache interventions give consistent
-per-chunk weights, which explains how a sink with a tiny weight sets the equilibrium.
-\item Two practical levers matching the two terms of the law, both evaluated in preregistered tests against
-baselines: a content-aware correction raises $\alpha$, and calibrated prompts move $\mu$.
+\item A measurement protocol for long-horizon drift: held and perturbed openings, persistence $\alpha$ and default
+$\mu$ for tone and scene content, paired seeds pinned to one GPU architecture, and preregistered analyses.
+\item An empirical account of relaxation across seven open models (five Wan-based cache models, SkyReels-V2 and the
+Matrix-Game-2.0 world model, all of the Wan2.1-1.3B architecture, plus the 13B HunyuanVideo-based FramePack), for tone
+and scene content, at horizons up to 120\,s: what sets $\mu$, what sets the long-run share (how, and at which position,
+the opening is held), and an exploratory decomposition of drift into forgetting and attractor offset.
+\item A phenomenological recursion whose predicted prompt pull we preregistered and then measured by bit-exact replay,
+with its limits.
+\item Training-free levers matched to the two terms, compared on the same prompts and seeds, with their costs and failures.
 \end{enumerate}
-No model is trained. Everything is inference on public weights, so the protocol applies to any open autoregressive
-video model.
+We preregistered fifteen studies with hashed analysis code and report all 42 primary tests, including the 15 that
+failed (Table~\ref{tab:primary}). No model is trained; all code and per-video statistics are public.
 
+%=====================================================================================================================
 \section{Related work}
-\paragraph{Autoregressive video diffusion.}
-\begin{itemize}
-\item Diffusion Forcing~\cite{diffusionforcing} trains with independent per-frame noise.
-\item CausVid~\cite{causvid} distils a bidirectional teacher~\cite{wan} into a causal few-step student with
-DMD~\cite{dmd}.
-\item Self Forcing~\cite{selfforcing} trains on the model's own rollouts.
-\item Long-video successors add rolling KV windows, attention sinks (as in streaming language
-models~\cite{streamingllm}), RoPE re-alignment, LoRA-based extension, and joint rolling
-denoising~\cite{longlive,rollingforcing,deepforcing}.
-\item SkyReels-V2~\cite{skyreels} extends videos by diffusion forcing over overlapping segments.
-\end{itemize}
+\paragraph{Autoregressive and long video diffusion.} Diffusion Forcing~\cite{diffusionforcing} and History-Guided Video
+Diffusion~\cite{historyguided} enable causal rollout with per-frame noise and guidance on the history. CausVid~\cite{causvid}
+distils a bidirectional teacher~\cite{wan} into a few-step causal student with DMD~\cite{dmd}; Self
+Forcing~\cite{selfforcing} and Self-Forcing++~\cite{selfforcingpp} train on the student's own (minute-long) rollouts.
+LongLive~\cite{longlive}, Rolling Forcing~\cite{rollingforcing} and Deep Forcing~\cite{deepforcing} add attention sinks,
+rolling joint denoising and deeper, re-aligned sinks; LoL~\cite{lol} traces ``sink collapse'' to positional periodicity.
+Segment-wise models condition on overlapping frames (SkyReels-V2~\cite{skyreels}, StreamingT2V~\cite{streamingt2v},
+MAGI-1~\cite{magi}), a temporal pyramid (Pyramid Flow~\cite{pyramidflow}) or packed history with anti-drifting sampling
+(FramePack~\cite{framepack}); training-free schemes lengthen bidirectional models~\cite{fifo,freenoise,freelong,rollingdiffusion}.
+These works propose mechanisms against drift; we measure what drift does and which mechanism changes which part of it.
 
-\paragraph{Error accumulation and correction.} Meta-ARVDM~\cite{metaarvdm} analyses error accumulation theoretically.
-Pathwise test-time correction~\cite{pathwise} and FreqForcing~\cite{freqforcing} correct drift at inference; our
-correction is a deliberately minimal member of this family. It transfers only the DC tone at one early step, which
-lets us study the step as a knob.
+\paragraph{Error accumulation, exposure bias and world models.} Sampling from one's own output causes exposure bias in
+sequence models~\cite{scheduledsampling,dagger} and diffusion models~\cite{ning2023,ning2024}; error analyses of
+autoregressive video diffusion~\cite{metaarvdm} bound how errors compound, and game and driving world
+models~\cite{gamengen,diamond,vista,matrixgame2} add noise to context frames for robustness. For global statistics our
+results suggest a complementary view: the rollout forgets its context and relaxes to the conditioning's default, whose
+offset from the short-horizon distribution is a training-horizon effect. Global brightness biases of diffusion models
+arise at the earliest denoising steps~\cite{lin2024,offsetnoise}, consistent with corrections acting only there.
 
-\paragraph{Evaluation.} VBench~\cite{vbench} scores imaging quality with MUSIQ~\cite{musiq}. We show that MUSIQ is
-nearly blind to drift, and we measure drift relative to each prompt's own fresh-start distribution, in colour
-statistics and in DINOv2~\cite{dinov2} features.
+\paragraph{Attention sinks, forgetting and correction.} Streaming language models keep the first tokens as an attention
+sink~\cite{streamingllm,sinkemerge}, related to registers in vision transformers~\cite{registers}; in autoregressive
+video the sink is usually the first chunk kept in the key--value cache. The closest analogue to our finding is
+instruction drift in dialogs~\cite{instructiondrift}, where attention to the system prompt decays and behaviour reverts
+to a default. Pathwise test-time correction~\cite{pathwise} and FreqForcing~\cite{freqforcing} anchor rollouts to early
+frames or their low frequencies; our correction is a minimal member of this family. VBench~\cite{vbench} scores imaging
+quality with MUSIQ~\cite{musiq}; we measure drift against each prompt's fresh-start distribution~\cite{dinov2} and by
+intervention.
 
-\section{Setup}\label{sec:setup}
-\paragraph{Models.} All configurations generate 832$\times$480 video at 16\,fps in chunks of 3 latent frames (0.75\,s),
-except SkyReels (960$\times$544, 24\,fps); details are in Table~\ref{tab:models}.
-\begin{itemize}
-\item \textbf{Self Forcing~\cite{selfforcing} checkpoints:} DMD (main), SiD, SiD-v2, GAN, and the 10-second variant.
-All share one architecture (Wan2.1-1.3B~\cite{wan}) and differ only in the distillation objective.
-\item \textbf{CausVid~\cite{causvid}:} autoregressive DMD checkpoint.
-\item \textbf{LongLive~\cite{longlive}:} LoRA, official window 12 + sink 3.
-\item \textbf{Rolling Forcing~\cite{rollingforcing}:} rolling joint denoising with a fixed anchor block.
-\item \textbf{SkyReels-V2-DF-1.3B~\cite{skyreels}:} diffusion forcing over overlapping segments.
-\end{itemize}
+%=====================================================================================================================
+\section{Measuring drift by intervention}\label{sec:protocol}
+\paragraph{Models.} Appendix Table~\ref{tab:models} lists the configurations. Self Forcing (five checkpoints), CausVid,
+LongLive and Rolling Forcing are causal few-step students of Wan2.1-T2V-1.3B~\cite{wan} that read their past through a
+key--value cache of 21 latent frames (LongLive: 12), optionally with an attention sink (the first chunk kept in the
+cache). SkyReels-V2-DF uses the Wan2.1 VAE and a transformer of the same architecture and size, but extends videos in
+97-frame segments that re-denoise the last 17 frames of the previous segment. Matrix-Game-2.0~\cite{matrixgame2} is a
+Wan-architecture world model without a text branch, driven by keyboard and mouse actions. FramePack~\cite{framepack} is a 13B model fine-tuned from HunyuanVideo~\cite{hunyuan}; each
+33-frame section sees the opening as a clean prefix frame and as a SigLIP~\cite{siglip} image embedding, plus
+compressed history. All Wan-based configurations run in one harness that reproduces the official Self Forcing loop
+bit for bit when no intervention is applied.
 
+\paragraph{Held and perturbed openings.} An opening image is held still for the first chunk (9 frames, 0.56\,s at
+16\,fps; SkyReels: 17 frames as a prefix video; FramePack: the input image) and continued under a prompt. Openings
+are NAVSIM~\cite{navsim} front-camera frames or frames generated by the models themselves. To separate what the model
+keeps from what the scene is, we shift the \emph{same} opening in CIELAB before encoding: \Lstar{} by $\pm8$ and
+$\pm16$, $b^*$ by $\pm12$. For scene content, we instead generate openings of six scene classes and vary the prompt
+(Section~\ref{sec:content}).
 
-\begin{table}[t]
-\centering\small
-\caption{Model configurations. All except SkyReels share the Wan2.1-T2V-1.3B architecture and are run in our harness
-(\texttt{hold\_gen.py}, bit-identical to the official Self Forcing loop when no perturbation is applied); window and
-sink sizes are in latent frames (3 per chunk of 0.75\,s).}
-\label{tab:models}
-\begin{tabular}{llll}
-\toprule
-Configuration & Training / generation & Steps & Context \\
-\midrule
-Self Forcing DMD & self-rollout, DMD~\cite{dmd} & 4 & window 21; sink 0 / 1 / 3 \\
-Self Forcing SiD, SiD v2 & self-rollout, SiD~\cite{sid} & 4 & window 21, sink 3 \\
-Self Forcing GAN & self-rollout, GAN & 4 & window 21, sink 3 \\
-Self Forcing 10\,s & self-rollout on 10-s clips & 4 & window 21, sink 3 \\
-CausVid~\cite{causvid} & teacher-forced DMD & 3 & window 21, sink 3 \\
-LongLive~\cite{longlive} & long-rollout LoRA & 4 & window 12; sink 0 / 3 \\
-Rolling Forcing~\cite{rollingforcing} & rolling joint denoising & 5 & anchor block + 21 \\
-SkyReels-V2-DF~\cite{skyreels} & diffusion forcing, 544p/24\,fps & 30 + CFG & overlap 17 frames \\
-\bottomrule
-\end{tabular}
-\end{table}
-\paragraph{Held and perturbed openings.} To separate drift from what the prompt asks for, an opening image is held for
-0.56\,s, encoded as the first chunk (or as the prefix video for SkyReels), and continued for 31\,s with a generic driving
-prompt. Openings are NAVSIM~\cite{navsim} front-camera frames or first frames generated by the model. In the
-interventional study, the same opening is shifted in CIELAB before encoding: \Lstar{} by $\pm$8 and $\pm$16, and
-$b^*$ by $\pm$12.
+\paragraph{Persistence and default.} For a statistic $x$ (a per-frame CIELAB mean), the persistence at time $T$ is the
+within-scene least-squares slope of the end value $\bar x(T)$, averaged over the window $[T-w, T)$ after the opening,
+on the opening value $x_{\text{open}}$ (mean of the held frames),
+\begin{equation}
+\alpha(T) = \frac{\partial\, \bar x(T)}{\partial\, x_{\text{open}}}\Big|_{\text{scene}},
+\qquad \mu(T) = \frac{b_0}{1-\alpha(T)},
+\end{equation}
+where $b_0$ is the fitted intercept, so $\mu$ is the level at which the end equals the opening (the zero-drift level).
+The window is the last 2\,s at 31\,s (study 6), 5\,s at 20--30\,s (studies 8, 9, 11), 10\,s at 60\,s and at
+30\,s in studies 12 and 15, and 1\,s for curves; Appendix Table~\ref{tab:matched} compares all models over the same
+window, 15--20\,s. Averaging slopes over
+24 scenes gives a scene-bootstrap interval. The fresh default is where prompt-only rollouts end.
 
-\paragraph{Metrics.} For each video we record per-frame Lab means, saturation, \Lstar{} contrast and Laplacian
-sharpness. The \emph{persistence} $\alpha$ is the within-scene slope of the end value (last 2\,s) on the opening value.
-For prompt-only rollouts, drift is measured against 10 (Self Forcing) or 5 (LongLive) fresh 5-second generations of the same prompt: $D$ is the
-Mahalanobis distance of colour statistics and $K$ the DINOv2 nearest-neighbour distance.
+\paragraph{Content persistence.} For scene content we score each frame with CLIP ViT-L/14~\cite{clip} as the log-odds
+of the opening's class against ``a city street'', $z = s\,(\cos(f, t_{\text{class}}) - \cos(f, t_{\text{city}}))$, and
+define $\kappa(T) = (z(T)-\mu_z)/(z_{\text{open}}-\mu_z)$ with $\mu_z$ the class score of fresh rollouts of the generic
+prompt. $\kappa$ is the content analogue of $\alpha$: 1 if the class evidence is kept, 0 if the rollout looks like a
+fresh generic rollout.
 
-\paragraph{Statistics.} Seeds are paired across arms, and every arm of a scene runs in one job on one GPU
-architecture. We use mixed models or seed-averaged paired differences with Holm correction within each preregistered family;
-intervals are Wald intervals from the mixed models in studies 1--2 (as preregistered) and scene- or opening-cluster
-bootstrap intervals elsewhere. Each preregistration froze its code by SHA-256 hash before generation, and
-studies 3--8 were also committed publicly before generation.
+\paragraph{Drift metrics for prompt-only rollouts.} Where no opening is held, drift is measured against fresh 5-s
+generations of the same prompt, in colour statistics ($D$) and DINOv2~\cite{dinov2} features ($K$; Appendix~\ref{app:metrics}).
 
-\section{Drift is relaxation toward a prompt-set default}\label{sec:relax}
-\paragraph{Observational evidence.} Across 40 held openings with a generic prompt, the change of every statistic over
-31\,s is strongly anti-correlated with its opening value (Table~\ref{tab:attr}): $r$ between $-0.79$ and $-0.95$ for
-\Lstar, $a^*$, $b^*$, saturation, sharpness and contrast, on both Self Forcing and LongLive. For brightness:
-\[
-\Delta L = 22.8 - 0.69\,L_{\text{open}}, \quad R^2 = 0.82.
-\]
-\begin{itemize}
-\item Only about a third of an opening's deviation survives (31\% for Self Forcing brightness; 22--54\% across
-statistics and models, Table~\ref{tab:attr}).
-\item On Self Forcing, real and generated openings fall on the same line ($p=0.80$), so real frames ``drift more'' only
-because they are brighter. On LongLive, generated openings end $4.3$ \Lstar{} brighter than real ones at equal opening
-brightness ($p=0.03$).
-\end{itemize}
-
-\paragraph{The default is set by the prompt.} Continuing the same openings under four lighting prompts gives four
-levels (Fig.~\ref{fig:default}b). On Self Forcing these are sunny 43, overcast 34, dusk 19 and night 16 \Lstar; the
-lighting term has $p\approx5\times10^{-78}$. On LongLive the same words give 45, 40, 32 and 21. The prompt sets the
-target, and the mapping from words to brightness is model-specific.
+\paragraph{Pairing and preregistration.} With bf16 kernels, the same seed and code give bit-identical videos within a
+GPU architecture but different videos across A40, A100/A800 and L40S/RTX~6000 Ada. Arms that are compared therefore
+run in one job, which deletes and regenerates its outputs if a preempted job resumes on another architecture. (In our
+first study this was not yet enforced; 62\% of its nominal pairs crossed architectures, which widens but does not bias
+its intervals.) Each study's hypotheses, decision rules and analysis code were frozen by SHA-256 hash before its
+videos were generated (study 1: before analysis, after generation had started); studies 3--15 were also
+committed publicly first. Tests within a study are Holm-corrected. Table~\ref{tab:primary} lists every primary test.
 
 
-\begin{table}[t]
-\centering\small
-\caption{Every low-level statistic relaxes toward a default (40 held openings, generic prompt). Persistence = 1 +
-slope of the 31-s change on the opening value; $r$ = correlation of change with opening value.}
-\label{tab:attr}
-\begin{tabular}{lcccc}
-\toprule
-& \multicolumn{2}{c}{Self Forcing} & \multicolumn{2}{c}{LongLive} \\
-Statistic & persistence & $r$ & persistence & $r$ \\
-\midrule
-\Lstar{} & 0.31 & -0.91 & 0.26 & -0.81 \\
-$a^*$ & 0.38 & -0.92 & 0.39 & -0.90 \\
-$b^*$ & 0.22 & -0.88 & 0.42 & -0.80 \\
-saturation & 0.54 & -0.92 & 0.23 & -0.95 \\
-log sharpness & 0.37 & -0.91 & 0.23 & -0.94 \\
-\Lstar{} contrast & 0.34 & -0.82 & 0.37 & -0.79 \\
-\bottomrule
-\end{tabular}
-\end{table}
+\input{sec_results.tex}
+\input{sec_levers.tex}
+\input{sec_discussion.tex}
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=\linewidth]{fig_default.pdf}
-\caption{Brightness change after 31\,s against the opening's brightness (one dot per opening). (a) Real and generated
-openings follow one line. (b) Four lighting prompts set four defaults. (c) Two models: same slope, different default.}
-\label{fig:default}
-\end{figure}
-\paragraph{Interventional evidence across models (preregistered).} Observational regressions compare different scenes,
-whose content differs along with their brightness. We therefore shifted the opening \emph{within} each of 24 scenes (12
-NAVSIM, 12 generated): \Lstar{} by $-16, -8, 0, +8, +16$ and $b^*$ by $\pm12$. Each was continued for 31\,s by 14
-configurations (11 preregistered, 3 exploratory; Table~\ref{tab:models}); every configuration of a scene ran in one job on one GPU architecture. The
-persistence $\alpha$ is the within-scene slope of the end value on the opening value. Fig.~\ref{fig:relax}a shows the
-results.
-\begin{itemize}
-\item \textbf{Every attention-based model relaxes.} $\alpha_L$ ranges from 0.02 (LongLive without a sink) to 0.67
-(Self Forcing GAN); colour temperature behaves alike.
-\item \textbf{The training objective matters even with everything else fixed.} Five Self Forcing checkpoints share
-architecture, context and sampler, yet $\alpha_L$ ranges from 0.12 (SiD) to 0.67 (GAN) and the default from 17 to 47
-\Lstar.
-\item \textbf{The default is the end of a fresh rollout.} Across 10 configurations, the zero-drift level estimated from
-the shifted openings correlates $r=0.93$ with where prompt-only fresh starts end (Fig.~\ref{fig:defaultfresh}). A model's
-default can therefore be measured from a few cheap fresh rollouts.
-\item \textbf{Diffusion forcing is the exception.} SkyReels-V2-DF keeps the opening: $\alpha_L = 1.09$ \ci{1.02}{1.16} at
-10\,s and $0.96$ \ci{0.86}{1.07} at 20\,s (12 scenes). In an exploratory check, removing classifier-free guidance,
-tripling the history noise, or cutting to 10 steps all left $\alpha\approx1$. Its continuation re-denoises 17
-overlapping frames, a pixel-level constraint, whereas the KV-cache models only attend to their past. Weakening that
-constraint makes SkyReels relax:
-\begin{itemize}
-\item \textbf{Exploratory (4 scenes):} with 5 overlapping frames, $\alpha$ at 20\,s fell from 0.89 to 0.52; with 9
-frames it was unchanged.
-\item \textbf{Preregistered confirmation (study 8; 12 scenes not used in the exploratory check, both overlaps in one job per scene):} at 15--20\,s,
-$\alpha = 0.77$ with 5 frames vs $1.01$ with 17. The difference is $-0.24$ \ci{-0.40}{-0.09}, $p=0.014$, and is
-negative in 11 of 12 scenes. With 5 frames, persistence falls steadily from 1.09 at 5\,s to 0.71 at 20\,s.
-\end{itemize}
-The conditioning mechanism, not autoregression or diffusion forcing as such, decides whether a model relaxes.
-\end{itemize}
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=\linewidth]{fig_relax.pdf}
-\caption{Relaxation study (preregistration 06). (a) Persistence of a within-scene shift of the opening at 31\,s (24
-scenes; SkyReels at 20\,s, 12 scenes, hollow marker). (b) Persistence over time for the sink and correction contrasts.
-(c) Preregistration 07 (24 scenes, 60\,s; bands are scene-bootstrap 95\% CIs): with a sink a fixed share of the
-opening is held; without one it is forgotten.}
-\label{fig:relax}
-\end{figure}
-\begin{figure}[t]
-\centering
-\includegraphics[width=0.48\linewidth]{fig_default_fresh.pdf}
-\caption{The zero-drift level from shifted openings equals the end brightness of fresh rollouts of the same prompt.}
-\label{fig:defaultfresh}
-\end{figure}
-
-\section{Mechanism: an equilibrium between the anchor and the prompt}\label{sec:mech}
-Model a chunk's mean statistic as a linear recursion:
-\[
-x_{k+1}-\mu = w_w\big(\bar x_{\text{window}}-\mu\big) + w_s\big(x_{\text{sink}}-\mu\big).
-\]
-The opening counts as a window chunk until it rolls out; after that, with a sink, it keeps a direct pull $w_s$. The
-prompt's pull is $w_p = 1-w_w-w_s$. Without a sink the opening is eventually forgotten ($\alpha\to0$). With a sink the
-equilibrium share is
-\[
-\alpha_\infty = \frac{w_s}{w_s + w_p}.
-\]
-The share is large whenever the prompt's pull is as weak as the sink's.
-
-\paragraph{Direct measurement of the weights.} Bit-exact KV-cache replay lets us shift only the sink or only the
-window and regenerate the next chunk from identical noise. It measures $w_s = 0.053$ \ci{0.040}{0.066} for synthetic
-tone shifts, $0.036$ in a dose-response design, and $w_w \approx 0.76$ (synthetic) to $0.90$--$0.99$ (natural
-differences). Below we fit the recursion to the persistence curves of the relaxation study and compare.
-
-
-
-A preregistered factorial study of window and sink sizes (Appendix~\ref{sec:ctx}) already showed that a 3-frame sink cuts colour
-drift by more than half on fresh rollouts; here we ask how it does so.
-
-\paragraph{Interventional tests (preregistered, Holm over four).}
-\begin{itemize}
-\item \textbf{LongLive.} Removing the sink lowers $\alpha_L$ from 0.19 to 0.02 ($-0.17$ \ci{-0.28}{-0.06}, $p_{\text{Holm}}=0.013$).
-\item \textbf{Self Forcing, colour.} Removing the sink lowers $\alpha_b$ from 0.25 to $-0.01$ ($-0.26$
-\ci{-0.34}{-0.18}, $p<0.001$).
-\item \textbf{Self Forcing, brightness: not supported at 31\,s} ($-0.06$ \ci{-0.17}{0.05}). Its window forgets slowly
-($w_w\approx0.9$), so at 31\,s the sink-less run had not yet forgotten. In the preregistered long-horizon subset (6
-scenes, 120\,s), the sink holds 0.44--0.54 from 60\,s on, while without it persistence is $-0.11$ to $-0.07$. The
-difference is $+0.56$ \ci{0.34}{0.75} at 118\,s.
-\end{itemize}
-
-\paragraph{Confirmation at 60\,s (preregistration 07).} We then tested the sink at 60\,s on all 24 scenes, for Self Forcing
-and for CausVid (288 videos, Fig.~\ref{fig:relax}c).
-\begin{itemize}
-\item \textbf{Self Forcing:} with a sink, 0.58 of the opening remains; without one, 0.03. Difference $+0.55$ \ci{0.45}{0.65},
-$p_{\text{Holm}} < 10^{-9}$.
-\item \textbf{CausVid:} 0.23 vs 0.04, difference $+0.19$ \ci{0.14}{0.24}, $p_{\text{Holm}} < 10^{-6}$.
-\item \textbf{Quantitative predictions.} Without a sink, Self Forcing's persistence fell from 0.24 at 30\,s to 0.03 at 60\,s,
-as predicted. With a sink, the plateau of 0.58 lies just above the band the recursion predicted, \ci{0.25}{0.54}: the
-model gets the shape right and the level slightly low.
-\end{itemize}
-
-\paragraph{Fitting the recursion.} Fitted to the 120-s curve, the model gives:
-\begin{itemize}
-\item Self Forcing: $w_s = 0.060$ \ci{0.021}{0.097}, $w_w = 0.86$, $\alpha_\infty = 0.42$ \ci{0.25}{0.54}. KV-cache
-replay measured $0.053$ \ci{0.040}{0.066}. The two measurements agree, which resolves an earlier puzzle: the sink's
-direct effect on the next chunk is tiny, yet it holds about half of the opening, because the prompt's pull ($w_p\approx0.08$)
-is equally small.
-\item LongLive: $w_s = 0.034$ \ci{0.027}{0.045}.
-\item On the 31-s curves, every configuration with a sink gets a positive sink weight (GAN 0.11, SiD and Rolling
-Forcing 0.08, CausVid 0.05, LongLive 0.02). The share kept depends on both weights, $\alpha_\infty = w_s/(1-w_w)$:
-SiD has a sizeable sink weight but a short memory ($w_w = 0.64$), so it keeps little.
-\end{itemize}
-Two caveats:
-\begin{itemize}
-\item From a 31-s curve alone, Self Forcing's sink weight is not identifiable, because the plateau is not reached yet.
-\item Both long curves dip near 30\,s and then recover, which the first-order model does not capture. With six scenes
-this may be noise.
-\end{itemize}
-
-
-\section{Two levers}\label{sec:levers}
-\paragraph{Raising $\alpha$: a content-aware correction.} At denoising step 1 of 4, the noisy chunk is run once more
-with a temporary KV cache that holds only the anchor. The difference between the per-channel spatial means (the DC tone)
-of that prediction and of the real one is added back, scaled by $\beta$. Nothing else changes, including the main cache
-and the random stream.
-\begin{itemize}
-\item \textbf{Confirmation (preregistered, 40 held-out prompts $\times$ 4 seeds).} Colour drift $D$ falls by 1.48
-\ci{1.19}{1.76} at $\beta=1$ and by 1.78 at $\beta=1.5$. Structure drift $K$ is non-inferior. On held-out prompts with
-legitimate brightness changes, 83\% / 93\% of the change is kept.
-\item \textbf{Baselines.} Post-hoc colour matching to the anchor (mean, or Reinhard mean and standard deviation)
-reaches similar $D$ ($-0.89$, $-1.58$) but keeps only 7\% / 12\% of legitimate transitions (Table~\ref{tab:baselines}).
-\item \textbf{The step is a knob.} Correcting at step 0 removes more drift but erases tunnels (56\% kept); steps 2--3
-do nothing.
-\item \textbf{Cost and transfer.} The correction costs one forward pass per chunk and some flicker. On LongLive it
-reduces $D$ by half as much.
-\item \textbf{It works by raising $\alpha$.} In the relaxation study the correction raises Self Forcing's
-persistence from 0.28 to 0.40 ($+0.12$ \ci{0.05}{0.20}, preregistered). In exploratory runs it does the same on
-CausVid ($+0.09$ \ci{0.03}{0.14}), and on LongLive the estimate is $+0.06$ \ci{-0.06}{0.18}. It is therefore an
-artificial strengthening of the sink's pull, restricted to the DC tone.
-\end{itemize}
-
-
-\begin{table}[t]
-\centering\small
-\caption{Correction versus post-hoc colour matching on the preregistered confirmation set (40 held-out prompts
-$\times$ 4 seeds; transitions: 8 held-out prompts with legitimate brightness changes, 7 of which met the preregistered
-minimum change).}
-\label{tab:baselines}
-\begin{tabular}{lcccc}
-\toprule
-Method & $\Delta D$ [95\% CI] & $\Delta z_L$ & transitions kept & jitter \\
-\midrule
-Content-aware correction, $\beta=1$ & -1.48 \ci{-1.76}{-1.19} & +1.08 & 0.83 & $\times$1.13 \\
-Content-aware correction, $\beta=1.5$ & -1.78 \ci{-2.11}{-1.45} & +1.32 & 0.93 & $\times$1.67 \\
-Post-hoc mean matching & -0.89 \ci{-1.29}{-0.50} & +1.55 & 0.07 & $\times$0.15 \\
-Post-hoc Reinhard~\cite{reinhard} & -1.58 \ci{-1.96}{-1.19} & +1.53 & 0.12 & $\times$0.13 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=\linewidth]{fig_tradeoff.pdf}
-\caption{Drift reduction versus legitimate brightness transitions kept. (a) Preregistered confirmation set: only the
-content-aware correction is in the upper left. (b) Development set: the denoising step at which the anchor's tone is
-transferred trades drift removal against content fidelity.}
-\label{fig:tradeoff}
-\end{figure}
-\paragraph{Moving $\mu$: calibrated prompts.}
-\begin{itemize}
-\item \textbf{Free-form caption (preregistered).} Describing the opening with a Qwen2.5-VL~\cite{qwenvl} caption does
-not reduce brightness drift on either model (Self Forcing $-1.21$ \ci{-3.09}{0.36}). The caption describes half of the
-normally lit frames as ``dim'' and pulls them darker. It does improve content retention (+0.10 / +0.15).
-\item \textbf{Calibrated lighting (preregistered).} Choosing the lighting sentence whose measured default is nearest
-the opening's brightness reduces $|\Delta L|$ by 26\% on Self Forcing (Holm $p = 0.013$); with the correction, by 44\%.
-\item \textbf{Calibration is per model.} On LongLive, the preregistered test was not significant even with LongLive's
-own calibration; the lighting-only prompt reduces drift by 34\% (secondary).
-\end{itemize}
-(Appendix, Fig.~\ref{fig:prompts}).
-
-\paragraph{The law predicts these outcomes out of sample.} Take $\alpha$ and the generic default from the relaxation
-study (different scenes) and the lighting defaults from the lighting experiment (different openings). Then
-$\Delta L \approx (1-\alpha)(\mu - L_{\text{open}})$ predicts the 31-s brightness change of every opening under the generic
-and the calibrated prompt in the calibrated-lighting experiment:
-\begin{itemize}
-\item correlation 0.82 on Self Forcing and 0.77 on LongLive, mean absolute error 3.8 \Lstar;
-\item the mean benefit of calibration is overpredicted ($-4.5$ predicted vs $-3.2$ and $-2.8$ observed).
-\end{itemize}
-The law is a usable forecast of how a prompt choice will change long-horizon brightness.
-
-
-
-
-\section{Discussion: what this means for long-horizon world models}
-\begin{itemize}
-\item \textbf{Drift is a forgetting-and-reverting process, not accumulating noise.} In every attention-based model we
-tested, a rollout forgets its opening at a model-specific rate and reverts to the default its prompt sets. The default
-is cheap to measure from a few fresh rollouts.
-\item \textbf{Two measurable numbers describe a model's long-horizon fidelity:} the share of the opening it keeps
-($\alpha$) and its default ($\mu$). Both change with the training objective even when architecture and inference are
-fixed. Reporting them would make long-video models comparable in a way that a single quality score is not.
-\item \textbf{The levers follow from the law.}
-  \begin{itemize}
-  \item Raise $\alpha$: keep the opening as a sink, or transfer the anchor's tone at an early denoising step, which
-  keeps legitimate changes because it acts only on the DC component.
-  \item Move $\mu$: describe the lighting with words whose measured default matches the opening.
-  \end{itemize}
-A world model conditioned on a real camera frame and a caption will drift toward the caption unless the caption's
-default matches the frame.
-\item \textbf{Conditioning by overlap is different.} The diffusion-forcing model kept its opening, and weakening its
-overlap constraint made it relax (preregistered). A hard pixel-level overlap therefore protects against reversion to
-the default. It also passes errors forward unchanged. Whether overlap conditioning trades drift-to-default for
-error accumulation is the most important open question here.
-\end{itemize}
-
-Three preregistered studies or primary tests failed, one quantitative prediction missed, and four earlier claims were
-withdrawn; Appendix~\ref{app:failed} lists them all.
-
-\section{Limitations}
-\begin{itemize}
-\item All models but SkyReels share the Wan2.1-1.3B base, and only one diffusion-forcing model was tested.
-\item Horizons are 10--120\,s; openings are held images, not real video, and are continued with one generic prompt in the
-interventional studies.
-\item The statistics are global colour and texture summaries. Structural failures (objects melting, geometry drift) are
-not captured by $\alpha$.
-\item The correction acts on colour only. Lighting calibration uses four discrete levels and cannot match openings
-brighter than the sunny default.
-\item One seed per opening version in the interventional studies; precision comes from scenes and versions instead.
-\end{itemize}
-
-\begin{thebibliography}{99}\small
-\bibitem{causvid} T. Yin, Q. Zhang, R. Zhang, W. T. Freeman, F. Durand, E. Shechtman, X. Huang. From slow bidirectional to fast autoregressive video diffusion models. CVPR 2025 (arXiv:2412.07772).
-\bibitem{selfforcing} X. Huang, Z. Li, G. He, M. Zhou, E. Shechtman. Self Forcing: Bridging the train-test gap in autoregressive video diffusion. arXiv:2506.08009, 2025.
-\bibitem{diffusionforcing} B. Chen, D. Mart\'i Mons\'o, Y. Du, M. Simchowitz, R. Tedrake, V. Sitzmann. Diffusion Forcing: Next-token prediction meets full-sequence diffusion. NeurIPS 2024 (arXiv:2407.01392).
-\bibitem{wan} Wan Team. Wan: Open and advanced large-scale video generative models. arXiv:2503.20314, 2025.
-\bibitem{dmd} T. Yin et al. One-step diffusion with distribution matching distillation. CVPR 2024 (arXiv:2311.18828).
-\bibitem{sid} M. Zhou et al. Score identity distillation. ICML 2024 (arXiv:2404.04057).
-\bibitem{longlive} S. Yang et al. LongLive: Real-time interactive long video generation. 2025.
-\bibitem{rollingforcing} K. Liu et al. Rolling Forcing: Autoregressive long video diffusion in real time. 2025.
-\bibitem{deepforcing} Deep Forcing. arXiv:2512.05081, 2025.
-\bibitem{skyreels} SkyReels Team. SkyReels-V2: Infinite-length film generative model. arXiv:2504.13074, 2025.
-\bibitem{streamingllm} G. Xiao, Y. Tian, B. Chen, S. Han, M. Lewis. Efficient streaming language models with attention sinks. ICLR 2024 (arXiv:2309.17453).
-\bibitem{pathwise} Pathwise test-time correction for autoregressive video diffusion. arXiv:2602.05871, 2026.
-\bibitem{freqforcing} FreqForcing. arXiv:2607.27110, 2026.
-\bibitem{metaarvdm} Meta-ARVDM. arXiv:2503.10704, 2025.
-\bibitem{vbench} Z. Huang et al. VBench: Comprehensive benchmark suite for video generative models. CVPR 2024 (arXiv:2311.17982).
-\bibitem{musiq} J. Ke, Q. Wang, Y. Wang, P. Milanfar, F. Yang. MUSIQ: Multi-scale image quality transformer. ICCV 2021.
-\bibitem{dinov2} M. Oquab et al. DINOv2: Learning robust visual features without supervision. TMLR 2024 (arXiv:2304.07193).
-\bibitem{qwenvl} Qwen Team. Qwen2.5-VL technical report. arXiv:2502.13923, 2025.
-\bibitem{navsim} D. Dauner et al. NAVSIM: Data-driven non-reactive autonomous vehicle simulation and benchmarking. NeurIPS 2024.
-\bibitem{reinhard} E. Reinhard, M. Ashikhmin, B. Gooch, P. Shirley. Color transfer between images. IEEE CG\&A, 2001.
-\end{thebibliography}
+\input{bib.tex}
 
 \appendix
-\section{What did not hold}\label{app:failed}
-We report claims that were revised or withdrawn after checks, and the preregistered predictions that failed.
-\begin{itemize}
-\item \textbf{Withdrawn claims:}
-  \begin{itemize}
-  \item that MUSIQ rewards collapsed videos (it is merely insensitive);
-  \item that the sink stabilises the default (trend difference $+0.5$ \ci{-2.4}{3.5});
-  \item that the model follows its context by 76\% (only for artificial shifts);
-  \item that early dynamics forecast the final brightness.
-  \end{itemize}
-\item \textbf{Failed preregistered tests:}
-  \begin{itemize}
-  \item describing the opening with a free-form caption (study 3);
-  \item calibrated vs caption prompt on Self Forcing ($-1.24$ \ci{-2.54}{0.12}, Holm $p=0.25$; study 4);
-  \item calibrated lighting on LongLive (studies 4 and 5);
-  \item the sink effect on Self Forcing brightness at 31\,s (study 6). It is supported at 60\,s in study 7, but that
-  endpoint was chosen after seeing study 6.
-  \end{itemize}
-\item \textbf{A failed quantitative prediction:} the recursion predicted a Self Forcing plateau of 0.25--0.54, and the
-observed plateau was 0.58 (study 7).
-\item \textbf{Unexplained:} a sink of one latent frame retained less of the opening than no sink (exploratory).
-\end{itemize}
-
-
-\section{Context strategies (preregistration 1)}\label{sec:ctx}
-A preregistered factorial study (10 strategies, 40 prompts $\times$ 4 seeds) found:
-\begin{itemize}
-\item a 3-frame sink cuts colour drift by 7.56 \ci{6.81}{8.32};
-\item window size matters only without a sink;
-\item RoPE re-alignment, which Self Forcing was not trained for, does not help;
-\item MUSIQ varies only between 66 and 69 across strategies whose drift differs threefold;
-\item the GPU architecture changes outputs, so 62\% of nominally paired comparisons ran on different architectures.
-\end{itemize}
-
-
-\section{Preregistrations, deviations and pitfalls}\label{app:prereg}
-\begin{table}[h]
-\centering\small
-\caption{The eight preregistered studies. Code was frozen by SHA-256 hash before generation; studies 3--8 were also
-committed to the public repository before generation.}
-\label{tab:prereg}
-\begin{tabular}{p{0.2cm}p{4.2cm}p{5.8cm}p{3.2cm}}
-\toprule
-\# & Study & Primary hypotheses & Outcome \\
-\midrule
-1 & Context strategies (2,000 videos) & sink lowers drift; window matters only without sink & supported \\
-2 & Content-aware correction (480 + 96 videos) & lower colour drift; structure non-inferior; transitions kept & supported \\
-3 & Caption prompts (800 videos) & caption $<$ generic; +correction $<$ caption & not supported \\
-4 & Calibrated lighting (560 videos) & calibrated $<$ caption; calibrated $<$ generic & supported vs generic (SF) \\
-5 & Calibrated lighting, LongLive's own levels & same, LongLive & not supported \\
-6 & Relaxation (2,352 + 36 videos) & sink raises $\alpha$ (two models); correction raises $\alpha$; sink raises $\alpha_b$ & 3 of 4 supported (SF brightness not at 31\,s) \\
-7 & Sink retention at 60\,s (288 videos) & sink raises $\alpha$ at 60\,s (SF, CausVid) & supported (both) \\
-8 & SkyReels overlap (48 videos) & fewer overlapping frames lower $\alpha$ & supported \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\paragraph{Deviations.}
-\begin{itemize}
-\item In study 3, a preempted job resumed on another GPU type and split four LongLive openings across architectures.
-We regenerated the affected arms on the original architecture; the conclusions are unchanged (sensitivity analysis in
-the repository).
-\item In study 6, the ODE-initialised student was replaced by SiD v2 before generation, because it collapses to blur
-after the opening.
-\item Exploratory configurations (sink 1; correction on LongLive and CausVid) were added after freezing and before
-any data, and are reported as exploratory.
-\end{itemize}
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=\linewidth]{fig_match.pdf}\\[3pt]
-\includegraphics[width=\linewidth]{fig_calib.pdf}
-\caption{Moving $\mu$. Top: free-form VLM captions (preregistered; not supported for brightness, large content gain).
-Bottom: brightness-calibrated lighting descriptions (preregistered; supported against the generic prompt on Self
-Forcing). Paired differences with opening-cluster bootstrap 95\% CIs.}
-\label{fig:prompts}
-\end{figure}
-
-\paragraph{Robustness: linearity of the response.} Is the response to the opening shift linear? We compared $\alpha$
-estimated from the $\pm8$ versions with $\alpha$ from the $\pm16$ versions, and the brighter half of the shifts
-($0,+8,+16$) with the darker half.
-\begin{itemize}
-\item For 12 of 14 configurations, the $\pm8$ and $\pm16$ estimates differ by at most 0.09, with CIs including 0.
-\item SiD and the sink-1 configuration give near-zero slopes for small shifts ($-0.10$, $-0.15$) and positive slopes for
-large ones (0.18, 0.10).
-\item LongLive with a sink keeps a darkening better than a brightening (0.36 vs 0.04).
-\end{itemize}
-The linear law is a good first-order description, not an exact one.
-
-\paragraph{Pitfalls for evaluating video models.}
-\begin{enumerate}
-\item \textbf{The GPU architecture changes the video.} With bf16, the same seed and code give bit-identical videos
-within an architecture but different videos across A40, A100/A800 and L40S/RTX~6000 Ada. Paired designs must pin the
-architecture.
-\item \textbf{Resumed jobs can silently break pairing.} Generators that skip existing outputs resume a preempted job
-wherever it lands.
-\item \textbf{Popular quality metrics miss drift.} MUSIQ, used by VBench for imaging quality, barely moves across
-strategies that differ threefold in colour drift.
-\item \textbf{Natural variation is too small to estimate persistence.} Within a prompt, seeds start only about 2
-\Lstar{} apart, so within-prompt slopes of end on start brightness have confidence intervals of about $\pm0.4$
-(\texttt{results/corr/attr\_out/part1\_within\_prompt\_alpha.json}). Controlled
-shifts of $\pm16$ \Lstar{} are needed.
-\item \textbf{Change-on-baseline regressions can mislead.} Regressing change on an opening value measured with error
-produces spurious regression to the mean (Oldham's problem). Held openings are measured almost without error, and the
-interventional design removes the issue.
-\end{enumerate}
-
-
+\input{sec_appendix.tex}
 \end{document}

@@ -15,7 +15,7 @@ O = sys.argv[2] if len(sys.argv) > 2 else os.path.dirname(__file__)
 INK, MUTED, GRID = "#0b0b0b", "#898781", "#e1e0d9"
 BLUE, NAVY, ORANGE, RUST, GREEN, TEAL, PURPLE, GREY = ("#2a78d6", "#184f95", "#eb6834", "#a8441d", "#1baf7a", "#0d6b49",
                                                      "#7a5bd6", "#898781")
-plt.rcParams.update({"font.size": 8.5, "axes.edgecolor": "#c3c2b7", "axes.labelcolor": INK, "xtick.color": MUTED,
+plt.rcParams.update({"font.size": 9.5, "axes.edgecolor": "#c3c2b7", "axes.labelcolor": INK, "xtick.color": MUTED,
                      "ytick.color": MUTED, "axes.spines.top": False, "axes.spines.right": False, "legend.frameon": False})
 NAME = {"sf60_s3": "Self Forcing DMD", "sf60_s0": "SF, no sink", "sf60_s1": "SF, sink 1", "sf60_s6": "SF, sink 6",
         "sf60_s3rr": "SF, sink 3 re-rotated", "sf60_s1rr": "SF, sink 1 re-rotated", "ll60_s3": "LongLive",
@@ -50,7 +50,7 @@ if at:
                 A[c] = v["60"]
     A = {c: v for c, v in A.items() if v}
     order = sorted(A, key=lambda c: A[c]["mean"])
-    fig = plt.figure(figsize=(10.5, 4.2))
+    fig = plt.figure(figsize=(10.5, 4.9))
     ax = fig.add_subplot(1, 3, 1)
     for i, c in enumerate(order):
         errbar(ax, A[c]["mean"], i, A[c]["ci"], color=BLUE, label="60 s" if i == 0 else None)
@@ -76,9 +76,11 @@ if at:
                 k = np.ones(3) / 3
                 ax.plot(t[1:-1], np.convolve(a, k, "valid"), color=col, ls=ls, lw=1.6, label=NAME[c])
         ax.axhline(0, color=MUTED, lw=.8)
+        ax.axvspan(31, 35, color=GRID, alpha=.5, lw=0)
+        ax.axvspan(50, 54, color=GRID, alpha=.5, lw=0)
         ax.set_xlabel("seconds after the opening")
         ax.set_ylabel("persistence α(t)")
-        ax.legend(fontsize=6.8, ncol=2)
+        ax.legend(fontsize=6.6, ncol=2, loc="upper center", bbox_to_anchor=(0.5, -0.16))
         ax.set_title(title, fontsize=9, loc="left")
     fig.tight_layout()
     fig.savefig(f"{O}/fig_atlas.pdf")
@@ -89,7 +91,7 @@ ct = load("corr/content_out/content_results.json")
 TILES = os.path.join(os.path.dirname(__file__), "tiles")
 if ct:
     from PIL import Image
-    fig = plt.figure(figsize=(10.5, 6.4))
+    fig = plt.figure(figsize=(10.5, 5.2))
     rows = [("ctsnow0_mis_sf60_s3", "snow\ncity prompt"), ("ctsnow0_mat_sf60_s3", "snow\nsnow prompt"),
             ("ctdesert0_mis_sf60_s3", "desert\ncity prompt"), ("ctsnow0_mis_sf60_s0", "snow, no sink\ncity prompt")]
     gs = fig.add_gridspec(len(rows), 4, left=0.07, right=0.56, top=0.96, bottom=0.47, wspace=0.03, hspace=0.05)
@@ -122,7 +124,7 @@ if ct:
     ax.set_yticks([0, 0.2, 0.4, 0.6, 0.8, 1.0])
     ax.legend(fontsize=6.3, ncol=3, loc="lower center", columnspacing=0.9, handlelength=1.8)
     ax.set_title("(a) scene class over time", fontsize=9, loc="left")
-    ax = fig.add_axes([0.13, 0.07, 0.33, 0.30])
+    ax = fig.add_axes([0.13, 0.105, 0.33, 0.265])
     cfgs = [c for c in ("sf60_s3", "sf60_s0", "ll_s3", "ll_s0", "cv_s3", "gan_s3", "sid_s3", "rf") if c in ct["kappa"]]
     for i, c in enumerate(cfgs):
         for arm, col, dy in (("mis", BLUE, -0.15), ("mat", GREEN, 0.15)):
@@ -141,7 +143,7 @@ if ct:
                 ha="center", fontsize=6.6, color=GREEN)
     ax.set_ylim(len(cfgs) - 0.5, -1.0)
     ax.set_title("(b) the prompt sets the content default", fontsize=9, loc="left", pad=16)
-    ax = fig.add_axes([0.64, 0.07, 0.34, 0.30])
+    ax = fig.add_axes([0.64, 0.105, 0.34, 0.265])
     pairs = ct.get("spearman_kappa_alphaL", {}).get("pairs") if "spearman_kappa_alphaL" in ct else None
     if rel:
         xs, ys, ls_ = [], [], []
@@ -151,110 +153,102 @@ if ct:
             if v and rel["per_cfg"].get(r, {}).get("alpha_L"):
                 xs.append(rel["per_cfg"][r]["alpha_L"]["mean"]), ys.append(v["mean"]), ls_.append(NAME[c])
         ax.scatter(xs, ys, s=22, color=BLUE)
+        nudge = {"CausVid": (-4, -9), "SF, no sink": (4, -6), "SF-GAN": (-4, -11)}
         for x, y, l in zip(xs, ys, ls_):
-            ax.annotate(l, (x, y), textcoords="offset points", xytext=(3, 2), fontsize=6.3)
+            dx, dy = nudge.get(l, (3, 2))
+            ax.annotate(l, (x, y), textcoords="offset points", xytext=(dx, dy), fontsize=6.6,
+                        ha="right" if dx < 0 else "left")
         sp = ct.get("spearman_kappa_alphaL")
         ax.set_title(f"(c) content vs tone persistence" + (f" (ρ = {sp['rho']:.2f})" if sp else ""), fontsize=9, loc="left")
-    ax.set_xlabel("brightness persistence α_L at 31 s (study 06)")
+    ax.set_xlabel(r"brightness persistence $\alpha_L$ at 31 s (study 06)")
     ax.set_ylabel("content persistence κ at 30 s")
     fig.savefig(f"{O}/fig_content.pdf")
     print("ok content")
 
-# ---- FramePack (preregistration 11) --------------------------------------------------------------------------------
-fp, sk = load("corr/fp_out/fp_results.json"), load("corr/skyconf_out/skyov_results.json")
+# ---- FramePack (preregistration 11) and the world model (preregistration 15) ---------------------------------------
+fp, sk, mg = load("corr/fp_out/fp_results.json"), load("corr/skyconf_out/skyov_results.json"), \
+    load("corr/mg_out/mg_explore_15s.json")
 if fp:
-    fig, ax = plt.subplots(1, 2, figsize=(8.2, 3.2))
-    for c, col, lab in (("fpv_both", BLUE, "FramePack-F1, opening in context + conditioning"),
-                        ("fpv_ctx", ORANGE, "FramePack-F1, opening shift in context only"),
-                        ("fpv_emb", GREEN, "FramePack-F1, opening shift in conditioning only"),
-                        ("fpi_both", NAVY, "FramePack inverted anti-drifting")):
+    fig, ax = plt.subplots(1, 2, figsize=(9.6, 3.3))
+    for c, col, lab in (("fpv_both", BLUE, "both routes"), ("fpv_ctx", ORANGE, "context only"),
+                        ("fpv_emb", GREEN, "image embedding only"), ("fpi_both", NAVY, "both, anti-drifting sampler")):
         v = fp["alpha"].get(c, {})
         if v:
-            t = sorted(int(k) for k in v)
-            m = [v[str(k)]["mean"] for k in t]
-            ax[0].plot(t, m, "o-", color=col, lw=1.6, ms=3.5, label=lab)
-            ax[0].fill_between(t, [v[str(k)]["ci"][0] for k in t], [v[str(k)]["ci"][1] for k in t], color=col, alpha=.12, lw=0)
+            tt = sorted(int(k) for k in v)
+            ax[0].plot(tt, [v[str(k)]["mean"] for k in tt], "o-", color=col, lw=1.6, ms=3.5, label=lab)
+            ax[0].fill_between(tt, [v[str(k)]["ci"][0] for k in tt], [v[str(k)]["ci"][1] for k in tt], color=col, alpha=.12, lw=0)
     if sk:
-        for key, ls, lab in (("17", "--", "SkyReels-V2 DF, 17 overlap frames"), ("5", ":", "SkyReels-V2 DF, 5 overlap frames")):
+        for key, ls, lab in (("17", "--", "SkyReels, 17 overlap frames"), ("5", ":", "SkyReels, 5 overlap frames")):
             tc = sk["time_course"].get(key)
             if tc:
-                t = sorted(float(k) for k in tc)
-                ax[0].plot(t, [tc[k] if not isinstance(tc[k], dict) else tc[k]["mean"] for k in map(lambda x: f"{x:g}", t)],
-                           color=GREY, ls=ls, lw=1.4, label=lab)
-    ax[0].axhline(0, color=MUTED, lw=.8)
-    ax[0].axhline(1, color=GRID, lw=.8)
-    ax[0].set_xlabel("seconds after the opening")
+                tt = sorted(float(k) for k in tc)
+                ax[0].plot(tt, [tc[f"{x:g}"] for x in tt], color=GREY, ls=ls, lw=1.3, label=lab)
+    ax[0].set_title("(a) FramePack (13B, HunyuanVideo-based)", fontsize=9, loc="left")
+    if mg:
+        for c, col, lab in (("mg_both", BLUE, "both routes"), ("mg_ctx", ORANGE, "context only"),
+                            ("mg_emb", GREEN, "image embedding only")):
+            v = mg["alpha"].get(c, {})
+            tt = sorted(int(k) for k in v)
+            ax[1].plot(tt, [v[str(k)]["est"] for k in tt], "o-", color=col, lw=1.6, ms=3.5, label=lab)
+            ax[1].fill_between(tt, [v[str(k)]["ci"][0] for k in tt], [v[str(k)]["ci"][1] for k in tt], color=col, alpha=.12, lw=0)
+        ax[1].set_title("(b) Matrix-Game-2.0 world model (exploratory 15 s)", fontsize=9, loc="left")
+    for a_ in ax:
+        a_.axhline(0, color=MUTED, lw=.8)
+        a_.axhline(1, color=GRID, lw=.8)
+        a_.set_xlabel("seconds after the opening")
+    ax[0].legend(fontsize=6.3, loc="center right", bbox_to_anchor=(1.0, 0.30), ncol=2, columnspacing=0.8)
+    ax[1].legend(fontsize=6.5, loc="center right")
     ax[0].set_ylabel("persistence α(t)")
-    ax[0].legend(fontsize=6.3)
-    ax[0].set_title("(a) persistence over time (12 scenes)", fontsize=9, loc="left")
-    b = fp["alpha"]
-    names = [("fpv_both", "both"), ("fpv_ctx", "context only"), ("fpv_emb", "conditioning only"), ("fpi_both", "inverted")]
-    for i, (c, lab) in enumerate(names):
-        v = b.get(c, {}).get("20")
-        if v:
-            ax[1].bar(i, v["mean"], color=[BLUE, ORANGE, GREEN, NAVY][i], width=.6)
-            ax[1].errorbar(i, v["mean"], yerr=[[v["mean"] - v["ci"][0]], [v["ci"][1] - v["mean"]]], color=INK, lw=1)
-    ax[1].set_xticks(range(len(names)), [l for _, l in names], fontsize=7.5)
-    ax[1].axhline(0, color=MUTED, lw=.8)
-    ax[1].set_ylabel("persistence α at 20 s")
-    ax[1].set_title("(b) which route of the opening is kept", fontsize=9, loc="left")
     fig.tight_layout()
     fig.savefig(f"{O}/fig_framepack.pdf")
     print("ok framepack")
 
-# ---- drift decomposition (existing data) ---------------------------------------------------------------------------
+# ---- inputs of the combined mechanism figure ------------------------------------------------------------------
 dc = load("corr/review_out/review_analyses.json")
-if dc:
+ps = load("corr/pswap_out/pswap_results.json")
+
+# ---- combined mechanism figure: drift decomposition + prompt pull ----------------------------------------------------
+if dc and ps:
+    fig, ax = plt.subplots(1, 3, figsize=(10.5, 2.9))
     P = dc["A_decomposition"]["per_cfg"]
     LONG = {"ll_s3", "ll_s0", "rf"}
-    fig, ax = plt.subplots(figsize=(4.4, 3.4))
     for c, v in P.items():
-        col = ORANGE if c in LONG else BLUE
-        ax.scatter(v["alpha"], v["offset"], s=26, color=col)
+        ax[0].scatter(v["alpha"], v["offset"], s=22, color=ORANGE if c in LONG else BLUE)
         off = {"sf_s3": (-30, 6), "sidv2_s3": (4, 4), "sf10s_s3": (4, -9), "ll_s0": (4, 3), "ll_s3": (4, -8)}.get(c, (3, 2))
-        ax.annotate({"sf_s3": "SF-DMD"}.get(c, NAME.get(c, c)), (v["alpha"], v["offset"]), textcoords="offset points", xytext=off, fontsize=6.3)
-    ax.scatter([], [], color=ORANGE, s=26, label="trained for long rollouts")
-    ax.scatter([], [], color=BLUE, s=26, label="trained on 5–10-s clips")
-    ax.axhline(0, color=MUTED, lw=.8)
-    ax.set_xlabel("persistence α of the opening (31 s)")
-    ax.set_ylabel("attractor offset: fresh end − fresh start (L*)")
-    ax.legend(fontsize=7)
-    ax.set_title("Two separate components of drift", fontsize=9, loc="left")
-    fig.tight_layout()
-    fig.savefig(f"{O}/fig_decomposition.pdf")
-    print("ok decomposition")
-
-# ---- prompt pull (preregistration 14) ------------------------------------------------------------------------------
-ps = load("corr/pswap_out/pswap_results.json")
-if ps:
-    fig, ax = plt.subplots(1, 2, figsize=(7.4, 2.9))
-    ax[0].axhspan(0.04, 0.14, color=GRID, alpha=.6, lw=0, label="predicted by the 120-s fit")
+        ax[0].annotate({"sf_s3": "SF-DMD"}.get(c, NAME.get(c, c)), (v["alpha"], v["offset"]), textcoords="offset points",
+                       xytext=off, fontsize=7)
+    ax[0].scatter([], [], color=ORANGE, s=22, label="trained for long rollouts")
+    ax[0].scatter([], [], color=BLUE, s=22, label="trained on 5–10-s clips")
+    ax[0].axhline(0, color=MUTED, lw=.8)
+    ax[0].set_xlabel("persistence α of the opening (31 s)")
+    ax[0].set_ylabel("fresh end − fresh start (L*)")
+    ax[0].legend(fontsize=7.2, loc="upper right")
+    ax[0].set_title("(a) forgetting vs attractor offset", fontsize=9, loc="left")
+    ax[1].axhspan(0.04, 0.14, color=GRID, alpha=.6, lw=0, label="predicted (120-s fit)")
     for s, col, lab, dx in (("3", BLUE, "sink 3", -0.25), ("0", GREY, "no sink", 0.25)):
         v = ps["w_p"][s]
         ks = sorted(int(k) for k in v)
         x = np.array([k * 0.75 for k in ks]) + dx
         m = np.array([v[str(k)]["mean"] for k in ks])
-        lo = np.array([v[str(k)]["ci"][0] for k in ks])
-        hi = np.array([v[str(k)]["ci"][1] for k in ks])
-        ax[0].errorbar(x, m, yerr=[m - lo, hi - m], fmt="o-", color=col, ms=4, lw=1.3, label=lab)
-    ax[0].set_xlabel("time of the swapped chunk (s)")
-    ax[0].set_ylabel("prompt pull $w_p$ per chunk")
-    ax[0].set_xticks([6, 15, 30])
-    ax[0].legend(fontsize=6.8, loc="upper left")
-    ax[0].set_title("(a) the prompt's per-chunk pull", fontsize=9, loc="left")
+        lo, hi = np.array([v[str(k)]["ci"][0] for k in ks]), np.array([v[str(k)]["ci"][1] for k in ks])
+        ax[1].errorbar(x, m, yerr=[m - lo, hi - m], fmt="o-", color=col, ms=4, lw=1.3, label=lab)
+    ax[1].set_xlabel("time of the swapped chunk (s)")
+    ax[1].set_ylabel("prompt pull $w_p$ per chunk")
+    ax[1].set_xticks([6, 15, 30])
+    ax[1].legend(fontsize=6.5, loc="upper left")
+    ax[1].set_title("(b) the prompt's pull, by replay", fontsize=9, loc="left")
     MU = {"sunny": 42.9, "overcast": 33.6, "dusk": 19.1, "night": 16.0}
     for k, mk in (("8", "o"), ("20", "s"), ("40", "^")):
         r = ps["ratio"]["3"][k]
-        xs = [MU[b] - 33.1 for b in r]
-        ax[1].scatter(xs, [r[b] * (MU[b] - 33.1) for b in r], marker=mk, color=BLUE, s=22,
+        ax[2].scatter([MU[b] - 33.1 for b in r], [r[b] * (MU[b] - 33.1) for b in r], marker=mk, color=BLUE, s=20,
                       label={"8": "6 s", "20": "15 s", "40": "30 s"}[k])
     pl = ps["placebo_overcast_dL"]["3"]
-    ax[1].scatter([0.5] * 3, [pl[k]["mean"] for k in ("8", "20", "40")], marker="x", color=ORANGE, s=22, label="overcast (placebo)")
-    ax[1].axhline(0, color=MUTED, lw=.8), ax[1].axvline(0, color=MUTED, lw=.8)
-    ax[1].set_xlabel("default of swapped prompt − generic (L*)")
-    ax[1].set_ylabel("change of the chunk (L*)")
-    ax[1].legend(fontsize=6.8, loc="upper left")
-    ax[1].set_title("(b) one swapped chunk, sink 3", fontsize=9, loc="left")
+    ax[2].scatter([0.5] * 3, [pl[k]["mean"] for k in ("8", "20", "40")], marker="x", color=ORANGE, s=20, label="same default")
+    ax[2].axhline(0, color=MUTED, lw=.8), ax[2].axvline(0, color=MUTED, lw=.8)
+    ax[2].set_xlabel("default of swapped prompt − generic (L*)")
+    ax[2].set_ylabel("change of the chunk (L*)")
+    ax[2].legend(fontsize=6.5, loc="upper left")
+    ax[2].set_title("(c) one swapped chunk, sink 3", fontsize=9, loc="left")
     fig.tight_layout()
-    fig.savefig(f"{O}/fig_pswap.pdf")
-    print("ok pswap")
+    fig.savefig(f"{O}/fig_mech.pdf")
+    print("ok mech")

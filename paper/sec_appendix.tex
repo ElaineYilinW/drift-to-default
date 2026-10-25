@@ -1,0 +1,166 @@
+%=====================================================================================================================
+\section{Models, preregistered tests, deviations and withdrawn claims}\label{app:prereg}
+\input{tab_models_block.tex}
+\input{tab_primary.tex}
+
+\paragraph{Deviations from the preregistrations.}
+\begin{itemize}
+\item \emph{Study 1} was frozen before analysis but after generation of its main videos had started, and its arms were
+not pinned to one GPU architecture: 62\% of its nominal seed pairs ran on different architectures. Its preregistered
+Wald intervals are reported; the prompt-cluster bootstrap interval for the main contrast is wider (\ci{-10.45}{-5.39}
+for $D$) but leads to the same conclusion.
+\item \emph{Study 3:} a preempted job resumed on another GPU type and split four LongLive openings across
+architectures. We regenerated the affected arms on the original architecture; conclusions are unchanged.
+\item \emph{Study 6:} the ODE-initialised Self Forcing student was replaced by SiD v2 before generation (it collapses to
+blur after the opening). GPU pinning was replaced by an architecture guard that regenerates a task's outputs when a
+resumed job lands on another architecture; paired arms of each preregistered contrast always share a task. Exploratory
+configurations (sink 1; correction on LongLive and CausVid) were added after freezing but before any data, from
+separate task lists, so their contrasts with the preregistered arms are not guaranteed to share an architecture.
+Prompt-only reference rollouts were renamed after generation; no analysis code changed.
+\item \emph{Study 7} reuses the 24 scenes of study 6, including the 6 whose 120-s curves motivated it. Restricted to the
+18 other scenes, the sink effect is $+0.53$ \ci{0.42}{0.63} (Self Forcing) and $+0.18$ \ci{0.13}{0.24} (CausVid).
+\item \emph{Studies 10 and 11} were run on two non-preemptible 4-GPU jobs and A40-only array tasks instead of the
+preregistered all-queue arrays, because no large GPU was free on the shared queue; all their videos ran on A40 GPUs, so
+pairing is unaffected. The other studies ran as preregistered.
+\end{itemize}
+
+\paragraph{Withdrawn or revised claims.} During the project we withdrew four claims after checks: that MUSIQ rewards
+collapsed videos (it is merely insensitive); that the sink stabilises the default (trend difference $+0.5$
+\ci{-2.4}{3.5}); that the model follows its context by 76\% (true only for artificial shifts); and that early dynamics
+forecast the final brightness. The recursion's predicted Self Forcing plateau of 0.25--0.54 was missed (0.58 at 60\,s).
+
+%=====================================================================================================================
+\section{Drift metrics for prompt-only rollouts}\label{app:metrics}
+For rollouts without a held opening, drift is measured against 10 (Self Forcing) or 5 (LongLive) fresh 5-s generations
+of the same prompt. $D$ is the per-frame Mahalanobis distance of (Lab means, saturation, log sharpness) from the fresh
+frames' distribution, and $K$ the mean cosine distance of a frame's DINOv2 feature to its 5 nearest fresh-frame
+features, normalised by the fresh clips' own value; both are averaged over seconds 29--31. Transitions kept is the
+median over held-out transition prompts of the corrected over the uncorrected first-to-last brightness change; values
+above 1 mean the correction amplified the change.
+
+%=====================================================================================================================
+\section{Robustness}\label{app:robust}
+\begin{table}[h]
+\centering\scriptsize
+\caption{Persistence over the same window, 15--20\,s after the opening, for every model (exploratory; scene-bootstrap
+95\% CIs; Matrix-Game: scenes without a black second before 20\,s).}
+\label{tab:matched}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Configuration & $\alpha$ & 95\% CI & scenes \\
+\midrule
+SkyReels-V2-DF, 17 overlap frames & 1.01 & [0.89, 1.15] & 12 \\
+FramePack-I2V, anti-drifting sampler & 0.86 & [0.79, 0.92] & 12 \\
+SkyReels-V2-DF, 5 overlap frames & 0.77 & [0.64, 0.90] & 12 \\
+Self Forcing DMD, sink 6 & 0.72 & [0.65, 0.78] & 24 \\
+FramePack-F1, both routes & 0.68 & [0.56, 0.78] & 12 \\
+Rolling Forcing & 0.64 & [0.60, 0.67] & 24 \\
+Self Forcing GAN & 0.61 & [0.54, 0.67] & 24 \\
+Self Forcing 10-s & 0.54 & [0.46, 0.63] & 24 \\
+FramePack-F1, context prefix only & 0.53 & [0.31, 0.76] & 12 \\
+Self Forcing DMD, sink 3 & 0.49 & [0.44, 0.53] & 24 \\
+Self Forcing DMD, no sink & 0.44 & [0.38, 0.51] & 24 \\
+Self Forcing DMD, sink 3 re-rotated & 0.38 & [0.28, 0.46] & 24 \\
+Matrix-Game-2.0, both routes & 0.37 & [0.22, 0.52] & 17 \\
+Self Forcing SiD & 0.34 & [0.24, 0.46] & 24 \\
+LongLive, sink 3 & 0.33 & [0.25, 0.40] & 24 \\
+Self Forcing DMD, sink 1 re-rotated & 0.33 & [0.25, 0.41] & 24 \\
+Self Forcing DMD, sink 1 & 0.29 & [0.17, 0.41] & 24 \\
+Self Forcing SiD v2 & 0.24 & [0.11, 0.36] & 24 \\
+Matrix-Game-2.0, embedding only & 0.22 & [0.06, 0.36] & 17 \\
+CausVid, sink 3 & 0.21 & [0.16, 0.26] & 24 \\
+Matrix-Game-2.0, context only & 0.10 & [-0.02, 0.22] & 17 \\
+LongLive, no sink & 0.08 & [0.04, 0.12] & 24 \\
+CausVid, no sink & 0.08 & [0.04, 0.12] & 24 \\
+FramePack-F1, embedding only & 0.01 & [-0.14, 0.17] & 12 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\centering\small
+\caption{Every global statistic relaxes toward a default (observational; 40 held openings, generic prompt, 31\,s).
+Persistence = 1 + slope of the change on the opening value; $r$ = correlation of the change with the opening value.}
+\label{tab:attr}
+\begin{tabular}{lcccc}
+\toprule
+& \multicolumn{2}{c}{Self Forcing} & \multicolumn{2}{c}{LongLive} \\
+Statistic & persistence & $r$ & persistence & $r$ \\
+\midrule
+\Lstar{} & 0.31 & $-0.91$ & 0.26 & $-0.81$ \\
+$a^*$ & 0.38 & $-0.92$ & 0.39 & $-0.90$ \\
+$b^*$ & 0.22 & $-0.88$ & 0.42 & $-0.80$ \\
+saturation & 0.54 & $-0.92$ & 0.23 & $-0.95$ \\
+log sharpness & 0.37 & $-0.91$ & 0.23 & $-0.94$ \\
+\Lstar{} contrast & 0.34 & $-0.82$ & 0.37 & $-0.79$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Linearity.} For 12 of 14 configurations the persistence estimated from $\pm8$ and from $\pm16$ shifts differs
+by at most 0.09, with intervals including 0. SiD and the sink-1 configuration give near-zero slopes for small shifts
+($-0.10$, $-0.15$) and positive ones for large shifts (0.18, 0.10); LongLive with a sink keeps a darkening better than
+a brightening (0.36 vs 0.04). The linear law is a first-order description.
+
+\paragraph{The 60-s endpoint and the positional bursts.} The preregistered 60-s window, 50--60\,s, overlaps the
+second burst. Over 40--50\,s, Self Forcing keeps 0.48 with a three-frame sink and 0.20 with a re-rotated one (difference
+$-0.27$ \ci{-0.38}{-0.16}); over the full period 35--60\,s, 0.53 and 0.19. Sink depth is monotone in every window
+(40--50\,s: no sink 0.08, one frame 0.23, three 0.48, six 0.63). Some curves are not monotone decays (GAN and SiD v2 lose
+part of the shift early and regain it), and Rolling Forcing is still declining at 60\,s. In the 120-s subset of study 6
+(6 scenes), Self Forcing with a sink keeps 0.54, 0.48 and 0.44 at 60, 90 and 118\,s. No value we report is shown to
+be an asymptote; $x_\infty$ in Eq.~\ref{eq:law} denotes the long-run tendency, and $\alpha$ is always reported with its
+horizon.
+
+\paragraph{The default and fresh rollouts.} Across 10 configurations, the zero-drift level correlates $r=0.93$ with
+where prompt-only rollouts end, but the slope is 1.58 and the mean absolute difference 4.9~\Lstar{} (largest for the
+GAN and SiD v2 checkpoints, whose zero-drift levels are extrapolated from slopes far from 0). Fresh rollouts give the
+direction and rough size of the default, not its exact value.
+
+\paragraph{Persistence depends on the prompt.} In the lighting experiment, the slope of the 31-s change on the
+opening differs between lighting prompts on Self Forcing (prompt $\times$ opening interaction, opening-clustered Wald
+test $p=0.001$): persistence is 0.34 under sunny, 0.24 overcast, 0.17 dusk and 0.05 night prompts. On LongLive the
+interaction is weaker ($p=0.053$). Dark defaults compress the range of brightness the model produces, which may explain
+part of this. Study 12 confirms the prompt dependence in four new scene types (Section~\ref{sec:default}).
+
+\paragraph{Real and generated openings.} On Self Forcing, real and generated openings fall on the same line
+($p=0.80$); on LongLive, generated openings end 4.3~\Lstar{} brighter than real ones of equal brightness ($p=0.03$).
+
+\section{The default and the forecast}\label{app:default}
+\begin{figure}[h]
+\centering
+\includegraphics[width=\linewidth]{fig_default.pdf}
+\caption{Brightness change after 31\,s against the opening's brightness (one dot per opening, generic or lighting prompt): (a) real and generated openings follow one line; (b) four lighting prompts set four defaults (Self Forcing); (c) two models: similar slopes, different defaults.}
+\label{fig:default}
+\end{figure}
+
+\paragraph{How well does the law forecast?} Taking $\alpha$ and the generic default from the relaxation study and the
+lighting defaults from the lighting experiment (different scenes and openings), $\Delta L \approx
+(1-\alpha)(\mu-L_{\text{open}})$ predicts the 31-s brightness change of each opening in the calibrated-lighting study
+with $r=0.82$ (Self Forcing) and $0.77$ (LongLive), mean absolute error 3.8~\Lstar. Most of this correlation reflects
+the opening's brightness. The forecast of the \emph{benefit} of calibration per opening is weaker ($r=0.46$ and $0.58$),
+and its mean is overpredicted ($-4.5$ predicted vs $-3.2$ and $-2.8$ observed~\Lstar). The law is a first-order guide
+to a prompt choice, not a precise forecast.
+
+%=====================================================================================================================
+\section{Pitfalls for evaluating long-video models}\label{app:pitfalls}
+\begin{enumerate}
+\item \textbf{The GPU architecture changes the video.} With bf16, outputs are bit-identical within an architecture and
+differ across A40, A100/A800 and L40S/RTX~6000 Ada. Paired designs must pin or guard the architecture.
+\item \textbf{Resumed jobs can silently break pairing.} Generators that skip existing outputs resume a preempted job
+wherever it lands.
+\item \textbf{Image-quality scores miss drift.} MUSIQ, used by VBench for imaging quality, varies only between 66 and 69
+across context strategies whose colour drift differs threefold.
+\item \textbf{Natural variation is too small to estimate persistence.} Within a prompt, seeds start only about 2~\Lstar{}
+apart, so within-prompt slopes of end on start brightness have intervals of about $\pm0.4$; controlled shifts are needed.
+\item \textbf{Change-on-baseline regressions mislead.} Regressing change on a baseline measured with error produces
+spurious regression to the mean~\cite{oldham,barnett}. Held openings are measured almost without error, and the
+interventional design removes the issue.
+\end{enumerate}
+
+%=====================================================================================================================
+\section{Context strategies (study 1)}\label{app:ctx}
+A preregistered factorial study of 10 window and sink strategies on Self Forcing (40 prompts $\times$ 4 seeds, 31\,s)
+found that a 3-frame sink cuts colour drift $D$ by 7.56 \ci{6.81}{8.32} and DINOv2 drift $K$ by 0.90; that window size
+matters only without a sink; and that re-rotating the sink's positions, which Self Forcing was not trained for, does
+not reduce $D$ ($-0.03$ \ci{-0.79}{0.72}) and increases $K$ ($+0.36$). Darkening persists with a sink (last-2-s $z_L =
+-1.99$). $D$ and $K$ rise roughly linearly over 31\,s under every strategy, without a visible plateau.

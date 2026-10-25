@@ -7,6 +7,7 @@ C  lighting study: per-prompt slopes of the change on the opening with opening-c
    cluster-robust Wald test of the prompt x opening interaction (Self Forcing and LongLive).
 D  SkyReels: share of scenes with alpha > 1, and persistence against the number of autoregressive extensions.
 E  exponential fits alpha(t) = a_inf + (1 - a_inf) exp(-t / tau) from the preregistration-06 results.
+(Intervals for the share of legitimate transitions kept are in review2_analyses.py, from the preregistered statistic.)
 usage: python review_analyses.py LABPACK_DIR RESULTS_DIR OUT_JSON
 """
 import json
@@ -106,23 +107,3 @@ res["E_exponential_fits_31s"] = {c: d.get("fit") for c, d in rel.items() if d.ge
 json.dump(res, open(out, "w"), indent=1, default=float)
 print(json.dumps({k: v for k, v in res.items() if k in ("B_study7_independent_scenes",)}, indent=1))
 print(json.dumps(res["A_decomposition"]["zero_vs_fresh"]), {m: (v["interaction_wald_p_cluster"], {k: round(x["persistence"], 2) for k, x in v["per_prompt"].items()}) for m, v in CL.items()})
-
-# F ------------------------------------------------------------------------------------------------------------------
-# transitions kept: per valid control prompt, mean |dL_end| with the method / without; median over prompts with a
-# prompt-bootstrap CI, and the pooled ratio of means; boundary jumps and jitter relative to no correction (drift set)
-V = pd.read_csv(f"{R}/corr/baseline_out/videos.csv")
-valid = ["cfm_canyon_out", "cfm_cloud_cover", "cfm_garage_in", "cfm_garage_out", "cfm_meadow_out", "cfm_underpass",
-         "cfm_warehouse_in"]
-ctl = V[(V.set == "control") & V.prompt.isin(valid)].assign(a=lambda d: d.dL_end.abs()).groupby(["prompt", "arm"]).a.mean().unstack()
-F = {}
-for arm in ("ttc_s1", "ttc_s1_b15", "phmean", "phreinhard"):
-    k = (ctl[arm] / ctl["none"]).values
-    bs = [np.median(rng.choice(k, len(k))) for _ in range(10000)]
-    dr = V[V.set == "drift"].groupby("arm")[["boundary", "jitter"]].mean()
-    F[arm] = dict(kept_by_prompt=dict(zip(ctl.index, np.round(k, 2).tolist())), median=float(np.median(k)),
-                  median_ci=np.percentile(bs, [2.5, 97.5]).tolist(), pooled=float(ctl[arm].mean() / ctl["none"].mean()),
-                  boundary_ratio=float(dr.loc[arm, "boundary"] / dr.loc["none", "boundary"]),
-                  jitter_ratio=float(dr.loc[arm, "jitter"] / dr.loc["none", "jitter"]))
-res["F_transitions_kept"] = F
-json.dump(res, open(out, "w"), indent=1, default=float)
-print(json.dumps({a: {k: v for k, v in f.items() if k != "kept_by_prompt"} for a, f in F.items()}, indent=1))

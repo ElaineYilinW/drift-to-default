@@ -1,0 +1,20 @@
+\begin{table}[h]
+\centering\scriptsize
+\caption{Configurations. Wan-based cache models generate 832$\times$480 at 16\,fps in chunks of 3 latent frames
+(0.75\,s); window and sink sizes are in latent frames.}
+\label{tab:models}
+\begin{tabular}{@{}p{3.6cm}p{4.6cm}p{1.2cm}p{4.4cm}@{}}
+\toprule
+Configuration & Base; training & Steps & Context of the opening \\
+\midrule
+Self Forcing DMD, SiD, SiD v2, GAN~\cite{selfforcing,dmd,sid} & Wan2.1-1.3B; self-rollout on 5-s clips & 4 & window 21; sink 0/1/3/6, original or re-rotated positions \\
+Self Forcing 10\,s & Wan2.1-1.3B; self-rollout on 10-s clips & 4 & window 21, sink 3 \\
+CausVid~\cite{causvid} & Wan2.1-1.3B; teacher-forced DMD & 3 & window 21, sink 0/3 \\
+LongLive~\cite{longlive} & Wan2.1-1.3B; long-rollout tuning & 4 & window 12, sink 0/3 \\
+Rolling Forcing~\cite{rollingforcing} & Wan2.1-1.3B; rolling joint denoising & 5 & anchor block + 21 \\
+SkyReels-V2-DF~\cite{skyreels} & Wan2.1-1.3B architecture; diffusion forcing; 544p, 24\,fps & 30 + CFG & 17 (or 5) re-denoised overlapping frames \\
+Matrix-Game-2.0~\cite{matrixgame2} & Wan2.1-1.3B architecture, no text; actions; 352$\times$640, 25\,fps & 3 & first latent frame only, window 6, no sink; CLIP image embedding \\
+FramePack-F1 / I2V~\cite{framepack} & HunyuanVideo 13B; 480p, 30\,fps & 25 & clean prefix in every section; SigLIP image embedding \\
+\bottomrule
+\end{tabular}
+\end{table}

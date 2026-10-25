@@ -2,10 +2,14 @@
 % intervals are 95% (Wald for studies 1-2 as preregistered, bootstrap otherwise); p is Holm-adjusted within the study.
 \begin{table}[h]
 \centering\scriptsize
-\caption{All preregistered primary tests and their outcomes. Units: $D$, $K$ drift metrics; $|\Delta L|$ in \Lstar{};
+\caption{All preregistered primary tests and their outcomes. Intervals are Wald intervals from the preregistered mixed
+models in studies 1, 2 and 13 and bootstrap intervals otherwise; $p$ is Holm-adjusted within each study (no correction
+across studies). Study 3 LongLive rows are as executed; after regenerating four cross-architecture openings the
+conclusions are unchanged. Units: $D$, $K$ drift metrics; $|\Delta L|$ in \Lstar{};
 $\alpha$ persistence. Arms: G generic prompt, M VLM caption of the opening, C calibrated lighting plus caption, ttc
 content-aware correction.}
 \label{tab:primary}
+\setlength{\tabcolsep}{4.5pt}
 \begin{tabular}{@{}llllll@{}}
 \toprule
 Study & Test & Model & Estimate [95\% CI] & $p_{\text{Holm}}$ & Outcome \\
@@ -33,6 +37,25 @@ Study & Test & Model & Estimate [95\% CI] & $p_{\text{Holm}}$ & Outcome \\
 7 Sink at 60\,s & sink $-$ no sink, $\alpha_L$ & SF & $+0.55$ \ci{0.45}{0.65} & $<10^{-9}$ & supported \\
   & sink $-$ no sink, $\alpha_L$ & CausVid & $+0.19$ \ci{0.14}{0.24} & $<10^{-6}$ & supported \\
 8 Overlap & 5 $-$ 17 frames, $\alpha_L$ (20\,s) & SkyReels & $-0.24$ \ci{-0.40}{-0.09} & 0.014 & supported \\
+9 Content & class $-$ city prompt, class score (30\,s) & SF & $+9.33$ \ci{8.11}{10.51} & $<10^{-9}$ & supported \\
+  & sink $-$ no sink, $\kappa$ (30\,s) & LL & $-0.02$ \ci{-0.10}{0.07} & 0.72 & not supported \\
+  & sink $-$ no sink, $\kappa$ (60\,s) & SF & $+0.48$ \ci{0.39}{0.57} & $<10^{-7}$ & supported \\
+10 Atlas & sink 6 $-$ sink 3, $\alpha_L$ (60\,s) & SF & $+0.15$ \ci{0.11}{0.20} & $<10^{-6}$ & supported \\
+  & sink 1 $-$ no sink, $\alpha_L$ (60\,s) & SF & $+0.24$ \ci{0.14}{0.34} & $<0.001$ & supported \\
+  & sink $-$ no sink, $\alpha_L$ (60\,s) & LL & $+0.46$ \ci{0.39}{0.53} & $<10^{-10}$ & supported \\
+  & re-rotated $-$ original sink, $\alpha_L$ (60\,s) & SF & $-0.44$ \ci{-0.54}{-0.35} & $<10^{-7}$ & supported \\
+11 FramePack & $\alpha$ (both routes, 20\,s) $> 0.5$ & FramePack-F1 & $0.68$ \ci{0.57}{0.79} & 0.033 & supported \\
+  & $\alpha$ (embedding only, 20\,s) $> 0$ & FramePack-F1 & $0.01$ \ci{-0.14}{0.17} & 0.87 & not supported \\
+  & both $-$ context only, $\alpha$ (20\,s) & FramePack-F1 & $+0.14$ \ci{-0.05}{0.33} & 0.38 & not supported \\
+12 Prompts & sink $-$ no sink, $\alpha_L$ (60\,s), 4 domains & SF & $+0.53$ \ci{0.45}{0.61} & $<10^{-10}$ & supported \\
+  & sink $-$ no sink, $\alpha_L$ (30\,s), 4 domains & LL & $+0.19$ \ci{0.11}{0.28} & 0.005 & supported \\
+  & $\alpha_L$ differs between domains (ANOVA) & SF & $F=3.12$ & 0.049 & supported \\
+13 Deep sink & sink 6, $D$ & SF & $-1.30$ \ci{-1.68}{-0.93} & $<10^{-6}$ & supported \\
+  & sink 9, $D$ & SF & $-1.93$ \ci{-2.31}{-1.55} & $<10^{-6}$ & supported \\
+14 Prompt pull & $w_p > 0$ at 15\,s (replay) & SF & $+0.088$ \ci{0.045}{0.149} & 0.006 & supported \\
+15 World model & ctx-only shift fades (30 vs 5\,s) & Matrix-Game & $-0.24$ \ci{-0.35}{-0.14} & 0.024 & supported \\
+  & emb-only shift persists, $\alpha$ (30\,s) & Matrix-Game & $+0.43$ \ci{0.13}{0.71} & 0.075 & not supported \\
+  & both $-$ ctx-only, $\alpha$ (30\,s) & Matrix-Game & $+0.33$ \ci{-0.07}{0.71} & 0.18 & not supported \\
 %NEWROWS
 \bottomrule
 \end{tabular}
