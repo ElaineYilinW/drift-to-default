@@ -22,7 +22,7 @@ Each preregistration was written and frozen before any of its videos were genera
 | [12](preregistrations/12_prompt_generality.md) | Prompt generality: sink effects under four non-driving prompts; does persistence depend on the prompt? | Sinks keep more (Self Forcing, LongLive); persistence differs between prompts | Running |
 | [13](preregistrations/13_deep_sink_baseline.md) | Deep-sink baseline: do deeper sinks reduce drift, and at what cost to legitimate changes? | Lower colour drift with sink 6 and sink 9 | Running |
 | [14](preregistrations/14_prompt_pull_replay.md) | Prompt pull: measure w_p by swapping only the text conditioning for one chunk | w_p > 0, in [0.04, 0.14] as the recursion predicts | Supported: 0.088 [0.045, 0.149], in the band; not time-invariant (0.26 at 30 s) |
-| [15](preregistrations/15_world_model.md) | World model (Matrix-Game-2.0): is an opening held only in the context forgotten, and does the image conditioning set the default? | Context-only shift fades; conditioning-only shift persists; conditioning adds persistence | Running |
+| [15](preregistrations/15_world_model.md) | World model (Matrix-Game-2.0): is an opening held only in the context forgotten, and does the image conditioning set the default? | Context-only shift fades; conditioning-only shift persists; conditioning adds persistence | 1 of 3 supported (only 7 of 24 scenes survive the model's collapse to black before 30 s); all three hold at 15 s (exploratory, 20 scenes) |
 
 ## Lab notes
 
@@ -47,5 +47,6 @@ Each preregistration was written and frozen before any of its videos were genera
 | [16](lab-notes/16_prompt_pull_results.md) | Prompt pull measured by replay (study 14) | w_p = 0.088, as predicted; triples by 30 s |
 | [17](lab-notes/17_content_relaxation_results.md) | Scene content relaxes (study 9) | Snow, desert, forest openings become city under a city prompt; the sink brings content back late |
 | [18](lab-notes/18_review_analyses.md) | Exploratory re-analyses for an internal review | Drift = forgetting + attractor offset; persistence depends on the prompt; study 7 holds on independent scenes |
+| [19](lab-notes/19_world_model_results.md) | Action-conditioned world model (study 15) | Context forgets, image conditioning sets the default; the model collapses to black near its training length |
 
 The lab notes use the folder and file names from before the repository was reorganised (for example `analyze_match.py` without its `analysis/` folder). [`results/README.md`](../results/README.md) maps every experiment to its script, its output folder and its note.
