@@ -1,6 +1,6 @@
 # Preregistrations: English translations
 
-These files are English translations of the fourteen preregistrations in the parent folder. The originals are in Chinese and were frozen, with SHA-256 hashes recorded, before data collection. The Chinese files are the authoritative versions. If a translation and its original disagree, the original wins.
+These files are English translations of the fifteen preregistrations in the parent folder. The originals are in Chinese and were frozen, with SHA-256 hashes recorded, before data collection. The Chinese files are the authoritative versions. If a translation and its original disagree, the original wins.
 
 Hashes, file paths, commands and formulas are copied verbatim from the originals. File names and paths inside the documents (for example `docs/preregistration_cn.md`) are the names used at freezing time.
 
@@ -20,3 +20,4 @@ Hashes, file paths, commands and formulas are copied verbatim from the originals
 | [`12_prompt_generality.md`](12_prompt_generality.md) | [`../12_prompt_generality.md`](../12_prompt_generality.md) | Relaxation and the sink effect under four non-driving prompts; does persistence depend on the prompt? (2026-10-24). |
 | [`13_deep_sink_baseline.md`](13_deep_sink_baseline.md) | [`../13_deep_sink_baseline.md`](../13_deep_sink_baseline.md) | Deeper attention sinks (6, 9 frames) as a training-free baseline for the content-aware correction (2026-10-24). |
 | [`14_prompt_pull_replay.md`](14_prompt_pull_replay.md) | [`../14_prompt_pull_replay.md`](../14_prompt_pull_replay.md) | Bit-exact KV-cache replay with the text conditioning swapped for one chunk: the prompt's per-chunk pull w_p (2026-10-24). |
+| [`15_world_model.md`](15_world_model.md) | [`../15_world_model.md`](../15_world_model.md) | An action-conditioned world model (Matrix-Game-2.0, no text prompt): context vs conditioning routes of the opening (2026-10-24). |
