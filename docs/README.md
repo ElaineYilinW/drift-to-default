@@ -23,6 +23,7 @@ Each preregistration was written and frozen before any of its videos were genera
 | [13](preregistrations/13_deep_sink_baseline.md) | Deep-sink baseline: do deeper sinks reduce drift, and at what cost to legitimate changes? | Lower colour drift with sink 6 and sink 9 | Supported (2 of 2): deeper sinks cut drift as much as the correction with less flicker, but keep fewer legitimate changes (0.59–0.70) |
 | [14](preregistrations/14_prompt_pull_replay.md) | Prompt pull: measure w_p by swapping only the text conditioning for one chunk | w_p > 0, in [0.04, 0.14] as the recursion predicts | Supported: 0.088 [0.045, 0.149], in the band; not time-invariant (0.26 at 30 s) |
 | [15](preregistrations/15_world_model.md) | World model (Matrix-Game-2.0): is an opening held only in the context forgotten, and does the image conditioning set the default? | Context-only shift fades; conditioning-only shift persists; conditioning adds persistence | 1 of 3 supported (only 7 of 24 scenes survive the model's collapse to black before 30 s); all three hold at 15 s (exploratory, 20 scenes) |
+| [16](preregistrations/16_rerotation_and_horizon.md) | Re-rotated sink and the 60-s horizon: does the late return of content vanish without the sink's original position; does a deep re-rotated sink keep more; do FramePack and SkyReels keep a share at 60 s? | Re-rotation removes the content return and lowers persistence (sink 3, sink 6); depth still helps; FramePack keeps a share; SkyReels overlaps keep forgetting | Running |
 
 ## Lab notes
 
