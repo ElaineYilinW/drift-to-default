@@ -25,6 +25,7 @@ Each preregistration was written and frozen before any of its videos were genera
 | [15](preregistrations/15_world_model.md) | World model (Matrix-Game-2.0): is an opening held only in the context forgotten, and does the image conditioning set the default? | Context-only shift fades; conditioning-only shift persists; conditioning adds persistence | 1 of 3 supported (only 7 of 24 scenes survive the model's collapse to black before 30 s); all three hold at 15 s (exploratory, 20 scenes) |
 | [16](preregistrations/16_rerotation_and_horizon.md) | Re-rotated sink and the 60-s horizon: does the late return of content vanish without the sink's original position; does a deep re-rotated sink keep more; do FramePack and SkyReels keep a share at 60 s? | Re-rotation removes the content return and lowers persistence (sink 3, sink 6); depth still helps; FramePack keeps a share; SkyReels overlaps keep forgetting | Running |
 | [17](preregistrations/17_framepack_content.md) | FramePack content routes: does scene content relax on a non-Wan model, and which route (context prefix or SigLIP embedding) carries it? | Content relaxes; the context prefix and the SigLIP embedding each carry content; the embedding adds persistence | Running |
+| [18](preregistrations/18_magi.md) | MAGI-1 (non-Wan, chunk-wise KV cache): does the released attention window forget the opening, and does full history keep a share? | The window forgets; full history keeps more; full history keeps a share | Running |
 
 ## Lab notes
 
