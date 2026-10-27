@@ -27,6 +27,7 @@ Each preregistration was written and frozen before any of its videos were genera
 | [17](preregistrations/17_framepack_content.md) | FramePack content routes: does scene content relax on a non-Wan model, and which route (context prefix or SigLIP embedding) carries it? | Content relaxes; the context prefix and the SigLIP embedding each carry content; the embedding adds persistence | Supported (4 of 4); content kept at 20 s 0.55 (both), 0.24 (context only), 0.23 (embedding only, rising) |
 | [18](preregistrations/18_magi.md) | MAGI-1 (non-Wan, chunk-wise KV cache): does the released attention window forget the opening, and does full history keep a share? | The window forgets; full history keeps more; full history keeps a share | Supported (3 of 3); persistence at 30 s 0.34 (window) vs 0.64 (full history); no freezing |
 | [19](preregistrations/19_magi_content_horizon.md) | MAGI-1 content and horizon: does scene content relax on MAGI-1, does full history keep more of it, does the prompt set it; does the released window keep forgetting to 60 s? | Content relaxes; full history keeps more; the prompt sets the default; the window keeps forgetting | Running |
+| [20](preregistrations/20_seed_replication.md) | New seeds for the Self Forcing sink results: do they hold with seeds 1-3, and does a re-rotated sink keep more than no sink? | The sink keeps a share; re-rotation lowers it; a re-rotated sink still keeps more than none | Running |
 
 ## Lab notes
 
