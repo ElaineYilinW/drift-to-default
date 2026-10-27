@@ -41,9 +41,24 @@ Content persistence is correlated with tone persistence across configurations ($
 Sinks act differently on content. Self Forcing's sink keeps more of it at 60\,s ($\kappa$ 0.61 vs 0.14, $+0.48$
 \ci{0.39}{0.57}, preregistered), but not steadily: $\kappa$ falls to 0.32 at 30\,s and rises again, and in the
 frames the dunes, the sea and the mountains of the opening reappear after a minute of city (Fig.~\ref{fig:content},
-left). It coincides with the positional bursts in tone persistence (Section~\ref{sec:mech}); study 16 tests whether
-it disappears with a re-rotated sink.
+left). The returns coincide with the positional bursts in tone persistence (Section~\ref{sec:mech}), and they are
+positional too (study 16, 24 openings): with the sink's keys re-rotated to sit just before the window, the second
+return vanishes (burst contrast $+0.31\to+0.01$, $-0.29$ \ci{-0.37}{-0.22}), the first as well ($+0.20\to-0.03$),
+and the content kept at 60\,s falls from 0.56 to 0.25 ($-0.31$ \ci{-0.37}{-0.25}); both tests were preregistered and
+hold on tone-normalised embeddings. A re-rotated sink keeps no detectably more content than no sink (0.25 vs 0.15,
+$+0.10$ \ci{-0.00}{0.21}, preregistered test not supported); its content curve lies on the no-sink curve. What a
+Self Forcing sink keeps of the scene, it keeps by periodically re-injecting the opening.
 LongLive's sink, which keeps tone, does not keep content (0.22 vs 0.24, preregistered test not supported).
+
+Content relaxes outside the Wan family too. FramePack, continuing the same 24 openings under the city prompt, keeps
+0.55 of the class evidence at 20\,s (Self Forcing: 0.40 with a sink, 0.31 without), and the class score falls by 6.7
+\ci{5.2}{8.3} log-odds (study 17, preregistered). We separated its two routes by giving the context prefix and the
+SigLIP embedding different images, the opening or a generated city frame. The context prefix alone keeps 0.24
+\ci{0.12}{0.37}, levelling off after 14\,s; the embedding alone, with a city frame in the context, starts at 0 and
+\emph{pulls} the video toward the opening's class, to 0.23 \ci{0.16}{0.30} at 20\,s and still rising
+(Fig.~\ref{fig:framepack}b); together they keep $+0.31$ \ci{0.20}{0.41} more than the context alone, about the sum of
+the two. All four preregistered tests hold, also on tone-normalised embeddings. The same embedding has no effect on tone
+(study 11), so in FramePack the image embedding sets the default of the scene but not of its brightness.
 
 \begin{figure}[t]
 \centering
@@ -99,9 +114,15 @@ of the opening and no sink 0.03 ($+0.55$ \ci{0.45}{0.65}); for CausVid 0.23 vs 0
 reverses an exploratory 31-s anomaly), and LongLive's sink keeps 0.45 against $-0.01$. The sink's \emph{position}
 matters even more. Self Forcing keeps the sink keys at their absolute rotary positions, ever further from the current
 chunk; re-rotating them to sit just before the window, as Rolling Forcing and Deep Forcing do, lowers persistence at
-60\,s from 0.61 to 0.16 ($-0.44$ \ci{-0.54}{-0.35}, preregistered two-sided). In the burst-free window 40--50\,s the
-effect is smaller but clear ($-0.27$ \ci{-0.38}{-0.16}), and persistence still grows with sink depth (0.08, 0.23, 0.48,
-0.63).
+60\,s from 0.61 to 0.16 ($-0.44$ \ci{-0.54}{-0.35}, preregistered two-sided). In the window 40--50\,s, between the
+bursts described below, the effect is smaller but clear ($-0.27$ \ci{-0.38}{-0.16}), and persistence still grows with
+sink depth (0.08, 0.23, 0.48, 0.63). Depth, however, helps only at the original positions (study 16, 24 scenes):
+re-rotation cuts a six-frame sink from 0.76 to 0.22 ($-0.54$ \ci{-0.63}{-0.46}), and re-rotated sinks of six and three
+frames keep the same share (0.22 vs 0.23, $-0.00$ \ci{-0.11}{0.10}; preregistered test of a depth effect not
+supported; 40--50\,s: $+0.03$ \ci{-0.09}{0.14}). Their curves coincide from 10\,s on. (The three-frame value is 0.16
+in study 10 because 9 of the 24 scenes ran on another GPU architecture this time, which amounts to resampling them;
+all 72 videos repeated on the same architecture were bit-identical.) A sink at in-distribution
+positions thus holds a small, steady share of tone (about 0.2) whatever its depth, and almost none of the scene.
 
 \paragraph{Re-conditioning on the opening keeps most of it.} SkyReels-V2-DF, which re-denoises the last 17 frames
 of each segment jointly with the new ones, does not relax ($\alpha = 0.96$ \ci{0.86}{1.07} at 20\,s), whatever its
@@ -118,6 +139,16 @@ anti-drifting sampling, which generates sections from the end back toward the op
 through the image embedding does nothing (0.01 \ci{-0.14}{0.17}; preregistered test not supported): in FramePack the
 image embedding does not carry tone. (We did not vary FramePack's text prompt.)
 
+\paragraph{A model of its own architecture.} MAGI-1~\cite{magi} shares neither architecture nor training with the
+other models, and its code lets us choose how long the opening stays in the context (study 18, 12 scenes, 30\,s). In
+the released configuration, which attends to the four previous 1-s chunks, the opening leaves the context after about
+4\,s; persistence is 0.87 at 5\,s and falls to 0.34 at 30\,s ($-0.52$ \ci{-0.70}{-0.35}) without levelling off
+(Fig.~\ref{fig:framepack}c). With full history the curves coincide for the first 5\,s and then separate: persistence
+levels off near 0.65 from 10\,s on (0.64 \ci{0.45}{0.83} at 30\,s, $+0.30$ \ci{0.17}{0.43} over the window). All three
+preregistered tests hold, and none of the 48 videos froze. Keeping the opening in context does not stop the shared
+drift: fresh rollouts brighten by 15--20~\Lstar{} under either setting, and the mean $|$end $-$ open$|$ is no smaller
+with full history (13.2 vs 11.2~\Lstar). Full history preserves the difference between openings, not their level.
+
 \paragraph{An action-conditioned world model.} Matrix-Game-2.0~\cite{matrixgame2} generates a world from an image and
 keyboard and mouse actions, with no text. The opening's latent enters only the first chunk and leaves the 6-frame
 key--value window after about a second (no sink); its CLIP~\cite{clip} embedding conditions every chunk. We continued
@@ -133,12 +164,14 @@ relaxing toward a default that moves with the conditioning; the two routes add u
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{fig_framepack.pdf}
-\caption{Two models that condition on the opening in two ways. (a) FramePack (study 11, 12 scenes): the opening's
-brightness shift sent through both routes, only the clean context prefix, or only the SigLIP image embedding; the
-anti-drifting sampler; SkyReels-V2 with 17 and 5 overlapping frames for reference. (b) Matrix-Game-2.0, an
-action-conditioned world model without text (study 15, exploratory 15-s analysis, 20 scenes): the context latent
-leaves the window and is forgotten, while the rollout drifts toward the CLIP-embedded opening. Bands: scene-bootstrap
-95\% CIs.}
+\caption{Models outside the Wan cache family. (a) FramePack (study 11, 12 scenes): the opening's brightness shift
+sent through both routes, only the clean context prefix, or only the SigLIP image embedding; the anti-drifting sampler;
+SkyReels-V2 with 17 and 5 overlapping frames for reference. (b) FramePack, scene content (study 17, 24 openings, city
+prompt): with a city frame in the context, the opening's embedding alone pulls the video toward the opening's class.
+(c) MAGI-1 (study 18, 12 scenes): the released window of four 1-s chunks against full history (1-s windows, 3-s
+moving average). (d) Matrix-Game-2.0, an action-conditioned world model without text (study 15, exploratory 15-s
+analysis, 20 scenes): the context latent leaves the window and is forgotten, while the rollout drifts toward the
+CLIP-embedded opening. Bands: scene-bootstrap 95\% CIs.}
 \label{fig:framepack}
 \end{figure}
 
@@ -181,5 +214,6 @@ With re-rotated sinks it is replaced by a small decline ($-0.08$ \ci{-0.13}{-0.0
 attributes to rotary-position periodicity, and the role of intrinsic rotary frequencies in video length
 extrapolation~\cite{riflex,roundround}: the sink keeps its absolute position, and at certain distances the current
 chunk attends to it strongly. It coincides with the return of the opening's dunes and sea in study 9. Much of what a
-Self Forcing sink keeps at 60\,s is therefore positional: with in-distribution positions it keeps 0.16, below what the
-recursion implies; the aliased sink keeps 0.61, above it. The recursion does not explain either value.
+Self Forcing sink keeps at 60\,s is therefore positional: with in-distribution positions it keeps 0.16--0.23 whatever
+its depth, below what the recursion implies, and no more scene content than no sink; the aliased sink keeps 0.61,
+above it. The recursion does not explain either value.

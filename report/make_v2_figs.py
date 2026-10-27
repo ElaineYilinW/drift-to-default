@@ -165,11 +165,13 @@ if ct:
     fig.savefig(f"{O}/fig_content.pdf")
     print("ok content")
 
-# ---- FramePack (preregistration 11) and the world model (preregistration 15) ---------------------------------------
+# ---- Other architectures: FramePack (11, 17), MAGI-1 (18, 19) and the world model (15) ---------------------------------
 fp, sk, mg = load("corr/fp_out/fp_results.json"), load("corr/skyconf_out/skyov_results.json"), \
     load("corr/mg_out/mg_explore_15s.json")
+fpc, mcv = load("corr/fpc_out/fpc_results.json"), load("corr/magi_out/magi_curve.json")
 if fp:
-    fig, ax = plt.subplots(1, 2, figsize=(9.6, 3.3))
+    fig, axs = plt.subplots(2, 2, figsize=(9.6, 6.2))
+    ax = axs.ravel()
     for c, col, lab in (("fpv_both", BLUE, "both routes"), ("fpv_ctx", ORANGE, "context only"),
                         ("fpv_emb", GREEN, "image embedding only"), ("fpi_both", NAVY, "both, anti-drifting sampler")):
         v = fp["alpha"].get(c, {})
@@ -183,22 +185,48 @@ if fp:
             if tc:
                 tt = sorted(float(k) for k in tc)
                 ax[0].plot(tt, [tc[f"{x:g}"] for x in tt], color=GREY, ls=ls, lw=1.3, label=lab)
-    ax[0].set_title("(a) FramePack (13B, HunyuanVideo-based)", fontsize=9, loc="left")
+    ax[0].set_title("(a) FramePack (13B, HunyuanVideo-based): tone", fontsize=9, loc="left")
+    ax[0].set_ylabel("persistence α(t)")
+    if fpc:
+        for c, col, lab in (("both", BLUE, "both routes"), ("ctx", ORANGE, "context only"),
+                            ("emb", GREEN, "image embedding only")):
+            v = fpc["kappa"].get(c, {})
+            tt = sorted(int(k) for k in v)
+            ax[1].plot(tt, [v[str(k)] for k in tt], "o-", color=col, lw=1.6, ms=3.5, label=lab)
+        ax[1].set_title("(b) FramePack: scene content", fontsize=9, loc="left")
+        ax[1].set_ylabel("content persistence κ(t)")
+        ax[1].legend(fontsize=6.5, loc="upper right")
+    if mcv:
+        for c, col, lab in (("mgw", ORANGE, "released window (4 chunks)"), ("mgf", BLUE, "full history"),
+                            ("mgw60", ORANGE, None)):
+            v = mcv.get(c, {})
+            if not v:
+                continue
+            tt = sorted(int(k) for k in v)
+            y = np.array([v[str(k)]["mean"] for k in tt])
+            m = np.convolve(y, np.ones(3), mode="same") / np.convolve(np.ones_like(y), np.ones(3), mode="same")
+            ax[2].plot(tt, m, color=col, lw=1.6, ls=":" if c == "mgw60" else "-", label=lab)
+            ax[2].fill_between(tt, [v[str(k)]["ci"][0] for k in tt], [v[str(k)]["ci"][1] for k in tt], color=col,
+                               alpha=.10, lw=0)
+        ax[2].set_title("(c) MAGI-1 (4.5B, own architecture): tone", fontsize=9, loc="left")
+        ax[2].set_ylabel("persistence α(t)")
+        ax[2].legend(fontsize=6.5, loc="lower left")
     if mg:
         for c, col, lab in (("mg_both", BLUE, "both routes"), ("mg_ctx", ORANGE, "context only"),
                             ("mg_emb", GREEN, "image embedding only")):
             v = mg["alpha"].get(c, {})
             tt = sorted(int(k) for k in v)
-            ax[1].plot(tt, [v[str(k)]["est"] for k in tt], "o-", color=col, lw=1.6, ms=3.5, label=lab)
-            ax[1].fill_between(tt, [v[str(k)]["ci"][0] for k in tt], [v[str(k)]["ci"][1] for k in tt], color=col, alpha=.12, lw=0)
-        ax[1].set_title("(b) Matrix-Game-2.0 world model (exploratory 15 s)", fontsize=9, loc="left")
+            ax[3].plot(tt, [v[str(k)]["est"] for k in tt], "o-", color=col, lw=1.6, ms=3.5, label=lab)
+            ax[3].fill_between(tt, [v[str(k)]["ci"][0] for k in tt], [v[str(k)]["ci"][1] for k in tt], color=col, alpha=.12, lw=0)
+        ax[3].set_title("(d) Matrix-Game-2.0 world model (exploratory 15 s)", fontsize=9, loc="left")
+        ax[3].set_ylabel("persistence α(t)")
+        ax[3].legend(fontsize=6.5, loc="center right")
     for a_ in ax:
         a_.axhline(0, color=MUTED, lw=.8)
         a_.axhline(1, color=GRID, lw=.8)
+    for a_ in ax[2:]:
         a_.set_xlabel("seconds after the opening")
     ax[0].legend(fontsize=6.3, loc="center right", bbox_to_anchor=(1.0, 0.30), ncol=2, columnspacing=0.8)
-    ax[1].legend(fontsize=6.5, loc="center right")
-    ax[0].set_ylabel("persistence α(t)")
     fig.tight_layout()
     fig.savefig(f"{O}/fig_framepack.pdf")
     print("ok framepack")
