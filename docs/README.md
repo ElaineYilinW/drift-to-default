@@ -25,7 +25,7 @@ Each preregistration was written and frozen before any of its videos were genera
 | [15](preregistrations/15_world_model.md) | World model (Matrix-Game-2.0): is an opening held only in the context forgotten, and does the image conditioning set the default? | Context-only shift fades; conditioning-only shift persists; conditioning adds persistence | 1 of 3 supported (only 7 of 24 scenes survive the model's collapse to black before 30 s); all three hold at 15 s (exploratory, 20 scenes) |
 | [16](preregistrations/16_rerotation_and_horizon.md) | Re-rotated sink and the 60-s horizon: does the late return of content vanish without the sink's original position; does a deep re-rotated sink keep more; do FramePack and SkyReels keep a share at 60 s? | Re-rotation removes the content return and lowers persistence (sink 3, sink 6); depth still helps; FramePack keeps a share; SkyReels overlaps keep forgetting | Running |
 | [17](preregistrations/17_framepack_content.md) | FramePack content routes: does scene content relax on a non-Wan model, and which route (context prefix or SigLIP embedding) carries it? | Content relaxes; the context prefix and the SigLIP embedding each carry content; the embedding adds persistence | Running |
-| [18](preregistrations/18_magi.md) | MAGI-1 (non-Wan, chunk-wise KV cache): does the released attention window forget the opening, and does full history keep a share? | The window forgets; full history keeps more; full history keeps a share | Running |
+| [18](preregistrations/18_magi.md) | MAGI-1 (non-Wan, chunk-wise KV cache): does the released attention window forget the opening, and does full history keep a share? | The window forgets; full history keeps more; full history keeps a share | Supported (3 of 3); persistence at 30 s 0.34 (window) vs 0.64 (full history); no freezing |
 
 ## Lab notes
 
@@ -55,5 +55,6 @@ Each preregistration was written and frozen before any of its videos were genera
 | [21](lab-notes/21_deep_sink_results.md) | Deeper sinks as a baseline (study 13) | Strong baseline: less drift and flicker, but legitimate brightness changes are suppressed |
 | [22](lab-notes/22_framepack_results.md) | FramePack (study 11) | Relaxes but keeps 0.68; context prefix acts as a permanent sink; SigLIP route inert for tone |
 | [23](lab-notes/23_atlas_results.md) | 60-s atlas (study 10) | Persistence monotone in sink depth; the sink's absolute position causes the late jump and much of its retention |
+| [25](lab-notes/25_magi_results.md) | MAGI-1, a non-Wan architecture (study 18) | The released window forgets (0.87 at 5 s to 0.34 at 30 s); full history plateaus near 0.65; keeping the opening raises persistence but not the shared drift toward a brighter default |
 
 The lab notes use the folder and file names from before the repository was reorganised (for example `analyze_match.py` without its `analysis/` folder). [`results/README.md`](../results/README.md) maps every experiment to its script, its output folder and its note.
