@@ -121,7 +121,9 @@ re-rotation cuts a six-frame sink from 0.76 to 0.22 ($-0.54$ \ci{-0.63}{-0.46}),
 frames keep the same share (0.22 vs 0.23, $-0.00$ \ci{-0.11}{0.10}; preregistered test of a depth effect not
 supported; 40--50\,s: $+0.03$ \ci{-0.09}{0.14}). Their curves coincide from 10\,s on. (The three-frame value is 0.16
 in study 10 because 9 of the 24 scenes ran on another GPU architecture this time, which amounts to resampling them;
-all 72 videos repeated on the same architecture were bit-identical.) A sink at in-distribution
+all 72 videos repeated on the same architecture were bit-identical.) Three new seeds per scene (study 20, 432 videos)
+reproduce all of this: at 60\,s the sink keeps 0.61, the re-rotated sink 0.21 and no sink $-0.01$, the re-rotated sink
+keeps more than none ($+0.22$ \ci{0.15}{0.29}), and each seed alone gives the same three results. A sink at in-distribution
 positions thus holds a small, steady share of tone (about 0.2) whatever its depth, and almost none of the scene.
 
 \paragraph{Re-conditioning on the opening keeps most of it.} SkyReels-V2-DF, which re-denoises the last 17 frames
