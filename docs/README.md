@@ -29,6 +29,7 @@ Each preregistration was written and frozen before any of its videos were genera
 | [19](preregistrations/19_magi_content_horizon.md) | MAGI-1 content and horizon: does scene content relax on MAGI-1, does full history keep more of it, does the prompt set it; does the released window keep forgetting to 60 s? | Content relaxes; full history keeps more; the prompt sets the default; the window keeps forgetting | Running |
 | [20](preregistrations/20_seed_replication.md) | New seeds for the Self Forcing sink results: do they hold with seeds 1-3, and does a re-rotated sink keep more than no sink? | The sink keeps a share; re-rotation lowers it; a re-rotated sink still keeps more than none | Supported (3 of 3); at 60 s sink 0.61, re-rotated 0.21, no sink −0.01, matching seed 0 within 0.06; each seed alone gives the same three results |
 | [21](preregistrations/21_content_seeds.md) | New seeds for the Self Forcing content results: do the sink, re-rotation and positional-return results hold with seeds 1-3, and does a re-rotated sink keep any content? | The sink keeps content; re-rotation lowers it; a re-rotated sink keeps some; the late return is positional | Running |
+| [22](preregistrations/22_krea.md) | A 14B model, Krea Realtime (KV recomputation over a 3-latent-frame window): is the opening forgotten, and does the release's first-frame anchor keep a share? | The released window forgets tone and content; the anchor keeps a share (uncertain after a one-scene pilot) | Running |
 
 ## Lab notes
 
