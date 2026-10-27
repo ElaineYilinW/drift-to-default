@@ -6,8 +6,9 @@
 models in studies 1, 2 and 13 and bootstrap intervals otherwise; $p$ is Holm-adjusted within each study (no correction
 across studies). Study 3 LongLive rows are as executed; after regenerating four cross-architecture openings the
 conclusions are unchanged. Units: $D$, $K$ drift metrics; $|\Delta L|$ in \Lstar{};
-$\alpha$ persistence. Arms: G generic prompt, M VLM caption of the opening, C calibrated lighting plus caption, ttc
-content-aware correction.}
+$\alpha$ persistence, $\kappa$ content persistence. Arms: G generic prompt, M VLM caption of the opening, C calibrated
+lighting plus caption, ttc content-aware correction. $^\ddagger$The $t$-test treats the default $\mu$ as fixed; the
+bootstrap interval also resamples the fresh starts that estimate it (pooled with seed 0: \ci{0.02}{0.15}).}
 \label{tab:primary}
 \setlength{\tabcolsep}{4.5pt}
 \begin{tabular}{@{}llllll@{}}
@@ -68,6 +69,10 @@ Study & Test & Model & Estimate [95\% CI] & $p_{\text{Holm}}$ & Outcome \\
 20 Seeds & sink 3 $-$ none, $\alpha$ (60\,s) & SF & $+0.62$ \ci{0.56}{0.67} & $<10^{-15}$ & supported \\
   & re-rotated $-$ original sink, $\alpha$ (60\,s) & SF & $-0.39$ \ci{-0.46}{-0.32} & $<10^{-8}$ & supported \\
   & re-rotated sink $-$ none, $\alpha$ (60\,s) & SF & $+0.22$ \ci{0.15}{0.29} & $<10^{-5}$ & supported \\
+21 Content seeds & sink 3 $-$ none, $\kappa$ (60\,s) & SF & $+0.48$ \ci{0.40}{0.56} & $<10^{-10}$ & supported \\
+  & re-rotated $-$ original sink, $\kappa$ (60\,s) & SF & $-0.40$ \ci{-0.47}{-0.34} & $<10^{-12}$ & supported \\
+  & re-rotated sink $-$ none, $\kappa$ (60\,s) & SF & $+0.08$ \ci{-0.01}{0.16}$^\ddagger$ & 0.006 & supported \\
+  & re-rotated $-$ original, burst contrast $R$ & SF & $-0.34$ \ci{-0.38}{-0.28} & $<10^{-10}$ & supported \\
 %NEWROWS
 \bottomrule
 \end{tabular}
