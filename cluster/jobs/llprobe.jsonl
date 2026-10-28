@@ -1,0 +1,1 @@
+{"id": "llprobe", "cmd": "bash /Users/ywang906/vdrift/jobs/run_llprobe.sh", "done": "/nfsscratch/Users/ywang906/vdrift/corr/llprobe/gx03.npz", "est_min": 120, "mem_gb": 30, "gpus": 1, "gpu_mem_gb": 40, "gpu_bf16": true, "cores": 8}
