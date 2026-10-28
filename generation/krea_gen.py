@@ -10,8 +10,9 @@ that context is set by --anchor:
   --anchor first  the release's keep_first_frame option: the opening's first latent stays the first context frame for
                   the whole rollout (an anchor at the position just before the window, i.e. a re-rotated sink).
 Image-to-video: the opening image (centre-cropped to 832x480, resized, optionally shifted in CIELAB as in hold_gen.py)
-goes through the release's start_frame path (9 copies VAE-encoded as the first 3 latent frames). 8 copies of it are
-prepended to the output so that frames 0..8 are the opening (json hold_frames = 9). --fresh: text-to-video.
+goes through the release's start_frame path (9 copies VAE-encoded as the first 3 latent frames). The release does not
+output the start frame itself, so 9 copies of it are prepended to the output: frames 0..8 are the opening and the first
+generated frame is frame 9 (json hold_frames = 9). --fresh: text-to-video.
 Memory: the text encoder runs on the GPU first and is freed; the 14B transformer is built on the CPU from the Wan2.1-14B
 config (no 14B Wan weights needed), loaded from the Krea checkpoint, cast to bf16, its q/k/v projections fused as in the
 release (and the unfused copies, which the release keeps but never uses again, deleted) and moved to the GPU, so that it
@@ -177,7 +178,7 @@ for vt, dL, da, db, seed in JOBS:
     video = torch.cat(frames, 0)[:n_frames]                                    # (T, H, W, 3) uint8
     raw = int(video.shape[0])
     if HOLD:
-        video = torch.cat([torch.from_numpy(np.stack([im] * (HOLD - 1))), video])
+        video = torch.cat([torch.from_numpy(np.stack([im] * HOLD)), video])      # the release outputs no start frame
     out = stem(seed, vt)
     if not a.no_video:
         tmp = f"{out}.{os.getpid()}.tmp.mp4"

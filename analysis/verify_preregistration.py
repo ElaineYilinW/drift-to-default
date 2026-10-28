@@ -9,6 +9,8 @@ Status per file:
   REDACTED      prompt file published without the cluster image paths (NAVSIM images are not redistributed);
                 its frozen hash refers to the cluster copy
   NOT PUBLISHED cluster-only file (job lists, environment paths)
+  DEVIATION     changed after freezing; the change is documented in the study's results note (listed below), and
+                the frozen version is in the git history
   MISMATCH      anything else (none expected)
 
 usage: python analysis/verify_preregistration.py
@@ -26,6 +28,8 @@ for p in glob.glob(f"{ROOT}/**/*", recursive=True):
         index.setdefault(os.path.basename(p), []).append(p)
 # a few frozen paths are not unique by name; resolve them by their recorded relative path
 by_rel = {os.path.relpath(p, ROOT): p for ps in index.values() for p in ps}
+# (preregistration, file) -> the note that documents a change made after freezing
+DEVIATIONS = {("22_krea.md", "krea_gen.py"): "docs/lab-notes/29_krea_results.md"}
 
 
 def sha(p):
@@ -49,6 +53,10 @@ for doc in sorted(glob.glob(f"{ROOT}/docs/preregistrations/*.md")):
             status = "REDACTED"
         elif not cands or (path.startswith("jobs/") and path.endswith((".jsonl", ".txt"))):
             status = "NOT PUBLISHED"
+        elif (os.path.basename(doc), path) in DEVIATIONS:
+            status = "DEVIATION"
+            print(f"  {status:13s} {path:45s} -> see {DEVIATIONS[(os.path.basename(doc), path)]}")
+            continue
         else:
             status, bad = "MISMATCH", bad + 1
         where = os.path.relpath(hits[0] if hits else cands[0], ROOT) if (hits or cands) else "-"
