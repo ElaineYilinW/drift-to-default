@@ -57,7 +57,15 @@ Study & Test & Model & Estimate [95\% CI] & $p_{\text{Holm}}$ & Outcome \\
 15 World model & ctx-only shift fades (30 vs 5\,s) & Matrix-Game & $-0.24$ \ci{-0.35}{-0.14} & 0.024 & supported \\
   & emb-only shift persists, $\alpha$ (30\,s) & Matrix-Game & $+0.43$ \ci{0.13}{0.71} & 0.075 & not supported \\
   & both $-$ ctx-only, $\alpha$ (30\,s) & Matrix-Game & $+0.33$ \ci{-0.07}{0.71} & 0.18 & not supported \\
-%S16ROWS
+16 Re-rotation & re-rotated $-$ original, burst contrast $R$ & SF & $-0.29$ \ci{-0.37}{-0.22} & $<10^{-5}$ & supported \\
+  & re-rotated $-$ original sink, $\kappa$ (60\,s) & SF & $-0.31$ \ci{-0.37}{-0.25} & $<10^{-6}$ & supported \\
+  & re-rotated sink $-$ none, $\kappa$ (60\,s) & SF & $+0.10$ \ci{-0.00}{0.21} & 0.11 & not supported \\
+  & re-rotated $-$ original sink 6, $\alpha_L$ (60\,s) & SF & $-0.54$ \ci{-0.62}{-0.45} & $<10^{-9}$ & supported \\
+  & re-rotated sink 6 $-$ sink 3, $\alpha_L$ (60\,s) & SF & $-0.00$ \ci{-0.11}{0.10} & 0.94 & not supported \\
+  & $\alpha$ (both routes, 60\,s) $>0$ & FramePack-F1 & $0.51$ \ci{0.29}{0.71} & 0.004 & supported \\
+  & $\alpha$ (context only, 60\,s) $>0$ & FramePack-F1 & $0.46$ \ci{0.28}{0.65} & 0.003 & supported \\
+  & 5 frames: $\alpha$ (60\,s) $-$ $\alpha$ (20\,s) & SkyReels & $-0.57$ \ci{-0.79}{-0.39} & 0.001 & supported \\
+  & 17 frames: $\alpha$ (60\,s) $-$ $\alpha$ (20\,s) & SkyReels & $-0.72$ \ci{-0.81}{-0.63} & $<10^{-6}$ & supported \\
 17 FP content & content falls, class score (20\,s) & FramePack-F1 & $-6.72$ \ci{-8.29}{-5.20} & $<10^{-5}$ & supported \\
   & $\kappa$ (context only, 20\,s) $>0$ & FramePack-F1 & $0.24$ \ci{0.12}{0.37} & 0.001 & supported \\
   & $\kappa$ (embedding only, 20\,s) $>0$ & FramePack-F1 & $0.23$ \ci{0.16}{0.30} & $<10^{-6}$ & supported \\

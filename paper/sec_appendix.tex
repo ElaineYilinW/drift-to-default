@@ -122,6 +122,13 @@ test $p=0.001$): persistence is 0.34 under sunny, 0.24 overcast, 0.17 dusk and 0
 interaction is weaker ($p=0.053$). Dark defaults compress the range of brightness the model produces, which may explain
 part of this. Study 12 confirms the prompt dependence in four new scene types (Section~\ref{sec:default}).
 
+\paragraph{Content scores do not depend on the encoder.} Every content result uses CLIP ViT-L/14 class log-odds. We
+rescored all content videos with SigLIP so400m-patch14-384~\cite{siglip}, with its own text embeddings of the same seven
+labels, and reran each frozen analysis unchanged (Table~\ref{tab:encoder}). Every verdict agrees. Estimates in
+$\kappa$ agree within 0.03; raw log-odds differ in scale between encoders. This includes FramePack's embedding route,
+whose conditioning encoder is itself a SigLIP model: CLIP and SigLIP give it the same content share (0.23 and 0.25).
+\input{tab_encoder.tex}
+
 \paragraph{Real and generated openings.} On Self Forcing, real and generated openings fall on the same line
 ($p=0.80$); on LongLive, generated openings end 4.3~\Lstar{} brighter than real ones of equal brightness ($p=0.03$).
 

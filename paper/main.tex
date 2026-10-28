@@ -25,8 +25,8 @@ a generic city prompt, openings of six scene classes lose 39--93\% of their clas
 the long-run share is how the opening is held. Attention to a key--value cache alone forgets it completely; an
 attention sink holds a share that grows with its depth and hinges on its absolute rotary position: re-aligning the
 sink's positions cuts persistence at 60\,s from 0.61 to 0.16 and removes periodic bursts in which the opening, including
-its scene content, returns. Re-denoising overlapping frames holds nearly all of it over 20\,s until the overlap is
-shrunk. A linear chunk recursion predicted the prompt's per-chunk pull (0.08); bit-exact cache replay measured 0.088
+its scene content, returns. Re-denoising overlapping frames holds nearly all of it for 20\,s but only delays
+forgetting (0.29 left at 60\,s). A linear chunk recursion predicted the prompt's per-chunk pull (0.08); bit-exact cache replay measured 0.088
 \ci{0.045}{0.149}, but the recursion holds only for about 20\,s and does not account for the positional effects. In an
 exploratory analysis, drift separates into forgetting the opening and an offset of the default from where the same
 prompt starts, near zero for models trained on long rollouts. A content-aware correction and a deeper sink both reduce
@@ -69,7 +69,8 @@ Three findings do.
 \textbf{What survives in the long run depends on how the opening is held, not on autoregression as such.} Models
 that read the opening only through a key--value cache forget it completely. An attention sink holds a share that grows
 with its depth and hinges on its absolute rotary position, which also produces periodic bursts in which the opening
-returns. Re-denoising overlapping frames holds nearly all of it over 20\,s until the overlap is shrunk.
+returns. Re-denoising overlapping frames holds nearly all of it for 20\,s, but only delays forgetting: by 60\,s a
+17-frame overlap keeps 0.29.
 
 \textbf{The default is set by the conditioning.} Lighting words move the default brightness by up to 27~\Lstar, and
 scene words decide whether a snowy, desert or forest opening stays or becomes a city street within 30\,s. Which parts of

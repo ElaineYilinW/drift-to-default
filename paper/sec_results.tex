@@ -128,13 +128,18 @@ in study 10 because 9 of the 24 scenes ran on another GPU architecture this time
 all 72 videos repeated on the same architecture were bit-identical.) Three new seeds per scene (study 20, 432 videos)
 reproduce all of this: at 60\,s the sink keeps 0.61, the re-rotated sink 0.21 and no sink $-0.01$, the re-rotated sink
 keeps more than none ($+0.22$ \ci{0.15}{0.29}), and each seed alone gives the same three results. A sink at in-distribution
-positions thus holds a small, steady share of tone (about 0.2) whatever its depth, and almost none of the scene.
+positions thus holds a small, steady share of tone (about 0.2) whatever its depth, and a smaller share of the scene
+(Section~\ref{sec:content}).
 
-\paragraph{Re-conditioning on the opening keeps most of it.} SkyReels-V2-DF, which re-denoises the last 17 frames
-of each segment jointly with the new ones, does not relax ($\alpha = 0.96$ \ci{0.86}{1.07} at 20\,s), whatever its
+\paragraph{Re-conditioning on recent frames delays forgetting.} SkyReels-V2-DF, which re-denoises the last 17 frames
+of each segment jointly with the new ones, does not relax over 20\,s ($\alpha = 0.96$ \ci{0.86}{1.07}), whatever its
 guidance, history noise or number of steps (exploratory). Cutting the overlap to 5 frames, with the same number of
 extensions, makes it relax: $\alpha$ at 15--20\,s falls from 1.01 to 0.77 ($-0.24$ \ci{-0.40}{-0.09}, preregistered,
 12 new scenes). With 17 frames, 5 of 12 scenes have $\alpha>1$: the overlap passes the opening forward and can amplify it.
+But it only passes it forward. Over 60\,s (study 16, the same 12 scenes) the 17-frame overlap holds $\alpha\approx1$
+until 20\,s and then forgets steadily, to 0.82, 0.55, 0.32 and 0.29 at 30, 40, 50 and 60\,s ($-0.72$
+\ci{-0.81}{-0.63} from 20 to 60\,s); with 5 frames it falls to 0.08 ($-0.57$ \ci{-0.79}{-0.39}); both tests were
+preregistered. Re-denoising overlapping frames delays forgetting; it does not keep the opening.
 FramePack~\cite{framepack}, a 13B model fine-tuned from HunyuanVideo~\cite{hunyuan}, places the opening as a clean
 prefix frame in the context of \emph{every} 33-frame section and also feeds its SigLIP embedding as a global condition
 (study 11, 12 scenes, 20\,s). It relaxes: 0.91 of a brightness shift at 5\,s and 0.68 \ci{0.57}{0.79} at 20\,s with
@@ -143,7 +148,11 @@ configurations keep (six-frame sink 0.72, Rolling Forcing 0.64; Appendix Table~\
 sent only through the context prefix levels off at about half (0.53) between 10 and 20\,s; FramePack's
 anti-drifting sampling, which generates sections from the end back toward the opening, keeps 0.86. A shift sent only
 through the image embedding does nothing (0.01 \ci{-0.14}{0.17}; preregistered test not supported): in FramePack the
-image embedding does not carry tone. (We did not vary FramePack's text prompt.)
+image embedding does not carry tone. (We did not vary FramePack's text prompt.) Unlike the overlap, the prefix keeps its
+share: at 60\,s (study 16) FramePack still keeps 0.51 \ci{0.29}{0.71} with both routes and 0.46 \ci{0.28}{0.65} with the
+context prefix alone (both preregistered), with little decline after 20\,s ($-0.17$ \ci{-0.38}{0.01} and $-0.08$
+\ci{-0.26}{0.09}; one of 12 scenes collapsed with both routes and was excluded). A clean copy of the opening in every
+section acts as a permanent sink.
 
 \paragraph{A model of its own architecture.} MAGI-1~\cite{magi} shares neither architecture nor training with the
 other models, and its code lets us choose how long the opening stays in the context (study 18, 12 scenes, 30\,s). In
@@ -221,5 +230,5 @@ attributes to rotary-position periodicity, and the role of intrinsic rotary freq
 extrapolation~\cite{riflex,roundround}: the sink keeps its absolute position, and at certain distances the current
 chunk attends to it strongly. It coincides with the return of the opening's dunes and sea in study 9. Much of what a
 Self Forcing sink keeps at 60\,s is therefore positional: with in-distribution positions it keeps 0.16--0.23 whatever
-its depth, below what the recursion implies, and no more scene content than no sink; the aliased sink keeps 0.61,
+its depth, below what the recursion implies, and little more scene content than no sink; the aliased sink keeps 0.61,
 above it. The recursion does not explain either value.

@@ -1,0 +1,28 @@
+\begin{table}[h]
+\centering\scriptsize
+\caption{Content results do not depend on the scoring encoder (exploratory). Each preregistered content test rerun with
+its frozen analysis on SigLIP so400m embeddings instead of CLIP ViT-L/14. Estimates in each encoder's log-odds or
+$\kappa$ units; Holm $p$ within each study; $^\dagger$\,not supported. The verdict agrees for 14 of 14 tests.}
+\label{tab:encoder}
+\begin{tabular}{@{}llrrrr@{}}
+\toprule
+& & \multicolumn{2}{c}{CLIP} & \multicolumn{2}{c}{SigLIP} \\
+Study & Test & est. & $p$ & est. & $p$ \\
+\midrule
+09 H1 & prompt sets content: $s_{\text{class}} - s_{\text{generic}}$ (30\,s) & +9.33 & $<$0.001 & +13.24 & $<$0.001 \\
+09 H2 & LongLive sink keeps content: $\Delta\kappa$ (30\,s) & -0.02 & 0.718$^\dagger$ & +0.00 & 0.920$^\dagger$ \\
+09 H3 & Self Forcing sink keeps content: $\Delta\kappa$ (60\,s) & +0.48 & $<$0.001 & +0.48 & $<$0.001 \\
+16 A1 & late return is positional: $\Delta R$ & -0.29 & $<$0.001 & -0.28 & $<$0.001 \\
+16 A2 & re-rotation lowers content: $\Delta\kappa$ (60\,s) & -0.31 & $<$0.001 & -0.32 & $<$0.001 \\
+16 A3 & re-rotated sink keeps content: $\Delta\kappa$ (60\,s) & +0.10 & 0.113$^\dagger$ & +0.09 & 0.099$^\dagger$ \\
+17 H1 & FramePack content relaxes: $s - s_{\text{open}}$ & -6.72 & $<$0.001 & -10.10 & $<$0.001 \\
+17 H2 & context prefix carries content: $\kappa$ & +0.24 & 0.001 & +0.22 & $<$0.001 \\
+17 H3 & SigLIP embedding carries content: $\kappa$ & +0.23 & $<$0.001 & +0.25 & $<$0.001 \\
+17 H4 & embedding adds content: $\Delta\kappa$ & +0.31 & $<$0.001 & +0.30 & $<$0.001 \\
+21 H1 & sink keeps content, 3 new seeds: $\Delta\kappa$ (60\,s) & +0.48 & $<$0.001 & +0.50 & $<$0.001 \\
+21 H2 & re-rotation lowers content: $\Delta\kappa$ (60\,s) & -0.40 & $<$0.001 & -0.40 & $<$0.001 \\
+21 H3 & re-rotated sink keeps content: $\Delta\kappa$ (60\,s) & +0.08 & 0.006 & +0.10 & $<$0.001 \\
+21 H4 & late return is positional: $\Delta R$ & -0.34 & $<$0.001 & -0.32 & $<$0.001 \\
+\bottomrule
+\end{tabular}
+\end{table}
