@@ -1,0 +1,1 @@
+{"id": "llsp_check", "cmd": "bash /Users/ywang906/vdrift/jobs/run_llsp_check.sh", "done": "/nfsscratch/Users/ywang906/vdrift/corr/llsp_check/rx00_d30__m16_s0.npz", "est_min": 30, "mem_gb": 30, "gpus": 1, "gpu_mem_gb": 40, "gpu_bf16": true, "cores": 8}
