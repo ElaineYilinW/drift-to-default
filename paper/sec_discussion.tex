@@ -1,28 +1,26 @@
 %=====================================================================================================================
 \section{Discussion}\label{sec:discussion}
 Any autoregressive sampler with finite memory that is ergodic under a fixed conditioning will eventually forget its
-initial state and settle into a conditioning-dependent stationary distribution, so that video rollouts relax is
-expected. What we measure is \emph{how much} is kept and \emph{what} decides it, and three answers hold across the
-models we tested. The long-run share depends on how the opening enters the computation: once the opening leaves a
-key--value window it is forgotten (in the Wan-based cache models at 1.3B and 14B parameters, and in MAGI-1), while an opening that stays in the
-context (a sink, MAGI-1's full history, FramePack's per-section prefix) holds a share. Re-denoising overlapping frames
-passes the opening forward and so delays forgetting by about 20\,s, but does not stop it. A sink at in-distribution
-positions holds a small share of tone, about 0.2 whatever its depth, and less of the scene (0.08 more than none); the
-larger shares and the returning scenes of sinks at their original positions are positional bursts. The stationary
-state is set by the conditioning, for tone and for scene content, and models differ in which part of the conditioning
-carries which attribute: FramePack's image embedding sets the scene but not its brightness. And the stationary state of
-models trained on short clips is offset from where the same prompt starts; long-rollout training removes the offset but
-not the forgetting.
+initial state, so that video rollouts relax is expected; what we measure is how much is kept and what decides it.
+Across nine models the answer is whether the opening stays in the context. Once it leaves a key--value window it is
+forgotten, and overlapping frames only delay this; an opening that stays (a re-rotated sink, an anchor, a per-section
+prefix, full history) keeps a share whose size depends on the model \pend{[and its 180-s behaviour]}. The larger shares
+and returning scenes of sinks at their absolute positions are positional bursts \pend{[at predictable distances]}. The
+default is set by the conditioning, for tone and for scene content, and models differ in which part of the
+conditioning carries which attribute: FramePack's image embedding sets the scene but not its brightness. Fresh rollouts
+of the two models trained on their own long rollouts barely drift, though they still forget (exploratory).
 
-For world models, this means that a model conditioned on a real frame and a description drifts toward the
-description's default unless it re-conditions on the frame. Persistence at a stated horizon and the default with its
-offset are cheap to measure with our protocol and would make long-video models comparable where a single quality score
-does not. Anchors that keep the opening also pass its errors forward, and positional bursts can bring a forgotten
-opening back. In Self Forcing the mechanism that keeps the opening's scene is exactly the unstable one: keeping the
-opening's content while forgetting its errors is the open problem.
+A high $\alpha$ is not always better. Under a conflicting prompt (a snowy opening, a city prompt), forgetting the
+opening is following the prompt, and an anchor that keeps the opening also passes its errors forward (SkyReels
+amplifies the shift in 5 of 12 scenes). Persistence is better treated as a property to choose and to report at a stated
+horizon, together with the default and its offset; our protocol measures both cheaply and would make long-video models
+comparable where a single quality score does not. For world models, a model conditioned on a real frame and a
+description drifts toward the description's default unless it re-conditions on the frame. In Self Forcing the
+mechanism that keeps the opening's scene is the unstable, positional one: keeping the opening's content while
+forgetting its errors is the open problem.
 
 \paragraph{Limitations.} Six of the nine models share the Wan2.1-1.3B architecture and a seventh is a student of its
 14B sibling; FramePack and MAGI-1 have other bases. Content relaxation was replicated on FramePack, but the prompt dependence, the recursion
 and the decomposition rest on Wan-based models, and the world model collapses after 20--30\,s. Interventions shift global tone or select a scene class (CLIP scores are a
-coarse proxy for content); openings are held images; most configurations use one seed per scene (the Self Forcing sink results on tone and content replicate with three more); Holm correction is
+coarse proxy for content); openings are held images; scene content is compared across openings rather than shifted within one; most configurations use one seed per scene (the Self Forcing sink results on tone and content replicate with three more); Holm correction is
 applied within studies only; the correction was not compared with Pathwise test-time correction or FreqForcing.

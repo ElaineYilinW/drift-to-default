@@ -8,12 +8,12 @@ and continued every version with the generic prompt (study 6, 31\,s; study 10, 6
 (Fig.~\ref{fig:teaser}). At 60\,s every cache configuration has relaxed (Fig.~\ref{fig:atlas}a): $\alpha$ ranges from
 $-0.01$ (LongLive without a sink) to 0.79 (Self Forcing GAN), ranked as at 31\,s (Spearman $\rho=0.78$, $p=0.008$).
 Part of the loss is immediate: most configurations lose a fifth to a third of the shift within 4.5\,s, and SiD loses
-almost all of its total there (0.66 of 0.65), which looks like the model rejecting an off-manifold shift rather than
-forgetting it. Colour temperature behaves like brightness. Persistence varies by checkpoint even with architecture,
-context and sampler fixed (Self Forcing: 0.35 to 0.79 at 60\,s; two SiD checkpoints differ by 0.36), so it is a
-property of the checkpoint rather than of the training objective.
+two thirds there and nothing afterwards (0.66 by 4.5\,s, 0.65 by 60\,s), which looks like rejecting an off-manifold
+shift rather than forgetting it. Colour temperature behaves like brightness. Persistence varies by checkpoint even with architecture,
+context and sampler fixed (Self Forcing: 0.35 to 0.79 at 60\,s; two SiD checkpoints differ by 0.36), so the training
+objective alone does not set it.
 
-\paragraph{The response is linear in the shift.} Equation~\ref{eq:law} treats $\alpha$ as independent of how far the
+\paragraph{Is the response linear in the shift?} Equation~\ref{eq:law} treats $\alpha$ as independent of how far the
 opening was shifted, but every $\alpha$ above comes from one pair of shifts ($\pm16$~\Lstar). Study 23 shifted the same
 24 openings by $-24$, $-8$, 0, $+8$ and $+24$~\Lstar{} (Self Forcing, 60\,s, two seeds, 720 videos) and tested
 equivalence within $\pm0.15$. \pend{[results: large vs small shift with sink, re-rotated sink; darkening vs
@@ -40,8 +40,10 @@ eight configurations (study 9). Content relaxes like tone (Fig.~\ref{fig:content
 30\,s ranges from 0.07 (SiD) to 0.61 (Rolling Forcing), and the opening's class is CLIP's top label in only 34\% of Self
 Forcing frames at 30\,s. Under the opening's own class prompt the class persists ($\kappa$ 0.71--1.05; 9.3
 \ci{8.1}{10.5} more log-odds than under the city prompt, preregistered), as a fresh rollout of that prompt would also
-show it; the informative result is the loss under the city prompt. Content and tone persistence are correlated across
-configurations ($\rho=0.67$, $p=0.07$, $n=8$).
+show it; the informative result is the loss under the city prompt. Content and tone persistence tend to go together across
+configurations ($\rho=0.67$, $n=8$, $p=0.07$). Class scores could partly reflect colour (snow is bright, sand is
+yellow), but scoring frames whose CIELAB mean and spread are matched to the opening's gives the same results, as does
+SigLIP (Appendix~\ref{app:robust}).
 
 Sinks act differently on content. Self Forcing's sink keeps more of it at 60\,s ($\kappa$ 0.61 vs 0.14, $+0.48$
 \ci{0.39}{0.57}, preregistered), but not steadily: $\kappa$ falls to 0.32 at 30\,s and rises again, and the dunes, the
@@ -92,8 +94,8 @@ replicates almost exactly outside driving scenes: 0.55 with a sink and 0.02 with
 
 \paragraph{Two components of drift.} For a prompt-only rollout, Eq.~\ref{eq:law} says nothing about why the default
 should differ from where the same prompt starts. It does, and by how much depends on training (Appendix
-Fig.~\ref{fig:mech}a). Fresh rollouts of Self Forcing (trained on its own 5-s rollouts) and CausVid end 4--11~\Lstar{}
-from where they start; those of LongLive and Rolling Forcing, trained or tuned on their own long rollouts, 0.7--2.3~\Lstar.
+Fig.~\ref{fig:mech}a). Fresh rollouts of Self Forcing (trained on its own 5-s rollouts; a checkpoint trained on 10-s rollouts
+alike) and CausVid end 4--11~\Lstar{} from where they start; those of LongLive and Rolling Forcing, trained or tuned on their own long rollouts, 0.7--2.3~\Lstar.
 Yet LongLive still forgets its opening ($\alpha=0.02$ without a sink at 31\,s). In this exploratory analysis drift has
 two separable parts: \emph{forgetting} the opening, $(1-\alpha)(x_{\text{open}}-\mu)$, which every attention-based
 model does, and an \emph{attractor offset} $\mu - x_{\text{start}}$, which is near zero in the two models trained on
@@ -105,92 +107,71 @@ models fit this pattern: fresh rollouts of Krea 14B, distilled with Self Forcing
 
 %=====================================================================================================================
 \section{What decides how much of the opening is kept}\label{sec:mech}
-Figure~\ref{fig:hold} collects the long-run persistence of every model and configuration we ran for 60\,s, grouped by
-how the model holds the opening. Four regimes appear. An opening seen only through a sliding key--value window is
-forgotten. Re-denoising overlapping frames passes it forward and delays forgetting by about 20\,s. An opening kept
-next to the window, at positions of the kind the model was trained on, holds a steady share whose size depends on the
-model. A sink at its original rotary positions keeps the most, but largely through periodic positional bursts.
+Figure~\ref{fig:hold} collects every configuration we ran for 60\,s, grouped by whether the opening stays in the
+model's context. Once it leaves, it is forgotten; while it stays, a share is kept whose size depends on the model; and
+sinks left at their absolute rotary positions add bursts in which the opening returns.
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{fig_hold.pdf}
-\caption{How the opening is held decides how much of it is kept. (a) Persistence of an \Lstar{} shift at 60\,s
-(window [50, 60)\,s; MAGI-1 full history: 30\,s) with scene-bootstrap 95\% CIs; ticks: at 10\,s. (b) Persistence
-over time (10-s windows) for one configuration per regime.}
+\caption{Whether the opening stays in the context decides how much of it is kept. (a) Persistence of an \Lstar{} shift
+at 60\,s (window [50, 60)\,s; MAGI-1 full history: 30\,s) with scene-bootstrap 95\% CIs; ticks: at 10\,s. (b)
+Persistence over time (10-s windows) for one or two configurations per group.}
 \label{fig:hold}
 \end{figure}
 
-\paragraph{Only in the window: forgotten.} Without a sink, Self Forcing and LongLive keep 0.05 and $-0.01$ at 60\,s
-(study 10). MAGI-1~\cite{magi} (4.5B, distilled), which shares neither architecture nor training with the other models,
-attends in its released configuration to the four previous 1-s chunks, so the opening leaves its context after about
-4\,s; persistence falls from 0.87 at 5\,s to 0.34 at 30\,s ($-0.52$ \ci{-0.70}{-0.35}, study 18)
-\pend{and to [x] at 60\,s (study 19)}. Krea Realtime 14B~\cite{krea}, Self Forcing distilled from Wan2.1-14B and ten
-times the size of the other Wan models, recomputes its cache over a window of three latent frames (study 22, 24 scenes):
-\pend{it keeps 0.33 at 10\,s and nothing from 20\,s on ($-0.05$ at 60\,s)}. Scale does not change the regime.
+\paragraph{Once the opening leaves the context, it is forgotten.} Without a sink, Self Forcing and LongLive keep 0.05
+and $-0.01$ at 60\,s (study 10). MAGI-1~\cite{magi} (4.5B, distilled), which shares neither architecture nor training
+with the other models, attends in its released configuration to the four previous 1-s chunks, so the opening leaves
+its context after about 4\,s; persistence falls from 0.87 at 5\,s to 0.34 at 30\,s ($-0.52$ \ci{-0.70}{-0.35}, study
+18) \pend{and to [x] at 60\,s (study 19)}. Krea Realtime 14B~\cite{krea}, a Self Forcing student of Wan2.1-14B,
+recomputes its cache over a window of three latent frames (study 22, 24 scenes): \pend{it keeps 0.33 at 10\,s and
+nothing from 20\,s on ($-0.05$ at 60\,s)}. The pattern holds at 14B parameters, although Krea's window also differs, so
+this is not a controlled test of scale. Re-denoising overlapping frames delays forgetting but does not stop it.
+SkyReels-V2-DF extends videos in 97-frame segments that re-denoise the last 17 frames of the previous segment jointly
+with the new ones. It holds the opening for 20\,s ($\alpha = 0.96$ \ci{0.86}{1.07}, whatever its guidance, history
+noise or number of steps, exploratory; with a 5-frame overlap it relaxes, $-0.24$ \ci{-0.40}{-0.09} at 15--20\,s,
+preregistered) and then forgets steadily, to 0.29 at 60\,s ($-0.72$ \ci{-0.81}{-0.63} from 20 to 60\,s; 5 frames: 0.08;
+study 16).
 
-\paragraph{Sinks: depth helps only at the original positions.} In study 6, removing LongLive's sink lowered $\alpha$
-at 31\,s from 0.19 to 0.02 ($-0.17$ \ci{-0.28}{-0.06}); for Self Forcing the preregistered test failed at 31\,s
-($-0.06$ \ci{-0.17}{0.05}) because without a sink it forgets slowly (Fig.~\ref{fig:atlas}b). At 60\,s the difference is
-large (studies 7, 10): no sink 0.05, a sink of one latent frame 0.29, three 0.61, six 0.76 ($+0.15$ \ci{0.11}{0.20}
-for six vs three), and 0.45 against $-0.01$ for LongLive. The sink's \emph{position} matters more than its depth. Self
-Forcing keeps the sink keys at their absolute rotary positions, ever further from the current chunk; re-rotating them
-to sit just before the window, as Rolling Forcing and Deep Forcing do, lowers persistence at 60\,s from 0.61 to 0.16
-($-0.44$ \ci{-0.54}{-0.35}, preregistered; 40--50\,s, between the bursts: $-0.27$ \ci{-0.38}{-0.16}). Re-rotated, depth
-no longer helps (study 16): sinks of six and three frames keep the same share (0.22 vs 0.23, $-0.00$ \ci{-0.11}{0.10};
-the preregistered depth test is not supported), and their curves coincide from 10\,s on. Three new seeds per scene
-(study 20, 432 videos) reproduce this: 0.61 with a sink, 0.21 re-rotated and $-0.01$ without, the re-rotated sink
-keeping more than none ($+0.22$ \ci{0.15}{0.29}), in each seed alone too. Krea's optional first-frame anchor, one
-latent frame kept next to the window, keeps \pend{0.03 at 60\,s ([test A3])}, like a re-rotated one-frame sink on Self
-Forcing (0.08). A sink at in-distribution positions thus holds a small, steady share of tone, at most about 0.2 whatever
-its depth, and a smaller share of the scene (Section~\ref{sec:content}).
+\paragraph{An opening that stays in the context keeps a share.} Self Forcing keeps the sink's keys at their absolute
+rotary positions, ever further from the current chunk. Re-rotated to sit just before the window, as in Rolling Forcing
+and Deep Forcing, the sink stays at query distances seen in training. Re-rotated sinks of three and six frames keep
+the same share at 60\,s (0.23 and 0.22, $-0.00$ \ci{-0.11}{0.10}, study 16; the preregistered depth test is not
+supported) and one frame keeps 0.08 (study 10); with three new seeds per scene a three-frame sink keeps 0.21 against
+$-0.01$ without one ($+0.22$ \ci{0.15}{0.29}, study 20, in each seed alone too). Rolling Forcing, which re-aligns its
+anchor and was trained on longer rollouts, keeps 0.45, and Krea's optional first-frame anchor, one latent frame next to
+its window, keeps \pend{0.03 ([test A3])}. FramePack~\cite{framepack} (13B, fine-tuned from HunyuanVideo~\cite{hunyuan})
+places the opening as a clean prefix frame in the context of \emph{every} 33-frame section and also feeds its SigLIP
+embedding as a global condition. The shift travels through the prefix: sent only through the prefix it keeps about
+half at 20\,s, only through the embedding nothing (0.01 \ci{-0.14}{0.17}, study 11); at 60\,s FramePack keeps 0.51
+\ci{0.29}{0.71}, and 0.46 \ci{0.28}{0.65} with the prefix alone (study 16). MAGI-1 with full history keeps 0.64
+\ci{0.45}{0.83} at 30\,s ($+0.30$ \ci{0.17}{0.43} over the released window, study 18) \pend{and [x] at 60\,s}. These
+shares are still falling at 60\,s, slowly: from 30 to 60\,s the re-rotated sink goes from 0.36 to 0.21 (study 20), Rolling
+Forcing from 0.59 to 0.45 and FramePack from 0.66 to 0.51. \pend{[Study 24, 180\,s: whether they level off.]} Keeping the
+opening does not stop the drift the openings share: MAGI-1's fresh rollouts brighten by 15--20~\Lstar{} under either
+setting, so full history preserves the difference between openings, not their level.
 
-\paragraph{Sinks at their original positions: bursts.} Persistence with such a sink jumps between 31.5 and 34.5\,s
-($+0.45$ \ci{0.36}{0.53} with three frames, $+0.46$ with six) and again near 52\,s, in LongLive and the other Self
-Forcing checkpoints too (Fig.~\ref{fig:atlas}b, c); the returns of the opening's scene coincide with these bursts. With
-re-rotated sinks the jump is replaced by a small decline ($-0.08$ \ci{-0.13}{-0.02}). The timing matches the ``sink
-collapse'' that LoL~\cite{lol} attributes to rotary-position periodicity, and the role of intrinsic rotary frequencies
-in video length extrapolation~\cite{riflex,roundround}: the sink keeps its absolute position, and at certain distances
-the current chunk attends to it strongly. Much of what a Self Forcing sink keeps at 60\,s is therefore positional.
+\paragraph{Sinks at their absolute positions: bursts.} Without re-rotation a sink keeps more, and depth helps: no sink,
+one, three and six frames keep 0.05, 0.29, 0.61 and 0.76 at 60\,s ($+0.15$ \ci{0.11}{0.20} for six vs three; studies 7,
+10), and LongLive's sink 0.45 against $-0.01$. Much of this is positional. Persistence jumps at the same times, near 17,
+33 and 51\,s, in every configuration with a sink at its absolute positions, across five Self Forcing checkpoints and
+LongLive (Fig.~\ref{fig:atlas}b, c), and never with a re-rotated sink or without one; the returns of the opening's scene
+coincide with these jumps (Section~\ref{sec:content}). Re-rotation lowers persistence at 60\,s from 0.61 to 0.16
+($-0.44$ \ci{-0.54}{-0.35}, preregistered) and, between the bursts (40--50\,s), by $-0.27$ \ci{-0.38}{-0.16}: the
+absolute position helps even there. The jumps are about 67 latent frames apart, close to the 70.6-frame period of one
+of Wan's temporal rotary frequencies, which suggests that at certain query--sink distances the current chunk attends
+to the sink strongly, as LoL~\cite{lol} argues for ``sink collapse''~\cite{riflex,roundround}. \pend{[Study 25: an
+attention probe over sink distances, and moving the sink to fixed distances.]}
 
-\paragraph{Overlapping frames delay forgetting.} SkyReels-V2-DF extends videos in 97-frame segments that re-denoise
-the last 17 frames of the previous segment jointly with the new ones. It does not relax over 20\,s ($\alpha = 0.96$
-\ci{0.86}{1.07}), whatever its guidance, history noise or number of steps (exploratory), and in 5 of 12 scenes
-$\alpha>1$: the overlap passes the opening forward and can amplify it. Cutting the overlap to 5 frames makes it relax
-($-0.24$ \ci{-0.40}{-0.09} at 15--20\,s, preregistered). But the overlap only passes the opening forward: over 60\,s
-(study 16) 17 frames hold $\alpha\approx1$ until 20\,s and then forget steadily, to 0.29 at 60\,s ($-0.72$
-\ci{-0.81}{-0.63} from 20 to 60\,s), and 5 frames fall to 0.08 (both preregistered).
+\paragraph{An action-conditioned world model.} Matrix-Game-2.0~\cite{matrixgame2}, driven by keyboard and mouse
+actions with no text, fits the same picture (study 15): a shift held only in its 6-frame context fades ($-0.24$
+\ci{-0.35}{-0.14} from 5 to 30\,s, preregistered; 7 scenes, as the model often collapses to black), while a shift sent
+only through its CLIP image embedding, which conditions every chunk, persists (0.43 \ci{0.13}{0.71} at 30\,s, Holm
+$p=0.075$; 0.25 \ci{0.17}{0.36} at 15\,s over 20 scenes, exploratory; Appendix Fig.~\ref{fig:framepack}d).
 
-\paragraph{A copy of the opening in every section is a permanent sink.} FramePack~\cite{framepack}, a 13B model
-fine-tuned from HunyuanVideo~\cite{hunyuan}, places the opening as a clean prefix frame in the context of \emph{every}
-33-frame section and also feeds its SigLIP embedding as a global condition (study 11, 12 scenes). It relaxes too: 0.91
-of a brightness shift at 5\,s and 0.68 \ci{0.57}{0.79} at 20\,s (preregistered), about as much as the best cache
-configurations over the same window (Appendix Table~\ref{tab:matched}). The shift travels through the prefix: sent
-only through the prefix it keeps about half, only through the embedding nothing (0.01 \ci{-0.14}{0.17}). Unlike the
-overlap, the prefix keeps its share: at 60\,s (study 16) FramePack keeps 0.51 \ci{0.29}{0.71} with both routes and
-0.46 \ci{0.28}{0.65} with the prefix alone, with little decline after 20\,s ($-0.17$ \ci{-0.38}{0.01} and $-0.08$
-\ci{-0.26}{0.09}; one collapsed scene excluded). MAGI-1 with full history, the opening never leaving the context,
-behaves alike: its persistence levels off near 0.65 from 10\,s on (0.64 \ci{0.45}{0.83} at 30\,s, $+0.30$
-\ci{0.17}{0.43} over the released window). Keeping the opening does not stop the shared drift, though: MAGI-1's fresh
-rollouts brighten by 15--20~\Lstar{} under either setting, so full history preserves the difference between openings,
-not their level.
-
-\paragraph{An action-conditioned world model.} Matrix-Game-2.0~\cite{matrixgame2} generates a world from an image and
-keyboard and mouse actions, with no text; the opening's latent leaves its 6-frame window after about a second, while
-its CLIP~\cite{clip} embedding conditions every chunk (study 15). The model often collapses to black (40 of 144 videos
-within 30\,s), which left 7 scenes for the preregistered 30-s analysis: a shift held only in the context faded ($-0.24$
-\ci{-0.35}{-0.14}, supported), and an embedding-only shift persisted (0.43 \ci{0.13}{0.71}) without passing the Holm
-threshold ($p=0.075$). At 15\,s (20 scenes, exploratory) the context-only shift fades from 0.76 to 0.10 while the
-embedding-only shift grows from 0.08 to 0.25 \ci{0.17}{0.36}: the rollout relaxes toward a default that moves with the
-conditioning (Appendix Fig.~\ref{fig:framepack}d).
-
-\paragraph{A phenomenological recursion.} Model a chunk's mean statistic as $x_{k+1} = w_w\,\bar x_{\text{window}} +
-w_s\,x_{\text{sink}} + w_p\,\mu$ with $w_w + w_s + w_p = 1$, where the opening counts as a window chunk until it rolls
-out and $\mu$ is the prompt's default. Without a sink the opening is eventually forgotten; with one, $\alpha_\infty =
-w_s/(w_s+w_p)$, so a small sink weight keeps a large share if the prompt's pull is also small. Fitted to 120-s curves,
-the recursion gives $w_s = 0.060$ \ci{0.021}{0.097} and $w_w = 0.86$, implying $w_p\approx0.08$. We preregistered this
-prediction and measured the prompt's pull by bit-exact replay of the key--value cache, regenerating one chunk from
-identical cache, noise and random state with only the text conditioning swapped to a lighting prompt with a different
-default (study 14): $w_p = 0.088$ \ci{0.045}{0.149} at 15\,s, proportional to the default difference
-(Appendix~\ref{app:recursion}). The recursion holds for about 20\,s and no longer: with a sink the prompt's pull rises to
-0.26 \ci{0.17}{0.36} at 30\,s (preregistered test of time invariance, $+0.16$ \ci{0.10}{0.24}), and it explains neither
-the 0.2 kept by re-rotated sinks nor the 0.6 kept by aliased ones.
+\paragraph{A phenomenological recursion.} A linear recursion of a chunk's mean statistic on the window, the sink and the
+prompt's default describes the first 20\,s of these curves. Its prompt weight, $w_p\approx0.08$ from a fit to 120-s
+curves, matched a bit-exact cache-replay measurement that swaps only the text conditioning for one chunk (0.088
+\ci{0.045}{0.149} at 15\,s, study 14). It does not hold beyond 20\,s and explains neither the share of re-rotated sinks
+nor the bursts (Appendix~\ref{app:recursion}).

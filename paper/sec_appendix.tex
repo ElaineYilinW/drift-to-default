@@ -27,7 +27,7 @@ pairing is unaffected. The other studies ran as preregistered.
 \paragraph{Withdrawn or revised claims.} During the project we withdrew four claims after checks: that MUSIQ rewards
 collapsed videos (it is merely insensitive); that the sink stabilises the default (trend difference $+0.5$
 \ci{-2.4}{3.5}); that the model follows its context by 76\% (true only for artificial shifts); and that early dynamics
-forecast the final brightness. The recursion's predicted Self Forcing plateau of 0.25--0.54 was missed (0.58 at 60\,s).
+forecast the final brightness. The recursion's predicted Self Forcing plateau of 0.25--0.54 was missed (0.58 at 60\,s in study 7).
 
 %=====================================================================================================================
 \section{Drift metrics for prompt-only rollouts}\label{app:metrics}
@@ -131,6 +131,10 @@ rescored all content videos with SigLIP so400m-patch14-384~\cite{siglip}, with i
 labels, and reran each frozen analysis unchanged (Table~\ref{tab:encoder}). Every verdict agrees. Estimates in
 $\kappa$ agree within 0.03; raw log-odds differ in scale between encoders. This includes FramePack's embedding route,
 whose conditioning encoder is itself a SigLIP model: CLIP and SigLIP give it the same content share (0.23 and 0.25).
+Class scores might also carry global colour (snow is bright, sand is yellow). On frames whose CIELAB mean and standard
+deviation are matched to the held opening's before encoding, the city-versus-class-prompt difference of study 9 is 9.0
+\ci{7.9}{10.2} log-odds (9.3 without matching), and the four tests of study 21 give $+0.45$, $-0.38$, $+0.08$ and $-0.32$
+($+0.48$, $-0.40$, $+0.08$, $-0.34$ without).
 \input{tab_encoder.tex}
 
 \paragraph{Real and generated openings.} On Self Forcing, real and generated openings fall on the same line
@@ -148,6 +152,14 @@ implied by the recursion fitted to 120-s curves, preregistered for 15\,s. (c) Th
 difference of the prompts' defaults; a prompt with the same default has no effect.}
 \label{fig:mech}
 \end{figure}
+Model a chunk's mean statistic as $x_{k+1} = w_w\,\bar x_{\text{window}} + w_s\,x_{\text{sink}} + w_p\,\mu$ with
+$w_w + w_s + w_p = 1$, where the opening counts as a window chunk until it rolls out and $\mu$ is the prompt's default.
+Without a sink the opening is eventually forgotten; with one, $\alpha_\infty = w_s/(w_s+w_p)$, so a small sink weight
+keeps a large share if the prompt's pull is also small. Fitted to 120-s curves, the recursion gives $w_s = 0.060$
+\ci{0.021}{0.097} and $w_w = 0.86$, implying $w_p\approx0.08$, which we preregistered as the expected value of the
+replay measurement (the preregistered test was $w_p>0$). Study 14 measured 0.088 \ci{0.045}{0.149} at 15\,s. With a
+sink the prompt's pull rises to 0.26 \ci{0.17}{0.36} at 30\,s (preregistered test of time invariance, $+0.16$
+\ci{0.10}{0.24}), so the recursion holds for about 20\,s.
 Bit-exact replay of the key--value cache measures the recursion's weights directly, by regenerating one chunk from
 identical noise after changing only the sink, the window or the text conditioning: $w_s = 0.053$ \ci{0.040}{0.066} for
 synthetic tone shifts (0.036 in a dose--response design), and $w_w = 0.76$ (synthetic) to 0.90--0.99 (natural
@@ -155,9 +167,8 @@ differences), in 10 development prompts $\times$ 2 seeds. The prompt's pull meas
 difference between the two prompts' defaults, and a prompt with the same default has no effect (Fig.~\ref{fig:mech}b,
 c). The three weights sum to 1.00 with the fitted $w_w$, but to 0.90 or 1.13 with the replay-measured ones, and
 $\alpha_\infty$ is 0.29--0.41 depending on which $w_s$ is used. Without a sink the measured pull is smaller (0.035 at
-15\,s), so $w_p$ is not a property of the prompt alone, and fitted weights depend on the horizon. With in-distribution
-positions a sink keeps 0.16--0.23 whatever its depth, below what the recursion implies; the aliased sink keeps 0.61,
-above it.
+15\,s), so $w_p$ is not a property of the prompt alone, and fitted weights depend on the horizon. Re-rotated sinks of three or
+six frames keep 0.16--0.23, below what the recursion implies; a sink at its absolute positions keeps 0.61, above it.
 
 \section{Models outside the Wan cache family}\label{app:other}
 \begin{figure}[h]
@@ -210,6 +221,6 @@ interventional design removes the issue.
 \section{Context strategies (study 1)}\label{app:ctx}
 A preregistered factorial study of 10 window and sink strategies on Self Forcing (40 prompts $\times$ 4 seeds, 31\,s)
 found that a 3-frame sink cuts colour drift $D$ by 7.56 \ci{6.81}{8.32} and DINOv2 drift $K$ by 0.90; that window size
-matters only without a sink; and that re-rotating the sink's positions, which Self Forcing was not trained for, does
+matters only without a sink; and that re-rotating the sink's positions (which keeps the query--sink distance within the range seen in training) does
 not reduce $D$ ($-0.03$ \ci{-0.79}{0.72}) and increases $K$ ($+0.36$). Darkening persists with a sink (last-2-s $z_L =
 -1.99$). $D$ and $K$ rise roughly linearly over 31\,s under every strategy, without a visible plateau.

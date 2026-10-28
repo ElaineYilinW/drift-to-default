@@ -1,5 +1,5 @@
 """Summary figure: long-run persistence of the opening's tone, grouped by how each model holds the opening
-(studies 10, 16, 18, 19, 20, 22). Entries whose results file is missing are skipped.
+(studies 10, 16, 18, 19, 20, 22), grouped by whether the opening stays in the model's context. Entries whose results file is missing are skipped.
 usage: python report/make_hold_fig.py [RESULTS_DIR] [OUT_PDF]   (defaults: results/corr/, paper/fig_hold.pdf)"""
 import json
 import os
@@ -37,27 +37,29 @@ def curve(src, *keys):
 
 # group: (title, colour); entries: (label, curve, model marker)
 GROUPS = [
-    ("opening only in the window", ORANGE, [
+    ("opening leaves the context", ORANGE, [
         ("Self Forcing, no sink", curve(S20, "alpha", "sf60_s0")),
         ("LongLive, no sink", curve(ATL, "alpha", "ll60_s0")),
         ("MAGI-1, released window", curve(M19, "alpha_b") or curve(M18, "alpha", "mgw")),
-        ("Krea 14B, released window", curve(KR, "alpha", "kr60_none"))]),
-    ("overlapping frames re-denoised", PURPLE, [
-        ("SkyReels-V2, 17 frames", curve(S16, "D", "alpha", "sky17")),
-        ("SkyReels-V2, 5 frames", curve(S16, "D", "alpha", "sky5"))]),
-    ("opening kept next to the window", GREEN, [
+        ("Krea 14B, released window", curve(KR, "alpha", "kr60_none")),
+        ("SkyReels-V2, 17-frame overlap", curve(S16, "D", "alpha", "sky17")),
+        ("SkyReels-V2, 5-frame overlap", curve(S16, "D", "alpha", "sky5"))]),
+    ("opening stays in the context", GREEN, [
+        ("Self Forcing, sink 1 re-rotated", curve(ATL, "alpha", "sf60_s1rr")),
         ("Self Forcing, sink 3 re-rotated", curve(S20, "alpha", "sf60_s3rr")),
         ("Self Forcing, sink 6 re-rotated", curve(S16, "B", "alpha", "sf60_s6rr")),
+        ("Rolling Forcing, re-aligned anchor", curve(ATL, "alpha", "rf60")),
         ("Krea 14B, first-frame anchor", curve(KR, "alpha", "kr60_first")),
         ("FramePack, context prefix", curve(S16, "C", "alpha", "fpv_ctx")),
         ("FramePack, prefix + embedding", curve(S16, "C", "alpha", "fpv_both")),
         ("MAGI-1, full history", curve(M18, "alpha", "mgf"))]),
-    ("sink at its original positions", BLUE, [
+    ("sink at absolute positions", BLUE, [
+        ("Self Forcing, sink 1", curve(ATL, "alpha", "sf60_s1")),
         ("Self Forcing, sink 3", curve(S20, "alpha", "sf60_s3")),
         ("Self Forcing, sink 6", curve(ATL, "alpha", "sf60_s6")),
-        ("LongLive, sink", curve(ATL, "alpha", "ll60_s3"))])]
+        ("LongLive, sink 3", curve(ATL, "alpha", "ll60_s3"))])]
 
-fig, (ax, bx) = plt.subplots(1, 2, figsize=(6.9, 4.0), gridspec_kw=dict(width_ratios=[1.2, 1]), layout="constrained")
+fig, (ax, bx) = plt.subplots(1, 2, figsize=(6.9, 4.3), gridspec_kw=dict(width_ratios=[1.2, 1]), layout="constrained")
 y, ticks, labels = 0, [], []
 for title, col, items in GROUPS:
     items = [(lab, c) for lab, c in items if c]
@@ -86,8 +88,8 @@ ax.set_xlabel(r"persistence $\alpha$ at 60 s (bar: at 10 s)")
 ax.set_title("(a) long-run share of a brightness shift", fontsize=8.5, loc="left", color=INK)
 
 SHOW = [("Self Forcing, no sink", ORANGE, "-"), ("Krea 14B, released window", ORANGE, "--"),
-        ("SkyReels-V2, 17 frames", PURPLE, "-"), ("Self Forcing, sink 3 re-rotated", GREEN, "-"),
-        ("Krea 14B, first-frame anchor", GREEN, "--"), ("FramePack, prefix + embedding", GREEN, ":"),
+        ("SkyReels-V2, 17-frame overlap", ORANGE, ":"), ("Self Forcing, sink 3 re-rotated", GREEN, "-"),
+        ("Rolling Forcing, re-aligned anchor", GREEN, "--"), ("FramePack, prefix + embedding", GREEN, ":"),
         ("Self Forcing, sink 3", BLUE, "-")]
 allc = {lab: c for _, _, items in GROUPS for lab, c in items if c}
 for lab, col, ls in SHOW:
