@@ -108,44 +108,38 @@ distils a bidirectional teacher~\cite{wan} into a few-step causal student with D
 Forcing~\cite{selfforcing} and Self-Forcing++~\cite{selfforcingpp} train on the student's own (minute-long) rollouts.
 LongLive~\cite{longlive}, Rolling Forcing~\cite{rollingforcing} and Deep Forcing~\cite{deepforcing} add attention sinks,
 rolling joint denoising and deeper, re-aligned sinks; LoL~\cite{lol} traces ``sink collapse'' to positional periodicity.
-Segment-wise models condition on overlapping frames (SkyReels-V2~\cite{skyreels}, StreamingT2V~\cite{streamingt2v},
-MAGI-1~\cite{magi}), a temporal pyramid (Pyramid Flow~\cite{pyramidflow}) or packed history with anti-drifting sampling
-(FramePack~\cite{framepack}); training-free schemes lengthen bidirectional models~\cite{fifo,freenoise,freelong,rollingdiffusion}.
-These works propose mechanisms against drift; we measure what drift does and which mechanism changes which part of it.
+Segment-wise models condition on overlapping frames~\cite{skyreels,streamingt2v,magi}, a temporal
+pyramid~\cite{pyramidflow} or packed history~\cite{framepack}; training-free schemes lengthen bidirectional
+models~\cite{fifo,freenoise,freelong,rollingdiffusion}. These works propose mechanisms against drift; we measure what
+drift does and which mechanism changes which part of it.
 
-\paragraph{Error accumulation, exposure bias and world models.} Sampling from one's own output causes exposure bias in
-sequence models~\cite{scheduledsampling,dagger} and diffusion models~\cite{ning2023,ning2024}; error analyses of
-autoregressive video diffusion~\cite{metaarvdm} bound how errors compound, and game and driving world
-models~\cite{gamengen,diamond,vista,matrixgame2} add noise to context frames for robustness. For global statistics our
-results suggest a complementary view: the rollout forgets its context and relaxes to the conditioning's default, whose
-offset from the short-horizon distribution is a training-horizon effect. Global brightness biases of diffusion models
-arise at the earliest denoising steps~\cite{lin2024,offsetnoise}, consistent with corrections acting only there.
-
-\paragraph{Attention sinks, forgetting and correction.} Streaming language models keep the first tokens as an attention
-sink~\cite{streamingllm,sinkemerge}, related to registers in vision transformers~\cite{registers}; in autoregressive
-video the sink is usually the first chunk kept in the key--value cache. The closest analogue to our finding is
-instruction drift in dialogs~\cite{instructiondrift}, where attention to the system prompt decays and behaviour reverts
-to a default. Pathwise test-time correction~\cite{pathwise} and FreqForcing~\cite{freqforcing} anchor rollouts to early
-frames or their low frequencies; our correction is a minimal member of this family. VBench~\cite{vbench} scores imaging
-quality with MUSIQ~\cite{musiq}; we measure drift against each prompt's fresh-start distribution~\cite{dinov2} and by
-intervention.
+\paragraph{Error accumulation, sinks and correction.} Sampling from one's own output causes exposure bias in sequence
+models~\cite{scheduledsampling,dagger} and diffusion models~\cite{ning2023,ning2024}; error analyses of autoregressive
+video diffusion~\cite{metaarvdm} bound how errors compound, and world models~\cite{gamengen,diamond,vista,matrixgame2}
+add noise to context frames for robustness. For global statistics our results suggest a complementary view: the rollout
+forgets its context and relaxes to the conditioning's default. Global brightness biases of diffusion models arise at the
+earliest denoising steps~\cite{lin2024,offsetnoise}. Streaming language models keep the first tokens as an attention
+sink~\cite{streamingllm,sinkemerge}, related to registers in vision transformers~\cite{registers}; the closest analogue
+to our finding is instruction drift in dialogs~\cite{instructiondrift}, where attention to the system prompt decays and
+behaviour reverts to a default. Pathwise test-time correction~\cite{pathwise} and FreqForcing~\cite{freqforcing} anchor
+rollouts to early frames or their low frequencies; our correction is a minimal member of this family. VBench~\cite{vbench}
+scores imaging quality with MUSIQ~\cite{musiq}; we measure drift against each prompt's fresh-start
+distribution~\cite{dinov2} and by intervention.
 
 %=====================================================================================================================
 \section{Measuring drift by intervention}\label{sec:protocol}
-\paragraph{Models.} Appendix Table~\ref{tab:models} lists the configurations. Self Forcing (five checkpoints), CausVid,
-LongLive and Rolling Forcing are causal few-step students of Wan2.1-T2V-1.3B~\cite{wan} that read their past through a
-key--value cache of 21 latent frames (LongLive: 12), optionally with an attention sink (the first chunk kept in the
-cache). SkyReels-V2-DF uses the Wan2.1 VAE and a transformer of the same architecture and size, but extends videos in
-97-frame segments that re-denoise the last 17 frames of the previous segment. Matrix-Game-2.0~\cite{matrixgame2} is a
-Wan-architecture world model without a text branch, driven by keyboard and mouse actions. FramePack~\cite{framepack} is a 13B model fine-tuned from HunyuanVideo~\cite{hunyuan}; each
-33-frame section sees the opening as a clean prefix frame and as a SigLIP~\cite{siglip} image embedding, plus
-compressed history. MAGI-1~\cite{magi} (4.5B, distilled) has its own VAE and transformer; it generates 1-s chunks that
-attend to earlier chunks through a key--value cache, in its released configuration to at most the four previous chunks
-with no sink, and its code also allows attention to the full history. All Wan-based configurations run in one harness that reproduces the official Self Forcing loop
-bit for bit when no intervention is applied.
+\paragraph{Models.} We study nine open models (Appendix Table~\ref{tab:models}). Self Forcing (five checkpoints),
+CausVid, LongLive and Rolling Forcing are causal few-step students of Wan2.1-T2V-1.3B~\cite{wan} that read their past
+through a key--value cache of 21 latent frames (LongLive: 12), optionally with an attention sink (the first chunk kept
+in the cache); Krea Realtime 14B~\cite{krea} is a student of the 14B model. SkyReels-V2-DF~\cite{skyreels} (same
+architecture as the 1.3B model) extends videos in overlapping segments, Matrix-Game-2.0~\cite{matrixgame2} is a
+Wan-architecture world model driven by actions, FramePack~\cite{framepack} (13B, from HunyuanVideo~\cite{hunyuan})
+conditions every section on the opening, and MAGI-1~\cite{magi} (4.5B) has its own VAE and transformer;
+Section~\ref{sec:mech} describes how each holds the opening. All Wan-1.3B cache configurations run in one harness that
+reproduces the official Self Forcing loop bit for bit when no intervention is applied.
 
 \paragraph{Held and perturbed openings.} An opening image is held still for the first chunk (9 frames, 0.56\,s at
-16\,fps; SkyReels: 17 frames as a prefix video; FramePack: the input image; MAGI-1: a clean image prefix) and continued
+16\,fps; SkyReels: 17 frames as a prefix video; FramePack and Krea: the input image; MAGI-1: a clean image prefix) and continued
 under a prompt. Openings
 are NAVSIM~\cite{navsim} front-camera frames or frames generated by the models themselves. To separate what the model
 keeps from what the scene is, we shift the \emph{same} opening in CIELAB before encoding: \Lstar{} by $\pm8$ and

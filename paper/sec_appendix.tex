@@ -111,6 +111,10 @@ part of the shift early and regain it), and Rolling Forcing is still declining a
 be an asymptote; $x_\infty$ in Eq.~\ref{eq:law} denotes the long-run tendency, and $\alpha$ is always reported with its
 horizon.
 
+\paragraph{Re-rotated sinks across studies.} A re-rotated three-frame sink keeps 0.16 at 60\,s in study 10 and 0.23 in
+study 16 because 9 of the 24 scenes ran on another GPU architecture in study 16, which amounts to resampling them; all
+72 videos repeated on the same architecture were bit-identical.
+
 \paragraph{The default and fresh rollouts.} Across 10 configurations, the zero-drift level correlates $r=0.93$ with
 where prompt-only rollouts end, but the slope is 1.58 and the mean absolute difference 4.9~\Lstar{} (largest for the
 GAN and SiD v2 checkpoints, whose zero-drift levels are extrapolated from slopes far from 0). Fresh rollouts give the
@@ -131,6 +135,44 @@ whose conditioning encoder is itself a SigLIP model: CLIP and SigLIP give it the
 
 \paragraph{Real and generated openings.} On Self Forcing, real and generated openings fall on the same line
 ($p=0.80$); on LongLive, generated openings end 4.3~\Lstar{} brighter than real ones of equal brightness ($p=0.03$).
+
+\section{The recursion and the replay}\label{app:recursion}
+\begin{figure}[h]
+\centering
+\includegraphics[width=\linewidth]{fig_mech.pdf}
+\caption{(a) Two components of drift: persistence of the opening (study 6) against the attractor offset of fresh
+rollouts (end minus start brightness, 4 seeds); models trained on their own long rollouts have almost no offset but
+still forget. (b) The prompt's per-chunk pull measured by bit-exact replay (study 14; 16 seeds; 95\% CIs): one chunk
+regenerated from identical cache, noise and random state with only the text conditioning swapped; grey: the value
+implied by the recursion fitted to 120-s curves, preregistered for 15\,s. (c) The swapped chunk's change against the
+difference of the prompts' defaults; a prompt with the same default has no effect.}
+\label{fig:mech}
+\end{figure}
+Bit-exact replay of the key--value cache measures the recursion's weights directly, by regenerating one chunk from
+identical noise after changing only the sink, the window or the text conditioning: $w_s = 0.053$ \ci{0.040}{0.066} for
+synthetic tone shifts (0.036 in a dose--response design), and $w_w = 0.76$ (synthetic) to 0.90--0.99 (natural
+differences), in 10 development prompts $\times$ 2 seeds. The prompt's pull measured in study 14 is proportional to the
+difference between the two prompts' defaults, and a prompt with the same default has no effect (Fig.~\ref{fig:mech}b,
+c). The three weights sum to 1.00 with the fitted $w_w$, but to 0.90 or 1.13 with the replay-measured ones, and
+$\alpha_\infty$ is 0.29--0.41 depending on which $w_s$ is used. Without a sink the measured pull is smaller (0.035 at
+15\,s), so $w_p$ is not a property of the prompt alone, and fitted weights depend on the horizon. With in-distribution
+positions a sink keeps 0.16--0.23 whatever its depth, below what the recursion implies; the aliased sink keeps 0.61,
+above it.
+
+\section{Models outside the Wan cache family}\label{app:other}
+\begin{figure}[h]
+\centering
+\includegraphics[width=\linewidth]{fig_framepack.pdf}
+\caption{(a) FramePack (study 11, 12 scenes): the opening's brightness shift sent through both routes, only the clean
+context prefix, or only the SigLIP image embedding; the anti-drifting sampler; SkyReels-V2 with 17 and 5 overlapping
+frames for reference. (b) FramePack, scene content (study 17, 24 openings, city prompt): with a city frame in the
+context, the opening's embedding alone pulls the video toward the opening's class. (c) MAGI-1 (study 18, 12 scenes):
+the released window of four 1-s chunks against full history (1-s windows, 3-s moving average). (d) Matrix-Game-2.0, an
+action-conditioned world model without text (study 15, exploratory 15-s analysis, 20 scenes): the context latent
+leaves the window and is forgotten, while the rollout drifts toward the CLIP-embedded opening. Bands:
+scene-bootstrap 95\% CIs.}
+\label{fig:framepack}
+\end{figure}
 
 \section{The default and the forecast}\label{app:default}
 \begin{figure}[h]

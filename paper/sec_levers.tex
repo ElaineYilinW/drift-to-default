@@ -8,28 +8,18 @@ more with a temporary cache that holds only the anchor (the opening chunk). The 
 spatial means of the two predictions (the DC tone) is added to the real prediction, scaled by $\beta$; the main cache
 and the random stream are untouched. In a preregistered confirmation on 40 held-out prompts $\times$ 4 seeds
 (study~2), colour drift $D$ fell by 1.48 \ci{1.19}{1.76} at $\beta=1$ and by 1.78 \ci{1.45}{2.11} at $\beta=1.5$, with
-structure drift $K$ non-inferior. Table~\ref{tab:baselines} compares it with post-hoc colour matching to the anchor,
-which reaches a similar $D$ but, by construction, removes legitimate global changes too: on 7 held-out prompts with
-real brightness transitions (tunnels, garages, clouds), matching keeps 7--12\% of the transition and the correction a
-median of 83\% \ci{67}{147} ($\beta=1$) and 93\% \ci{83}{148} ($\beta=1.5$; prompt-bootstrap intervals over only
-seven prompts). The per-prompt values range from 0.58 to
-1.71, so on some prompts the correction amplifies the change. The costs are one extra forward pass per chunk (about
-25\% more compute), more frame-to-frame jitter ($\times$1.13 / $\times$1.67) and larger jumps at chunk boundaries
-($\times$1.32 / $\times$2.40).
-
-A deeper attention sink, as in Deep Forcing~\cite{deepforcing}, is a strong training-free alternative (study 13, same
-prompts and seeds, bit-identical pairing). Keeping 6 or 9 latent frames as the sink cuts colour drift by 1.30 and 1.93,
-the latter more than the correction at $\beta=1$ ($-0.45$ \ci{-0.75}{-0.15}), with frame-to-frame jitter similar to the
-correction's ($\times$1.04, $\times$1.16) and smaller boundary jumps ($\times$0.98, $\times$1.09). A sink pulls everything
-toward the opening through attention, and in two of the seven transition prompts the nine-frame sink erased most of a
-legitimate change (7\% and 19\% kept, against 151\% and 147\% for the correction); its median is 0.59 \ci{0.19}{1.09}
-against 0.83 for the correction, but with seven prompts the intervals overlap. The correction, which moves only the DC
-tone, is the more conservative choice when real changes matter.
-
-The denoising step is a knob. On the development set, correcting at step 0 removes as much drift as step 1 but erases
-tunnels (56\% of transitions kept vs 94\%); steps 2--3 do nothing, consistent with global tone being fixed at the
-earliest steps~\cite{lin2024,offsetnoise}. In the relaxation study the correction raised Self Forcing's persistence from
-0.28 to 0.40 ($+0.12$ \ci{0.05}{0.20}, preregistered) and also the zero-drift level by 5~\Lstar.
+structure drift $K$ non-inferior, and in the relaxation study the correction raised Self Forcing's persistence from 0.28
+to 0.40 ($+0.12$ \ci{0.05}{0.20}, preregistered). Table~\ref{tab:baselines} compares it with two baselines. Post-hoc
+colour matching to the anchor reaches a similar $D$ but, by construction, removes legitimate global changes too: on 7
+held-out prompts with real brightness transitions (tunnels, garages, clouds), matching keeps 7--12\% of the transition
+and the correction a median of 83\% (per-prompt values from 0.58 to 1.71, so on some prompts it amplifies the change). A
+deeper attention sink, as in Deep Forcing~\cite{deepforcing} (study 13, bit-identical pairing), is a strong alternative:
+nine sink frames cut $D$ by more than the correction at $\beta=1$ ($-0.45$ \ci{-0.75}{-0.15}) with smaller boundary
+jumps, but a sink pulls everything toward the opening, and in two of the seven transition prompts it erased most of a
+legitimate change (7\% and 19\% kept, against 151\% and 147\% for the correction). The correction costs one extra
+forward pass per chunk (about 25\% more compute) and more frame-to-frame jitter; it is the more conservative choice
+when real changes matter. Correcting at step 0 removes as much drift but erases tunnels, and steps 2--3 do nothing,
+consistent with global tone being fixed at the earliest denoising steps~\cite{lin2024,offsetnoise}.
 
 \begin{table}[t]
 \centering\small
@@ -52,10 +42,9 @@ Deeper sink, 9 frames (study 13) & $-1.93$ \ci{-2.31}{-1.55} & 0.59 \ci{0.19}{1.
 \end{table}
 
 \paragraph{Moving $\mu$: prompts.} Since the prompt sets the default, lighting words can be chosen so that the default
-matches the opening. A free-form Qwen2.5-VL~\cite{qwenvl} caption of the opening does not reduce brightness drift on
-either model (Self Forcing $-1.21$ \ci{-3.09}{0.36}, study 3): it calls half of the normally lit frames ``dim'', though it
-improves content retention. Choosing the lighting sentence whose \emph{measured} default is nearest the opening's
-brightness reduces $|\Delta L|$ at 31\,s by 26\% on Self Forcing ($-2.45$ \ci{-4.08}{-1.04}, Holm $p=0.013$, study 4);
-the other five preregistered prompt tests failed, including LongLive with its own calibration (study 5). The mapping
-from words to brightness is model-specific and must be measured per model. Appendix~\ref{app:default} shows how well
-Eq.~\ref{eq:law} forecasts these outcomes ($r=0.82$ for the change, $0.46$ for the gain).
+matches the opening. Choosing the lighting sentence whose \emph{measured} default is nearest the opening's brightness
+reduces $|\Delta L|$ at 31\,s by 26\% on Self Forcing ($-2.45$ \ci{-4.08}{-1.04}, Holm $p=0.013$, study 4). A free-form
+Qwen2.5-VL~\cite{qwenvl} caption of the opening does not reduce brightness drift (study 3; it calls half of the normally
+lit frames ``dim''), and the other five preregistered prompt tests failed, including LongLive with its own calibration
+(study 5). The mapping from words to brightness is model-specific and must be measured per model;
+Appendix~\ref{app:default} shows how well Eq.~\ref{eq:law} forecasts these outcomes.
