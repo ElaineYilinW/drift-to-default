@@ -64,7 +64,9 @@ routes different images separates them (Appendix Fig.~\ref{fig:framepack}b): the
 \ci{0.12}{0.37}, levelling off after 14\,s, while the SigLIP image embedding alone, with a city frame in the context,
 \emph{pulls} the video toward the opening's class, to 0.23 \ci{0.16}{0.30} at 20\,s and still rising. The same
 embedding has no effect on tone (study 11), so in FramePack it sets the default of the scene but not of its
-brightness. \pend{[Krea 14B (study 22) and MAGI-1 (study 19) content results.]}
+brightness. Tone and content can also part the other way: Krea Realtime 14B's first-frame anchor keeps the
+opening's class ($\kappa$ 0.37 vs 0.05 without it at 60\,s, study 22; SigLIP and tone-normalised scores agree) but none
+of its tone (Section~\ref{sec:mech}). \pend{[MAGI-1 (study 19) content results.]}
 
 \begin{figure}[t]
 \centering
@@ -125,9 +127,9 @@ and $-0.01$ at 60\,s (study 10). MAGI-1~\cite{magi} (4.5B, distilled), which sha
 with the other models, attends in its released configuration to the four previous 1-s chunks, so the opening leaves
 its context after about 4\,s; persistence falls from 0.87 at 5\,s to 0.34 at 30\,s ($-0.52$ \ci{-0.70}{-0.35}, study
 18) \pend{and to [x] at 60\,s (study 19)}. Krea Realtime 14B~\cite{krea}, a Self Forcing student of Wan2.1-14B,
-recomputes its cache over a window of three latent frames (study 22, 24 scenes): \pend{it keeps 0.33 at 10\,s and
-nothing from 20\,s on ($-0.05$ at 60\,s)}. The pattern holds at 14B parameters, although Krea's window also differs, so
-this is not a controlled test of scale. Re-denoising overlapping frames delays forgetting but does not stop it.
+recomputes its cache over a window of three latent frames (study 22, 24 scenes): it keeps 0.33 at 10\,s and nothing
+from 20\,s on ($-0.05$ at 60\,s; $-0.38$ \ci{-0.45}{-0.31} from 10 to 60\,s), and its class evidence falls to $\kappa=0.05$.
+The pattern holds at 14B parameters, although Krea's window also differs, so this is not a controlled test of scale. Re-denoising overlapping frames delays forgetting but does not stop it.
 SkyReels-V2-DF extends videos in 97-frame segments that re-denoise the last 17 frames of the previous segment jointly
 with the new ones. It holds the opening for 20\,s ($\alpha = 0.96$ \ci{0.86}{1.07}, whatever its guidance, history
 noise or number of steps, exploratory; with a 5-frame overlap it relaxes, $-0.24$ \ci{-0.40}{-0.09} at 15--20\,s,
@@ -140,8 +142,10 @@ and Deep Forcing, the sink stays at query distances seen in training. Re-rotated
 the same share at 60\,s (0.23 and 0.22, $-0.00$ \ci{-0.11}{0.10}, study 16; the preregistered depth test is not
 supported) and one frame keeps 0.08 (study 10); with three new seeds per scene a three-frame sink keeps 0.21 against
 $-0.01$ without one ($+0.22$ \ci{0.15}{0.29}, study 20, in each seed alone too). Rolling Forcing, which re-aligns its
-anchor and was trained on longer rollouts, keeps 0.45, and Krea's optional first-frame anchor, one latent frame next to
-its window, keeps \pend{0.03 ([test A3])}. FramePack~\cite{framepack} (13B, fine-tuned from HunyuanVideo~\cite{hunyuan})
+anchor and was trained on longer rollouts, keeps 0.45. Krea's optional first-frame anchor, one latent frame next to its
+window, keeps scene content but not tone: $\kappa=0.37$ against 0.05 without it ($+0.33$ \ci{0.18}{0.47}, preregistered;
+the opening's class is CLIP's top label in 37\% of frames against 14\%), but $\alpha=0.03$ \ci{-0.03}{0.08} (both tone
+tests not supported), close to the 0.08 of a one-frame re-rotated sink in Self Forcing. FramePack~\cite{framepack} (13B, fine-tuned from HunyuanVideo~\cite{hunyuan})
 places the opening as a clean prefix frame in the context of \emph{every} 33-frame section and also feeds its SigLIP
 embedding as a global condition. The shift travels through the prefix: sent only through the prefix it keeps about
 half at 20\,s, only through the embedding nothing (0.01 \ci{-0.14}{0.17}, study 11); at 60\,s FramePack keeps 0.51

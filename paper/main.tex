@@ -25,7 +25,9 @@ model, the prompt and the horizon. Under a generic city prompt, openings of six 
 class evidence within 30\,s. How much is kept depends on whether the opening stays in the model's context. Once it
 leaves, it is forgotten, through a sliding key--value window at 1.3B and at 14B parameters, and after a delay of about
 20\,s when overlapping frames are re-denoised. An opening that stays in the context keeps a share whose size depends on
-the model, \pend{from 0.03 to 0.65} at 60\,s \pend{[study 24: at 180\,s]}. Attention sinks left at their absolute rotary
+the model: 0.2--0.5 of its tone at 60\,s for multi-frame sinks, anchors and clean prefixes \pend{[study 24: at
+180\,s]}, while a single anchored latent frame keeps almost no tone (0.03--0.08) but, in the 14B model, a third of the
+scene. Attention sinks left at their absolute rotary
 positions keep more, much of it in bursts \pend{[study 25: at query--sink distances predicted by an attention probe,
 which move when the sink is moved]}. In an exploratory analysis, drift separates into forgetting the opening and an
 offset of the default from where the same prompt starts, small in the two models trained on their own long rollouts. A
@@ -69,7 +71,8 @@ findings, and tests of its assumptions (Section~\ref{sec:relax}).
 Once the opening leaves a sliding key--value window it is forgotten, in 1.3B models and in a 14B model alike;
 re-denoising overlapping frames passes it forward and delays forgetting by about 20\,s. An opening that stays in the
 context (a re-rotated attention sink, an anchor, a clean copy in every section, full history) keeps a share whose size
-depends on the model \pend{[and that levels off / keeps falling to 180\,s]}. A sink left at its absolute rotary
+depends on the model \pend{[and that levels off / keeps falling to 180\,s]}, and tone and scene can be kept separately:
+a one-frame anchor in the 14B model keeps the scene but not its tone, LongLive's sink the reverse. A sink left at its absolute rotary
 positions keeps more, much of it in periodic bursts in which the opening, including its scene, returns
 \pend{[at distances an attention probe predicts]}.
 
