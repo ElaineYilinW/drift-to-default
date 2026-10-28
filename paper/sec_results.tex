@@ -8,8 +8,7 @@ and continued every version with the generic prompt (study 6, 31\,s; study 10, 6
 (Fig.~\ref{fig:teaser}). At 60\,s every cache configuration has relaxed (Appendix Fig.~\ref{fig:atlas}a): $\alpha$ ranges from
 $-0.01$ (LongLive without a sink) to 0.79 (Self Forcing GAN), ranked as at 31\,s (Spearman $\rho=0.78$, $p=0.008$).
 Part of the loss is immediate: most configurations lose a fifth to a third of the shift within 4.5\,s, and SiD loses
-two thirds there and nothing afterwards (0.66 by 4.5\,s, 0.65 by 60\,s), which looks like rejecting an off-manifold
-shift rather than forgetting it. Colour temperature behaves like brightness. Persistence varies by checkpoint even with architecture,
+two thirds there and nothing afterwards, which looks like rejecting an off-manifold shift rather than forgetting it. Colour temperature behaves like brightness. Persistence varies by checkpoint even with architecture,
 context and sampler fixed (Self Forcing: 0.35 to 0.79 at 60\,s; two SiD checkpoints differ by 0.36), so the training
 objective alone does not set it.
 
@@ -38,11 +37,9 @@ Sinks act differently on content. Self Forcing's sink keeps more of it at 60\,s 
 sea and the mountains of the opening reappear after a minute of city (Fig.~\ref{fig:content}, left). The returns are
 positional (study 16, 24 openings): with the sink's keys re-rotated to sit just before the window, they vanish (burst
 contrast $-0.29$ \ci{-0.37}{-0.22}), and the content kept at 60\,s falls from 0.56 to 0.25 ($-0.31$
-\ci{-0.37}{-0.25}). With this one seed the re-rotated sink kept no detectably more content than no sink ($+0.10$
-\ci{-0.00}{0.21}, not supported). Three new seeds per opening (study 21, 240 videos) reproduce the sink's advantage,
-the loss under re-rotation ($-0.40$ \ci{-0.47}{-0.34}) and the positional return, and, averaged per opening, detect a
-small share kept by the re-rotated sink: 0.19 against 0.11 without a sink ($+0.08$, Holm $p=0.006$; \ci{-0.01}{0.16}
-when the fresh starts are also resampled). What a Self Forcing sink keeps of the scene, it keeps mostly by periodically
+\ci{-0.37}{-0.25}). Three new seeds per opening (study 21, 240 videos) reproduce the sink's advantage, the loss under
+re-rotation ($-0.40$ \ci{-0.47}{-0.34}) and the positional return, and detect a small share kept by the re-rotated
+sink that one seed had missed: 0.19 against 0.11 without a sink ($+0.08$, Holm $p=0.006$; Table~\ref{tab:primary}). What a Self Forcing sink keeps of the scene, it keeps mostly by periodically
 re-injecting the opening. LongLive's sink, which keeps tone, does not keep content (0.22 vs 0.24, preregistered test not
 supported).
 
@@ -166,7 +163,8 @@ distance does not burst, and the distance sets how much is kept, in the order of
 over 50--60\,s, against 2.4 with the sink in place; Appendix Fig.~\ref{fig:s25frames}). A burst is thus a brief copy
 of the opening while the sink's distance passes a peak. A second probe on four other openings, to 723 frames
 (180\,s), reproduces the curve ($r=0.999$) and, by a peak rule fixed before its output was read, finds 13 further
-peaks after 60\,s, preregistered as burst times for the 180-s videos of study 24 (study 26). \pend{[Study 26: bursts
+peaks after 60\,s, preregistered as burst times for the 180-s videos of study 24 (study 26); the same probe on LongLive
+gives the same peaks ($r=0.96$). \pend{[Study 26: bursts
 at the 13 predicted onsets, contrast [x] (Self Forcing) and [x] (LongLive), [x] more than at control onsets.]}
 LoL~\cite{lol} relates a similar failure, ``sink collapse'', to rotary phases~\cite{riflex,roundround}.
 
