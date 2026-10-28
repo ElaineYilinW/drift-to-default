@@ -40,5 +40,7 @@ This folder holds the summary outputs of every experiment: tables, JSON summarie
 | Krea Realtime 14B (study 22, preregistered) | `corr/krea_out/`, `corr/krea_out_siglip/` | `analysis/analyze_krea.py` | `docs/lab-notes/29_krea_results.md` |
 | Attention-to-sink probes, Self Forcing and LongLive (exploratory) | `corr/sinkprobe_out/`, `corr/sinkprobe_long_out/`, `corr/llprobe_out/` | `analysis/analyze_sinkprobe.py`, `analyze_sinkprobe_long.py` | `docs/lab-notes/30_sink_probe.md` |
 | The sink's rotary position (study 25, preregistered) | `corr/s25_out/` | `analysis/analyze_s25.py`; figures `report/make_probe_fig.py`, `make_s25_frames_fig.py` | `docs/lab-notes/31_sink_position_results.md` |
+| The 180-s horizon (study 24, preregistered; 60-s windows exploratory) | `corr/s24_out/` | `analysis/analyze_s24.py`, `explore_s24_windows.py` | `docs/lab-notes/33_long_horizon_results.md` |
+| Out-of-sample burst times (study 26, preregistered; 120-s replication on study 6) | `corr/s26_out/`, `corr/s26_rep120_out/` | `analysis/analyze_s26.py` | `docs/lab-notes/32_burst_prediction_results.md` |
 
 `corr/` stands for "correction". The folder grew out of the correction work and later held all the opening-based experiments.

@@ -9,7 +9,7 @@ conclusions are unchanged; in study 1, 62\% of nominal pairs crossed GPU archite
 bias its intervals. Units: $D$, $K$ drift metrics; $|\Delta L|$ in \Lstar{};
 $\alpha$ persistence, $\kappa$ content persistence. Arms: G generic prompt, M VLM caption of the opening, C calibrated
 lighting plus caption, ttc content-aware correction. $^\ddagger$The $t$-test treats the default $\mu$ as fixed; the
-bootstrap interval also resamples the fresh starts that estimate it (pooled with seed 0: \ci{0.02}{0.15}).}
+bootstrap interval also resamples the fresh starts that estimate it (pooled with seed 0: \ci{0.02}{0.15}). $^{\S}$Equivalence by two one-sided tests; $p$ is the larger one-sided $p$.}
 \label{tab:primary}
 \setlength{\tabcolsep}{4.5pt}
 \begin{tabular}{@{}llllll@{}}
@@ -88,12 +88,18 @@ Study & Test & Model & Estimate [95\% CI] & $p_{\text{Holm}}$ & Outcome \\
   & content falls, class score (55--60\,s) & Krea 14B & $-12.02$ \ci{-12.64}{-11.37} & $<10^{-15}$ & supported \\
   & anchor $-$ window, $\kappa$ (55--60\,s) & Krea 14B & $+0.33$ \ci{0.18}{0.47} & $<10^{-5}$ & supported \\
 %S23ROWS
-%S24ROWS
+24 180-s horizon & re-rotated sink, $\alpha$ (180\,s) $>0$ & SF & $+0.12$ \ci{0.04}{0.20} & 0.044 & supported \\
+  & Rolling Forcing, $\alpha$ (180\,s) $>0$ & RF & $+0.29$ \ci{0.21}{0.37} & $<10^{-5}$ & supported \\
+  & re-rotated sink steady, 60$\to$180\,s, within $\pm0.10^{\S}$ & SF & $-0.09$ \ci{-0.22}{0.03} & 0.55 & not supported \\
+  & Rolling Forcing steady, 60$\to$180\,s, within $\pm0.10^{\S}$ & RF & $-0.07$ \ci{-0.16}{0.01} & 0.55 & not supported \\
+  & no sink, $\alpha$ (180\,s) within $\pm0.10^{\S}$ & SF & $+0.04$ \ci{-0.06}{0.14} & 0.38 & not supported \\
 25 Sink position & sink 18 frames back: bursts move & SF & $+0.53$ \ci{0.45}{0.61} & $<10^{-10}$ & supported \\
   & sink 36 frames back: bursts move & SF & $+0.25$ \ci{0.21}{0.30} & $<10^{-9}$ & supported \\
   & held at peak (203) $-$ trough (187), $\alpha$ (60\,s) & SF & $+0.85$ \ci{0.78}{0.91} & $<10^{-16}$ & supported \\
   & held at peak (203) $-$ distance 20, $\alpha$ (60\,s) & SF & $+0.64$ \ci{0.54}{0.74} & $<10^{-10}$ & supported \\
-%S26ROWS
+26 Burst times & bursts at 13 predicted onsets, 65--177\,s & SF & $+0.19$ \ci{0.17}{0.20} & $<10^{-16}$ & supported \\
+  & bursts at the same onsets & LL & $+0.13$ \ci{0.12}{0.15} & $<10^{-13}$ & supported \\
+  & predicted $-$ control onsets & SF & $+0.32$ \ci{0.29}{0.35} & $<10^{-15}$ & supported \\
 %NEWROWS
 \bottomrule
 \end{tabular}

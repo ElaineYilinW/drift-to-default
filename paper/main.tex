@@ -25,11 +25,12 @@ model, the prompt and the horizon. Under a generic city prompt, openings of six 
 class evidence within 30\,s. How much is kept depends on whether the opening stays in the model's context. Once it
 leaves, it is forgotten, through a sliding key--value window at 1.3B and at 14B parameters, and after a delay of about
 20\,s when overlapping frames are re-denoised. An opening that stays in the context keeps a share whose size depends on
-the model: 0.2--0.5 of its tone at 60\,s for multi-frame sinks, anchors and clean prefixes \pend{[study 24: at
-180\,s]}, while a single anchored latent frame keeps almost no tone (0.03--0.08) but, in the 14B model, a third of the
+the model: 0.2--0.5 of its tone at 60\,s for multi-frame sinks, anchors and clean prefixes (a re-rotated sink and
+an anchor still keep 0.12 and 0.29 at 180\,s), while a single anchored latent frame keeps almost no tone (0.03--0.08) but, in the 14B model, a third of the
 scene. Attention sinks left at their absolute rotary
 positions keep more, much of it in bursts, brief copies of the opening at the query--sink distances where an
-attention probe finds the sink most attended, which move when the sink is moved. In an exploratory analysis, drift separates into forgetting the opening and an
+attention probe finds the sink most attended; they move when the sink is moved and recur at the times the probe
+predicts, out of sample to 180\,s. In an exploratory analysis, drift separates into forgetting the opening and an
 offset of the default from where the same prompt starts, small in the two models trained on their own long rollouts. A
 content-aware correction and a deeper sink reduce drift without training. We report all \pend{N} preregistered primary
 tests, \pend{M} of which failed.
@@ -71,10 +72,11 @@ findings, and tests of its assumptions (Section~\ref{sec:relax}).
 Once the opening leaves a sliding key--value window it is forgotten, in 1.3B models and in a 14B model alike;
 re-denoising overlapping frames passes it forward and delays forgetting by about 20\,s. An opening that stays in the
 context (a re-rotated attention sink, an anchor, a clean copy in every section, full history) keeps a share whose size
-depends on the model \pend{[and that levels off / keeps falling to 180\,s]}, and tone and scene can be kept separately:
+depends on the model and is still there at 180\,s, and tone and scene can be kept separately:
 a one-frame anchor in the 14B model keeps the scene but not its tone, LongLive's sink the reverse. A sink left at its absolute rotary
 positions keeps more, much of it in bursts in which the opening, including its scene, returns when the sink's
-distance to the current chunk passes a peak of the attention it draws; moving the sink moves the bursts.
+distance to the current chunk passes a peak of the attention it draws; moving the sink moves the bursts, and the
+probe predicts them out of sample to 180\,s.
 
 \textbf{For a given checkpoint, the default is set by the conditioning.} Lighting words move the default brightness
 by up to 27~\Lstar, and scene words decide whether a snowy, desert or forest opening stays or becomes a city street
@@ -92,7 +94,7 @@ one model only.
 $\mu$ for tone and scene content, paired seeds pinned to one GPU architecture, and preregistered analyses.
 \item An empirical account of relaxation across nine open models (six of the Wan2.1-1.3B architecture, the Wan2.1-14B
 student Krea Realtime, the HunyuanVideo-based FramePack and MAGI-1), for tone and scene content, at horizons up to
-\pend{180}\,s: what sets $\mu$, what sets the long-run share, and an exploratory decomposition of drift into
+180\,s: what sets $\mu$, what sets the long-run share, and an exploratory decomposition of drift into
 forgetting and attractor offset.
 \item A positional account of attention-sink bursts, predicted by an attention probe and tested by moving the sink.
 \item Training-free levers matched to the two terms, compared on the same prompts and seeds, with their costs and failures.
