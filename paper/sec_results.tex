@@ -5,7 +5,7 @@
 ($r$ from $-0.79$ to $-0.95$; Appendix Table~\ref{tab:attr}), but openings differ in content too, so we intervened: we
 shifted the brightness and colour temperature of the same opening within each of 24 scenes (12 NAVSIM, 12 generated)
 and continued every version with the generic prompt (study 6, 31\,s; study 10, 60\,s). The versions converge
-(Fig.~\ref{fig:teaser}). At 60\,s every cache configuration has relaxed (Fig.~\ref{fig:atlas}a): $\alpha$ ranges from
+(Fig.~\ref{fig:teaser}). At 60\,s every cache configuration has relaxed (Appendix Fig.~\ref{fig:atlas}a): $\alpha$ ranges from
 $-0.01$ (LongLive without a sink) to 0.79 (Self Forcing GAN), ranked as at 31\,s (Spearman $\rho=0.78$, $p=0.008$).
 Part of the loss is immediate: most configurations lose a fifth to a third of the shift within 4.5\,s, and SiD loses
 two thirds there and nothing afterwards (0.66 by 4.5\,s, 0.65 by 60\,s), which looks like rejecting an off-manifold
@@ -19,18 +19,6 @@ opening was shifted, but every $\alpha$ above comes from one pair of shifts ($\p
 equivalence within $\pm0.15$. \pend{[results: large vs small shift with sink, re-rotated sink; darkening vs
 brightening; no sink forgets a large shift too.]} In study 6, persistence from $\pm8$ and from $\pm16$ shifts agrees
 within 0.09 in 12 of 14 configurations at 31\,s (exploratory; Appendix~\ref{app:robust}).
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=\linewidth]{fig_atlas.pdf}
-\caption{Persistence at 60\,s (study 10; CausVid from study 7). (a) $\alpha$ of an \Lstar{} shift with
-scene-bootstrap 95\% CIs; hollow markers: 31\,s (study 6). (b) Self Forcing with sinks of 0, 1, 3 and 6 latent frames,
-at their original positions or re-rotated to sit just before the window (dashed). (c) Other models. Curves: 1-s windows,
-3-s moving average; shaded: 31--35\,s and 50--54\,s, where sinks of three or more frames at their original positions
-produce bursts. The 60-s endpoint window, [50, 60)\,s, overlaps the second burst; Appendix~\ref{app:robust} reports a
-burst-free window.}
-\label{fig:atlas}
-\end{figure}
 
 \subsection{Scene content}\label{sec:content}
 Global tone is the easiest statistic to shift and measure, but it is not what a user sees as ``the scene''. We
@@ -160,13 +148,28 @@ setting, so full history preserves the difference between openings, not their le
 one, three and six frames keep 0.05, 0.29, 0.61 and 0.76 at 60\,s ($+0.15$ \ci{0.11}{0.20} for six vs three; studies 7,
 10), and LongLive's sink 0.45 against $-0.01$. Much of this is positional. Persistence jumps at the same times, near 17,
 33 and 51\,s, in every configuration with a sink at its absolute positions, across five Self Forcing checkpoints and
-LongLive (Fig.~\ref{fig:atlas}b, c), and never with a re-rotated sink or without one; the returns of the opening's scene
+LongLive (Appendix Fig.~\ref{fig:atlas}b, c), and never with a re-rotated sink or without one; the returns of the opening's scene
 coincide with these jumps (Section~\ref{sec:content}). Re-rotation lowers persistence at 60\,s from 0.61 to 0.16
 ($-0.44$ \ci{-0.54}{-0.35}, preregistered) and, between the bursts (40--50\,s), by $-0.27$ \ci{-0.38}{-0.16}: the
-absolute position helps even there. The jumps are about 67 latent frames apart, close to the 70.6-frame period of one
-of Wan's temporal rotary frequencies, which suggests that at certain query--sink distances the current chunk attends
-to the sink strongly, as LoL~\cite{lol} argues for ``sink collapse''~\cite{riflex,roundround}. \pend{[Study 25: an
-attention probe over sink distances, and moving the sink to fixed distances.]}
+absolute position helps even there. An attention probe accounts for the timing (exploratory; Fig.~\ref{fig:probe}a): for
+the queries of a chunk we computed the share of attention the sink would receive if its keys sat at each query--sink
+distance from 3 to 300 latent frames (4 openings, 20 chunks each, all layers and denoising passes). The share peaks
+sharply at distances of 71, 134, 203 and 266 latent frames (0.11--0.15 against a median of 0.07), at the same
+distances in every chunk and opening, so the peaks belong to the model's positional code rather than to content. A
+sink at its original positions passes the first three peaks 16.5, 32.3 and 49.5\,s after the opening, the times of
+the bursts. LoL~\cite{lol} relates a similar failure, ``sink collapse'', to rotary phases~\cite{riflex,roundround}. \pend{[Study 25: moving the
+sink 18 or 36 frames further back moves the bursts by [x] s; held at a peak it keeps [x], at a trough [x].]}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{fig_probe.pdf}
+\caption{Bursts happen where the sink draws attention. (a) Share of attention that Self Forcing's queries would give
+to a three-frame sink at each query--sink distance (exploratory probe; 4 openings, 20 chunks, all layers and passes;
+dotted: median); top axis: when a sink at its original positions is at that distance. (b) Persistence of an \Lstar{}
+shift in 1-s windows (3-s moving average) \pend{with the sink at its original positions and moved 18 or 36 frames
+further back (study 25)}; dotted lines: burst onsets predicted from the peaks in (a).}
+\label{fig:probe}
+\end{figure}
 
 \paragraph{An action-conditioned world model.} Matrix-Game-2.0~\cite{matrixgame2}, driven by keyboard and mouse
 actions with no text, fits the same picture (study 15): a shift held only in its 6-frame context fades ($-0.24$
