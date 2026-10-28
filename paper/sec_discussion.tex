@@ -5,7 +5,7 @@ initial state, so that video rollouts relax is expected; what we measure is how 
 Across nine models the answer is whether the opening stays in the context. Once it leaves a key--value window it is
 forgotten, and overlapping frames only delay this; an opening that stays (a re-rotated sink, an anchor, a per-section
 prefix, full history) keeps a share whose size depends on the model \pend{[and its 180-s behaviour]}. The larger shares
-and returning scenes of sinks at their absolute positions are positional bursts \pend{[at predictable distances]}. The
+and returning scenes of sinks at their absolute positions are positional bursts, brief copies of the opening at the distances where the sink draws the most attention. The
 default is set by the conditioning, for tone and for scene content, and models differ in which part of the
 conditioning carries which attribute: FramePack's image embedding sets the scene but not its brightness. Fresh rollouts
 of the two models trained on their own long rollouts barely drift, though they still forget (exploratory).

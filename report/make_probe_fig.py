@@ -73,8 +73,8 @@ top.tick_params(labelsize=7)
 # (b) bursts over time
 b = ax[1]
 if S25:
-    for arm, d, col, lab in (("sp_abs", 0, BLUE, "original"), ("sp_off18", 18, PURPLE, "18 frames back"),
-                             ("sp_off36", 36, ORANGE, "36 frames back")):
+    for arm, d, col, lab in (("sp_abs", 0, BLUE, "original"), ("sp_off18", 18, PURPLE, "+18 frames"),
+                             ("sp_off36", 36, ORANGE, "+36 frames")):
         c = S25["alpha_1s"][arm]
         t = np.array(sorted(int(k) for k in c))
         b.plot(*smooth(t - 0.5, np.array([c[str(k)] for k in t])), color=col, lw=1.4, label=lab)
@@ -90,18 +90,18 @@ else:
             b.axvline(onset(P, 0), color=BLUE, lw=0.7, ls=":")
 b.set(xlabel="time after the opening (s)", ylabel=r"persistence $\alpha$ (1-s)", xlim=(0, 60), ylim=(0, 1))
 b.set_title("b  bursts at the predicted onsets", loc="left", fontsize=8.5, pad=TPAD)
-b.legend(fontsize=7, loc="lower left", handlelength=1.4)
+b.legend(fontsize=6.5, loc="lower center", bbox_to_anchor=(0.5, 0.98), ncol=3, handlelength=1.0, columnspacing=0.8)
 
 # (c) held distances
 if S25:
-    for arm, col, lab in (("sp_d203", BLUE, "held at 203 (peak)"), ("sp_d187", ORANGE, "held at 187 (trough)"),
-                          ("sp_d20", GREEN, "held at 20")):
+    for arm, col, lab in (("sp_d203", BLUE, "203 (peak)"), ("sp_d187", ORANGE, "187 (trough)"),
+                          ("sp_d20", GREEN, "20 (window)")):
         c = S25["alpha_1s"][arm]
         t = np.array(sorted(int(k) for k in c))
         ax[2].plot(*smooth(t - 0.5, np.array([c[str(k)] for k in t])), color=col, lw=1.4, label=lab)
     ax[2].set(xlabel="time after the opening (s)", xlim=(0, 60), ylim=(0, 1))
     ax[2].set_title("c  sink held at one distance", loc="left", fontsize=8.5, pad=TPAD)
-    ax[2].legend(fontsize=7, loc="lower left", handlelength=1.4)
+    ax[2].legend(fontsize=7, loc="center right", bbox_to_anchor=(1.0, 0.59), handlelength=1.4)
 for a in ax:
     a.grid(axis="y", color=GRID, lw=0.6)
     a.set_axisbelow(True)

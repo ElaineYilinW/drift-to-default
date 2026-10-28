@@ -28,8 +28,8 @@ leaves, it is forgotten, through a sliding key--value window at 1.3B and at 14B 
 the model: 0.2--0.5 of its tone at 60\,s for multi-frame sinks, anchors and clean prefixes \pend{[study 24: at
 180\,s]}, while a single anchored latent frame keeps almost no tone (0.03--0.08) but, in the 14B model, a third of the
 scene. Attention sinks left at their absolute rotary
-positions keep more, much of it in bursts \pend{[study 25: at query--sink distances predicted by an attention probe,
-which move when the sink is moved]}. In an exploratory analysis, drift separates into forgetting the opening and an
+positions keep more, much of it in bursts at the query--sink distances where an attention probe finds the sink most
+attended; moving the sink moves the bursts, and a sink held at such a distance freezes the video on its opening. In an exploratory analysis, drift separates into forgetting the opening and an
 offset of the default from where the same prompt starts, small in the two models trained on their own long rollouts. A
 content-aware correction and a deeper sink reduce drift without training. We report all \pend{N} preregistered primary
 tests, \pend{M} of which failed.
@@ -73,8 +73,8 @@ re-denoising overlapping frames passes it forward and delays forgetting by about
 context (a re-rotated attention sink, an anchor, a clean copy in every section, full history) keeps a share whose size
 depends on the model \pend{[and that levels off / keeps falling to 180\,s]}, and tone and scene can be kept separately:
 a one-frame anchor in the 14B model keeps the scene but not its tone, LongLive's sink the reverse. A sink left at its absolute rotary
-positions keeps more, much of it in periodic bursts in which the opening, including its scene, returns
-\pend{[at distances an attention probe predicts]}.
+positions keeps more, much of it in bursts in which the opening, including its scene, returns when the sink's
+distance to the current chunk passes a peak of the attention it draws; moving the sink moves the bursts.
 
 \textbf{For a given checkpoint, the default is set by the conditioning.} Lighting words move the default brightness
 by up to 27~\Lstar, and scene words decide whether a snowy, desert or forest opening stays or becomes a city street
@@ -94,7 +94,8 @@ $\mu$ for tone and scene content, paired seeds pinned to one GPU architecture, a
 student Krea Realtime, the HunyuanVideo-based FramePack and MAGI-1), for tone and scene content, at horizons up to
 \pend{180}\,s: what sets $\mu$, what sets the long-run share, and an exploratory decomposition of drift into
 forgetting and attractor offset.
-\item A positional account of attention-sink bursts \pend{[study 25]}.
+\item A positional account of attention-sink bursts: an attention probe predicts when they occur, moving the sink moves
+them, and holding the sink at a peak distance freezes the video (study 25).
 \item Training-free levers matched to the two terms, compared on the same prompts and seeds, with their costs and failures.
 \end{enumerate}
 We preregistered \pend{25} studies with hashed analysis code and report all \pend{N} primary tests, including the
