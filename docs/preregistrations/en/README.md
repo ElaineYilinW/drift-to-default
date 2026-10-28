@@ -1,6 +1,6 @@
 # Preregistrations: English translations
 
-These files are English translations of the fifteen preregistrations in the parent folder. The originals are in Chinese and were frozen, with SHA-256 hashes recorded, before data collection. The Chinese files are the authoritative versions. If a translation and its original disagree, the original wins.
+These files are English translations of the preregistrations in the parent folder. The originals are in Chinese and were frozen, with SHA-256 hashes recorded, before data collection. The Chinese files are the authoritative versions. If a translation and its original disagree, the original wins.
 
 Hashes, file paths, commands and formulas are copied verbatim from the originals. File names and paths inside the documents (for example `docs/preregistration_cn.md`) are the names used at freezing time.
 
@@ -32,3 +32,4 @@ Hashes, file paths, commands and formulas are copied verbatim from the originals
 | [`24_long_horizon.md`](24_long_horizon.md) | [`../24_long_horizon.md`](../24_long_horizon.md) | Does an opening that stays in the context (re-rotated sink, Rolling Forcing's anchor) keep a steady share over 180 s, and is it forgotten without a sink? (2026-10-28). |
 | [`25_sink_position.md`](25_sink_position.md) | [`../25_sink_position.md`](../25_sink_position.md) | The sink's rotary position (Self Forcing): do the bursts of a sink at its original positions move when the sink is moved further back, and does a sink held at a peak distance of an attention probe keep more than one held at a trough or next to the window? (2026-10-28). |
 | [`26_burst_prediction.md`](26_burst_prediction.md) | [`../26_burst_prediction.md`](../26_burst_prediction.md) | Out-of-sample burst times (Self Forcing, LongLive; data of study 24): does persistence jump at the onsets that a second attention probe predicts between 60 and 180 s, and more than at control onsets? (2026-10-28). |
+| [`27_held_distance.md`](27_held_distance.md) | [`../27_held_distance.md`](../27_held_distance.md) | A sink held at one query–sink distance (Self Forcing; 14 distances chosen by a rule from the 180-s probe, plus the 3 of study 25): do persistence rise and motion fall with the probe's attention share at that distance? (2026-10-28). |
