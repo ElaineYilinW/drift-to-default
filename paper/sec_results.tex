@@ -157,15 +157,20 @@ distance from 3 to 300 latent frames (4 openings, 20 chunks each, all layers and
 sharply at distances of 71, 134, 203 and 266 latent frames (0.11--0.15 against a median of 0.07), at the same
 distances in every chunk and opening, so the peaks belong to the model's positional code rather than to content. A
 sink at its original positions passes the first three peaks 16.5, 32.3 and 49.5\,s after the opening, the times of
-the bursts. LoL~\cite{lol} relates a similar failure, ``sink collapse'', to rotary phases~\cite{riflex,roundround}. \pend{[Study 25: moving the
+the bursts. A second probe on four other openings, out to 723 frames (180\,s), reproduces the curve ($r=0.999$) and,
+by a peak rule fixed before its output was read, finds 13 further peaks after 60\,s, preregistered as predicted burst
+times for the 180-s videos of study 24 (study 26). \pend{[Study 26: bursts at the 13 predicted onsets, contrast [x]
+(Self Forcing) and [x] (LongLive), [x] more than at control onsets between them.]} LoL~\cite{lol} relates a similar failure, ``sink collapse'', to rotary phases~\cite{riflex,roundround}. \pend{[Study 25: moving the
 sink 18 or 36 frames further back moves the bursts by [x] s; held at a peak it keeps [x], at a trough [x].]}
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{fig_probe.pdf}
 \caption{Bursts happen where the sink draws attention. (a) Share of attention that Self Forcing's queries would give
-to a three-frame sink at each query--sink distance (exploratory probe; 4 openings, 20 chunks, all layers and passes;
-dotted: median); top axis: when a sink at its original positions is at that distance. (b) Persistence of an \Lstar{}
+to a three-frame sink at each query--sink distance (exploratory probe; 4 openings, 6 chunks each, all layers and passes;
+a first probe on 4 other openings to distance 300 gives the same curve). Triangles: major peaks (prominence $\ge0.04$);
+orange: the 13 after 60\,s, preregistered as burst predictions (study 26). Top axis: when a sink at its original
+positions is at that distance. (b) Persistence of an \Lstar{}
 shift in 1-s windows (3-s moving average) \pend{with the sink at its original positions and moved 18 or 36 frames
 further back (study 25)}; dotted lines: burst onsets predicted from the peaks in (a).}
 \label{fig:probe}
