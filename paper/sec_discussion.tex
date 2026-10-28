@@ -4,7 +4,7 @@ Any autoregressive sampler with finite memory that is ergodic under a fixed cond
 initial state and settle into a conditioning-dependent stationary distribution, so that video rollouts relax is
 expected. What we measure is \emph{how much} is kept and \emph{what} decides it, and three answers hold across the
 models we tested. The long-run share depends on how the opening enters the computation: once the opening leaves a
-key--value window it is forgotten (in the Wan-based cache models and in MAGI-1), while an opening that stays in the
+key--value window it is forgotten (in the Wan-based cache models at 1.3B and 14B parameters, and in MAGI-1), while an opening that stays in the
 context (a sink, MAGI-1's full history, FramePack's per-section prefix) holds a share. Re-denoising overlapping frames
 passes the opening forward and so delays forgetting by about 20\,s, but does not stop it. A sink at in-distribution
 positions holds a small share of tone, about 0.2 whatever its depth, and less of the scene (0.08 more than none); the
@@ -21,8 +21,8 @@ does not. Anchors that keep the opening also pass its errors forward, and positi
 opening back. In Self Forcing the mechanism that keeps the opening's scene is exactly the unstable one: keeping the
 opening's content while forgetting its errors is the open problem.
 
-\paragraph{Limitations.} Six of the eight models share the Wan2.1-1.3B architecture; of the other bases, FramePack ran for 60\,s and MAGI-1
-for 30\,s. Content relaxation was replicated on FramePack, but the prompt dependence, the recursion
+\paragraph{Limitations.} Six of the nine models share the Wan2.1-1.3B architecture and a seventh is a student of its
+14B sibling; FramePack and MAGI-1 have other bases. Content relaxation was replicated on FramePack, but the prompt dependence, the recursion
 and the decomposition rest on Wan-based models, and the world model collapses after 20--30\,s. Interventions shift global tone or select a scene class (CLIP scores are a
 coarse proxy for content); openings are held images; most configurations use one seed per scene (the Self Forcing sink results on tone and content replicate with three more); Holm correction is
 applied within studies only; the correction was not compared with Pathwise test-time correction or FreqForcing.

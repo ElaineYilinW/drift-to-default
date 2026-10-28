@@ -18,20 +18,20 @@
 \begin{abstract}
 Autoregressive video diffusion models generate long videos chunk by chunk and drift over tens of seconds. We measure
 drift by intervention: we shift the brightness, colour or scene class of the same opening frame and measure how much of
-the shift survives. In fifteen preregistered studies on seven open models (six built on the Wan2.1-1.3B architecture,
-one on the 13B HunyuanVideo), rollouts \emph{relax}: global tone and scene content move from the opening toward a
-default set by the conditioning, keeping a share $\alpha$ that depends on the model, the prompt and the horizon. Under
-a generic city prompt, openings of six scene classes lose 39--93\% of their class evidence within 30\,s. What decides
-the long-run share is how the opening is held. Attention to a key--value cache alone forgets it completely; an
-attention sink holds a share that grows with its depth and hinges on its absolute rotary position: re-aligning the
-sink's positions cuts persistence at 60\,s from 0.61 to 0.16 and removes periodic bursts in which the opening, including
-its scene content, returns. Re-denoising overlapping frames holds nearly all of it for 20\,s but only delays
-forgetting (0.29 left at 60\,s). A linear chunk recursion predicted the prompt's per-chunk pull (0.08); bit-exact cache replay measured 0.088
-\ci{0.045}{0.149}, but the recursion holds only for about 20\,s and does not account for the positional effects. In an
-exploratory analysis, drift separates into forgetting the opening and an offset of the default from where the same
-prompt starts, near zero for models trained on long rollouts. A content-aware correction and a deeper sink both reduce
-drift without training; the correction keeps more legitimate brightness changes in some prompts. We report all 42
-preregistered primary tests, 15 of which failed.
+the shift survives. In 23 preregistered studies on nine open models (1.3B to 14B parameters, four architectures),
+rollouts \emph{relax}: global tone and scene content move from the opening toward a default set by the conditioning,
+keeping a share $\alpha$ that depends on the model, the scene and the horizon. Under a generic city prompt, openings of
+six scene classes lose 39--93\% of their class evidence within 30\,s. What decides the long-run share is how the opening
+is held. An opening seen only through a sliding key--value window is forgotten, at 1.3B and at 14B parameters.
+Re-denoising overlapping frames delays forgetting by about 20\,s but does not stop it. An opening kept next to the
+window at the positions the model was trained on holds a steady share, about 0.2 for an attention sink of any depth and
+half for a clean copy in every section. A sink left at its absolute rotary positions keeps 0.6, mostly through periodic
+bursts in which the opening, including its scene content, returns. \pend{[study 23: whether $\alpha$ is independent of
+the size of the shift.]} A linear chunk recursion predicted the prompt's per-chunk pull (0.08); bit-exact cache replay
+measured 0.088 \ci{0.045}{0.149}, but the recursion holds only for about 20\,s. In an exploratory analysis, drift
+separates into forgetting the opening and an offset of the default from where the same prompt starts, near zero only in
+models trained on their own long rollouts. A content-aware correction and a deeper sink both reduce drift without
+training. We report all 78 preregistered primary tests, \pend{N} of which failed.
 \end{abstract}
 
 %=====================================================================================================================
@@ -66,19 +66,20 @@ x_\infty \approx \alpha\,x_{\text{open}} + (1-\alpha)\,\mu .
 Written this way the law is just a linear response, and much of the paper is about which parts of it carry content.
 Three findings do.
 
-\textbf{What survives in the long run depends on how the opening is held, not on autoregression as such.} Models
-that read the opening only through a key--value cache forget it completely. An attention sink holds a share that grows
-with its depth and hinges on its absolute rotary position, which also produces periodic bursts in which the opening
-returns. Re-denoising overlapping frames holds nearly all of it for 20\,s, but only delays forgetting: by 60\,s a
-17-frame overlap keeps 0.29.
+\textbf{What survives in the long run depends on how the opening is held, not on autoregression or scale}
+(Fig.~\ref{fig:hold}). An opening seen only through a sliding key--value window is forgotten, in 1.3B models and in a
+14B model alike. Re-denoising overlapping frames passes the opening forward and delays forgetting by about 20\,s. An
+opening kept next to the window, at positions the model was trained on, holds a steady share: about 0.2 for an
+attention sink whatever its depth, half for a clean copy in every section. A sink left at its absolute rotary
+positions keeps more, but mostly through periodic bursts in which the opening returns.
 
 \textbf{The default is set by the conditioning.} Lighting words move the default brightness by up to 27~\Lstar, and
 scene words decide whether a snowy, desert or forest opening stays or becomes a city street within 30\,s. Which parts of
-the conditioning carry tone differs between models.
+the conditioning carry tone and which carry the scene differs between models.
 
 \textbf{Drift has two separable parts} (exploratory): forgetting the opening, $(1-\alpha)(x_{\text{open}}-\mu)$, and an
-offset of the default itself from where the same prompt starts, which is small in the two models trained for long
-rollouts and 4--11~\Lstar{} in models trained on short clips.
+offset of the default itself from where the same prompt starts, which is small in the two models trained on their own
+long rollouts and 4--20~\Lstar{} in the others.
 
 A linear chunk recursion, $\alpha_\infty = w_s/(w_s+w_p)$ with per-chunk pulls of the sink and the prompt, predicted
 $w_p\approx0.08$; bit-exact replay of the key--value cache measured 0.088. It describes the first 20\,s, not the
@@ -89,15 +90,15 @@ and lighting words calibrated to a model's measured defaults, each with its own 
 \begin{enumerate}
 \item A measurement protocol for long-horizon drift: held and perturbed openings, persistence $\alpha$ and default
 $\mu$ for tone and scene content, paired seeds pinned to one GPU architecture, and preregistered analyses.
-\item An empirical account of relaxation across seven open models (five Wan-based cache models, SkyReels-V2 and the
-Matrix-Game-2.0 world model, all of the Wan2.1-1.3B architecture, plus the 13B HunyuanVideo-based FramePack), for tone
-and scene content, at horizons up to 120\,s: what sets $\mu$, what sets the long-run share (how, and at which position,
-the opening is held), and an exploratory decomposition of drift into forgetting and attractor offset.
+\item An empirical account of relaxation across nine open models (six of the Wan2.1-1.3B architecture, the Wan2.1-14B
+student Krea Realtime, the HunyuanVideo-based FramePack and MAGI-1), for tone and scene content, at horizons up to
+120\,s: what sets $\mu$, what sets the long-run share (how, and at which position, the opening is held), and an
+exploratory decomposition of drift into forgetting and attractor offset.
 \item A phenomenological recursion whose predicted prompt pull we preregistered and then measured by bit-exact replay,
 with its limits.
 \item Training-free levers matched to the two terms, compared on the same prompts and seeds, with their costs and failures.
 \end{enumerate}
-We preregistered fifteen studies with hashed analysis code and report all 42 primary tests, including the 15 that
+We preregistered 23 studies with hashed analysis code and report all 78 primary tests, including the \pend{N} that
 failed (Table~\ref{tab:primary}). No model is trained; all code and per-video statistics are public.
 
 %=====================================================================================================================
@@ -173,7 +174,7 @@ GPU architecture but different videos across A40, A100/A800 and L40S/RTX~6000 Ad
 run in one job, which deletes and regenerates its outputs if a preempted job resumes on another architecture. (In our
 first study this was not yet enforced; 62\% of its nominal pairs crossed architectures, which widens but does not bias
 its intervals.) Each study's hypotheses, decision rules and analysis code were frozen by SHA-256 hash before its
-videos were generated (study 1: before analysis, after generation had started); studies 3--15 were also
+videos were generated (study 1: before analysis, after generation had started); studies 3--23 were also
 committed publicly first. Tests within a study are Holm-corrected. Table~\ref{tab:primary} lists every primary test.
 
 

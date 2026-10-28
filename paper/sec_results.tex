@@ -97,8 +97,10 @@ from where they start; those of LongLive and Rolling Forcing, trained or tuned o
 Yet LongLive still forgets its opening ($\alpha=0.02$ without a sink at 31\,s). In this exploratory analysis drift has
 two separable parts: \emph{forgetting} the opening, $(1-\alpha)(x_{\text{open}}-\mu)$, which every attention-based
 model does, and an \emph{attractor offset} $\mu - x_{\text{start}}$, which is near zero in the two models trained on
-their own long rollouts (other differences between them and the short-clip models cannot be excluded). \pend{[fresh
-offsets of Krea and MAGI-1.]} Prompt-only drift metrics mix the two, and both keep rising over 31\,s even with a sink
+their own long rollouts (other differences between them and the short-clip models cannot be excluded). Two later
+models fit this pattern: fresh rollouts of Krea 14B, distilled with Self Forcing, brighten by 4.8~\Lstar{} over
+31\,s (8 seeds), and those of MAGI-1, trained chunk by chunk on real videos rather than on its own rollouts, by 15--20~\Lstar{} over
+30\,s. Prompt-only drift metrics mix the two, and both keep rising over 31\,s even with a sink
 (Appendix~\ref{app:ctx}); relaxation describes the memory of the opening, not the absence of degradation.
 
 %=====================================================================================================================
