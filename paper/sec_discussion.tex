@@ -10,8 +10,7 @@ the conditioning carries tone and which the scene.
 A high $\alpha$ is not always better. Under a conflicting prompt (a snowy opening, a city prompt), forgetting the
 opening is following the prompt, and an anchor that keeps the opening also passes its errors forward (SkyReels
 amplifies the shift in 5 of 12 scenes). Persistence is better treated as a property to choose and to report at a stated
-horizon, together with the default and its offset; our protocol measures both cheaply and would make long-video models
-comparable where a single quality score does not. For world models, a model conditioned on a real frame and a
+horizon, together with the default and its offset; our protocol measures both cheaply. For world models, a model conditioned on a real frame and a
 description drifts toward the description's default unless it re-conditions on the frame. In Self Forcing the
 mechanism that keeps the opening's scene is the unstable, positional one: keeping the opening's content while
 forgetting its errors is the open problem.
@@ -19,5 +18,5 @@ forgetting its errors is the open problem.
 \paragraph{Limitations.} Six of the nine models share the Wan2.1-1.3B architecture and a seventh is a student of its
 14B sibling; FramePack and MAGI-1 have other bases. Content relaxation was replicated on FramePack, but the prompt dependence
 and the decomposition rest on Wan-based models, and the world model collapses after 20--30\,s. Interventions shift global tone or select a scene class (CLIP scores are a
-coarse proxy for content); openings are held images; scene content is compared across openings rather than shifted within one; most configurations use one seed per scene (the Self Forcing sink results on tone and content replicate with three more); with Holm correction across all \pend{89} primary tests, \pend{49} of the \pend{67}
+coarse proxy for content); openings are held images; scene content is compared across openings rather than shifted within one; most configurations use one seed per scene (the Self Forcing sink results on tone and content replicate with three more); with Holm correction across all \pend{93} primary tests, \pend{53} of the \pend{71}
 supported ones remain significant; the correction was not compared with Pathwise test-time correction or FreqForcing.

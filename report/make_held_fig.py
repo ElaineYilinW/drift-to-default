@@ -73,7 +73,7 @@ a = ax[0]
 a.axhline(0, color=GRID, lw=0.8, zorder=0)
 a.set_title("a  how much is kept", loc="left", fontsize=8.5)
 ax[1].set_title("b  how much the video moves", loc="left", fontsize=8.5)
-a.legend(fontsize=6.8, loc="lower right", handlelength=1.4)
+ax[1].legend(*a.get_legend_handles_labels(), fontsize=6.8, loc="upper right", handlelength=1.4)
 fig.tight_layout(w_pad=1.5)
 fig.savefig(OUT, bbox_inches="tight")
 print("wrote", OUT)

@@ -4,7 +4,7 @@
 \centering\scriptsize
 \caption{All preregistered primary tests and their outcomes. Intervals are Wald intervals from the preregistered mixed
 models in studies 1, 2 and 13 and bootstrap intervals otherwise; $p$ is Holm-adjusted within each study;
-$^{*}$supported but not significant after Holm correction across all \pend{89} tests. Study 3 LongLive rows are as executed; after regenerating four cross-architecture openings the
+$^{*}$supported but not significant after Holm correction across all \pend{93} tests. Study 3 LongLive rows are as executed; after regenerating four cross-architecture openings the
 conclusions are unchanged; in study 1, 62\% of nominal pairs crossed GPU architectures, which widens but does not
 bias its intervals. Units: $D$, $K$ drift metrics; $|\Delta L|$ in \Lstar{};
 $\alpha$ persistence, $\kappa$ content persistence. Arms: G generic prompt, M VLM caption of the opening, C calibrated
@@ -106,6 +106,10 @@ Study & Test & Model & Estimate [95\% CI] & $p_{\text{Holm}}$ & Outcome \\
 27 Held distance & persistence rises with the share ($\rho$), 14 distances & SF & $+0.83$ \ci{0.79}{0.86} & $<10^{-16}$ & supported \\
   & motion falls with the share ($\rho$) & SF & $-0.81$ \ci{-0.84}{-0.79} & $<10^{-16}$ & supported \\
   & the same among the 7 lowest shares ($\rho$) & SF & $+0.35$ \ci{0.20}{0.49} & $<10^{-3}$ & supported \\
+28 LongLive sink position & sink 18 frames back: bursts move & LL & $+0.43$ \ci{0.36}{0.50} & $<10^{-10}$ & supported \\
+  & sink 36 frames back: bursts move & LL & $+0.36$ \ci{0.29}{0.43} & $<10^{-8}$ & supported \\
+  & held: persistence rises with LL's share ($\rho$), 17 distances & LL & $+0.81$ \ci{0.78}{0.84} & $<10^{-16}$ & supported \\
+  & held: motion falls with the share ($\rho$) & LL & $-0.83$ \ci{-0.85}{-0.81} & $<10^{-16}$ & supported \\
 %NEWROWS
 \bottomrule
 \end{tabular}

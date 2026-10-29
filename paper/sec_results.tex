@@ -12,11 +12,11 @@ context and sampler fixed (Self Forcing: 0.35 to 0.79 at 60\,s; two SiD checkpoi
 objective alone does not set it.
 
 \paragraph{Is the response linear in the shift?} Every $\alpha$ above comes from shifts of $\pm16$~\Lstar. Shifting
-the same 24 openings by $-24$ to $+24$~\Lstar{} (study 23, Self Forcing, 60\,s, 720 videos), all four equivalence tests
-held: $\alpha$ for $\pm24$ and $\pm8$ agree with the sink in place (0.61 and 0.58, margin $\pm0.15$) and re-rotated
-(0.20 and 0.21), darkening and brightening are kept alike (0.60 and 0.61), and without a sink the large shift is
-forgotten too (0.05 \ci{0.01}{0.08}, margin $\pm0.10$); the end brightness is a straight line in the opening's
-($R^2=0.95$ with the sink; Appendix~\ref{app:robust}).
+the same 24 openings by $-24$ to $+24$~\Lstar{} (study 23, Self Forcing, 60\,s, 720 videos), $\alpha$ for $\pm24$ and
+$\pm8$ agree with the sink in place (0.61 and 0.58) and re-rotated (0.20 and 0.21), darkening and brightening are kept
+alike (0.60 and 0.61), and without a sink the large shift is forgotten too (0.05); the four equivalence tests held
+within the study but not across all tests. The end brightness is linear in the opening's ($R^2=0.95$;
+Appendix~\ref{app:robust}).
 
 \subsection{Scene content}\label{sec:content}
 Tone is not what a user sees as ``the scene''. We generated openings of six scene classes (snow, desert, forest, coast, mountain, farmland; four each, selected
@@ -36,8 +36,8 @@ positional (study 16, 24 openings): with the sink's keys re-rotated to sit just 
 contrast, $\kappa$ over 50--55\,s minus 45--50\,s: $-0.29$ \ci{-0.37}{-0.22}), and the content kept at 60\,s falls from 0.56 to 0.25 ($-0.31$
 \ci{-0.37}{-0.25}). Three new seeds per opening (study 21) reproduce the sink's advantage, the loss under re-rotation ($-0.40$
 \ci{-0.47}{-0.34}) and the return, and suggest a small share kept by the re-rotated sink: 0.19 against 0.11 without a
-sink ($+0.08$, Holm $p=0.006$, though an interval that also resamples the fresh starts is \ci{-0.01}{0.16}). What a Self Forcing sink keeps of the scene, it keeps mostly by periodically
-re-injecting the opening. LongLive's sink, which keeps tone, does not keep content (0.22 vs 0.24, preregistered test not
+sink ($+0.08$, Holm $p=0.006$, though an interval that also resamples the fresh starts is \ci{-0.01}{0.16}).
+LongLive's sink, which keeps tone, does not keep content (0.22 vs 0.24, preregistered test not
 supported).
 
 Content relaxes outside the Wan-1.3B family too. FramePack, continuing the same 24 openings under the city prompt,
@@ -114,10 +114,10 @@ its context after about 4\,s; persistence falls from 0.87 at 5\,s to 0.34 at 30\
 18) \pend{and to [x] at 60\,s (study 19)}. Krea Realtime 14B~\cite{krea}, a Self Forcing student of Wan2.1-14B,
 recomputes its cache over a window of three latent frames (study 22, 24 scenes): it keeps 0.33 at 10\,s and nothing
 from 20\,s on ($-0.05$ at 60\,s; $-0.38$ \ci{-0.45}{-0.31} from 10 to 60\,s), and its class evidence falls to $\kappa=0.05$.
-The pattern holds at 14B parameters, though Krea's window also differs (not a controlled test of scale). Re-denoising overlapping frames delays forgetting but does not stop it.
+The pattern holds at 14B, though Krea's window also differs. Re-denoising overlapping frames delays forgetting but does not stop it.
 SkyReels-V2-DF extends videos in 97-frame segments that re-denoise the last 17 frames of the previous segment jointly
-with the new ones. It holds the opening for 20\,s ($\alpha = 0.96$ \ci{0.86}{1.07}, whatever its guidance, history
-noise or number of steps) and then forgets steadily, to 0.29 at 60\,s ($-0.72$ \ci{-0.81}{-0.63} from 20 to 60\,s,
+with the new ones. It holds the opening for 20\,s ($\alpha = 0.96$ \ci{0.86}{1.07}, robust to its sampler
+settings) and then forgets steadily, to 0.29 at 60\,s ($-0.72$ \ci{-0.81}{-0.63} from 20 to 60\,s,
 study 16); with a 5-frame overlap it relaxes
 earlier ($-0.24$ \ci{-0.40}{-0.09} at 15--20\,s, preregistered) and keeps 0.08 at 60\,s.
 
@@ -166,10 +166,11 @@ further distances chosen by a rule fixed in advance, 9 of them beyond any distan
 persistence rose with the share (mean within-scene Spearman $\rho=+0.83$ \ci{0.79}{0.86}, study 27, preregistered),
 also among the 7 lowest shares ($+0.35$ \ci{0.20}{0.49}). The price is motion ($\rho=-0.81$ \ci{-0.84}{-0.79}):
 every distance with a share of 0.11 or more froze the video on its opening (persistence 0.78--0.87, frame-to-frame
-change 0.7--1.1 grey levels over 50--60\,s, against 2.4 with the sink in place; Appendix Fig.~\ref{fig:s25frames}),
-every distance below kept moving (2.2--4.9), and the change between the two was abrupt (exploratory; Appendix
-Fig.~\ref{fig:held}). A burst is thus a brief copy
-of the opening while the sink's distance passes a peak. A second probe to 180\,s ($r=0.999$ with the first) found 13 further peaks, which we preregistered
+change 0.7--1.1 grey levels against 2.4 with the sink in place; Appendix Figs.~\ref{fig:s25frames},~\ref{fig:held}),
+every distance below kept moving, and the change was abrupt (exploratory). So does LongLive (study 28, preregistered): moving its sink
+moves its bursts ($+0.43$ and $+0.36$), and held, its persistence rises with its own probe's share ($\rho=+0.81$
+\ci{0.78}{0.84}), correlating 0.94 with Self Forcing's across distances. A burst
+is thus a brief copy of the opening while the sink's distance passes a peak. A second probe to 180\,s found 13 further peaks, which we preregistered
 as burst times for the 180-s videos of study 24 (study 26; Appendix Fig.~\ref{fig:long}b): persistence jumped at these
 onsets, by $+0.19$ \ci{0.17}{0.20} in Self Forcing ($+0.32$ \ci{0.29}{0.35} more than at control onsets between them)
 and $+0.13$ \ci{0.12}{0.15} in LongLive, but not with a re-rotated sink (0.00 \ci{-0.02}{0.02}), and 12 of the 13 large
@@ -180,14 +181,14 @@ LoL~\cite{lol} relates a similar failure, ``sink collapse'', to rotary phases~\c
 \centering
 \includegraphics[width=\linewidth]{fig_probe.pdf}
 \caption{Bursts happen where the sink draws attention. (a) Share of attention that Self Forcing's queries would give
-to a three-frame sink at each query--sink distance (exploratory probe; 4 openings, 6 chunks each, all layers and passes;
-a first probe on 4 other openings to distance 300 gives the same curve). Triangles: major peaks (prominence $\ge0.04$);
+to a three-frame sink at each query--sink distance (exploratory probe; 4 openings, 6 chunks each, all layers and passes). Triangles: major peaks (prominence $\ge0.04$);
 orange: the 13 after 60\,s, preregistered as burst predictions (study 26). Top axis: when a sink at its original
 positions is at that distance. (b) Persistence of an \Lstar{}
 shift in 1-s windows (3-s moving average, 24 scenes) with the sink at its original positions and moved 18 or 36
 frames further back (study 25); dotted lines: burst onsets predicted from the peaks in (a). (c) Persistence at
 60\,s with the sink held at one query--sink distance, against the probe's share there: 14 distances chosen by a rule
-fixed in advance (study 27) and the three of study 25 (circled); hollow: most videos frozen on the opening.}
+fixed in advance (study 27) and the three of study 25 (circled); squares: LongLive against its own probe (study 28);
+hollow: most videos frozen on the opening.}
 \label{fig:probe}
 \end{figure}
 
