@@ -7,8 +7,7 @@ shifted the brightness and colour temperature of the same opening within each of
 and continued every version with the generic prompt (study 6, 31\,s; study 10, 60\,s). The versions converge
 (Fig.~\ref{fig:teaser}). At 60\,s every cache configuration has relaxed (Appendix Fig.~\ref{fig:atlas}a): $\alpha$ ranges from
 $-0.01$ (LongLive without a sink) to 0.79 (Self Forcing GAN), ranked as at 31\,s (Spearman $\rho=0.78$, $p=0.008$).
-Part of the loss is immediate: most configurations lose a fifth to a third of the shift within 4.5\,s, and SiD loses
-two thirds there and nothing afterwards, which looks like rejecting an off-manifold shift rather than forgetting it. Colour temperature behaves like brightness. Persistence varies by checkpoint even with architecture,
+Colour temperature behaves like brightness. Persistence varies by checkpoint even with architecture,
 context and sampler fixed (Self Forcing: 0.35 to 0.79 at 60\,s; two SiD checkpoints differ by 0.36), so the training
 objective alone does not set it.
 
@@ -70,7 +69,10 @@ persistence across configurations.}
 on Self Forcing, sunny 43, overcast 34, dusk 19 and night 16~\Lstar; on LongLive the same words give 45, 40, 32 and 21
 (Appendix Fig.~\ref{fig:default}). The mapping from words to brightness is model-specific. Under one prompt the default
 also differs between checkpoints of one architecture (zero-drift levels from 17 to 54~\Lstar), and it tracks where
-prompt-only rollouts end ($r=0.93$, slope 1.58; Appendix~\ref{app:robust}).
+prompt-only rollouts end ($r=0.93$, slope 1.58; Appendix~\ref{app:robust}). Regenerating one chunk from a bit-exact
+copy of the cache with only its text conditioning swapped measures the prompt's pull per chunk: 0.088
+\ci{0.045}{0.149} at 15\,s (study 14), as a linear recursion fitted to 120-s curves had predicted
+(Appendix~\ref{app:recursion}).
 
 \paragraph{Persistence depends on the scene.} Equation~\ref{eq:law} separates a model term ($\alpha$) from a prompt
 term ($\mu$), but $\alpha$ itself varies: Self Forcing keeps 0.34 of the opening under a sunny prompt and 0.05 under a
@@ -153,10 +155,9 @@ every configuration with a sink at its absolute positions, across five Self Forc
 Fig.~\ref{fig:atlas}b, c), never with a re-rotated sink or without one, and the opening's scene returns at these times
 (Section~\ref{sec:content}). Re-rotation lowers persistence at 60\,s from 0.61 to 0.16 ($-0.44$ \ci{-0.54}{-0.35},
 preregistered), and by $-0.27$ \ci{-0.38}{-0.16} between the bursts (40--50\,s). An attention probe locates the bursts
-(exploratory; Fig.~\ref{fig:probe}a): for the queries of a chunk we computed the share of attention the sink would
-receive if its keys sat at each query--sink distance (4 openings, 20 chunks each, all layers and denoising passes). The
-share peaks sharply at distances 71, 134, 203 and 266 latent frames (0.11--0.15 against a median of 0.07), identically
-in every chunk and opening, so the peaks belong to the positional code, not to content; a sink at its original
+(exploratory; Fig.~\ref{fig:probe}a): the share of attention a chunk's queries would give the sink if its keys sat at
+each query--sink distance peaks sharply at 71, 134, 203 and 266 latent frames (0.11--0.15 against a median of 0.07),
+identically in every chunk and opening, so the peaks are positional, not content; a sink at its original
 positions passes the first three 16.5, 32.3 and 49.5\,s after the opening, the times of the bursts. Moving the sink
 moves the bursts (study 25, preregistered; Fig.~\ref{fig:probe}b): 18 or 36 latent frames further back, the probe puts
 every burst 4.5 or 9\,s earlier, and persistence rose in the windows predicted for the moved sink rather than in the
@@ -170,11 +171,10 @@ every distance with a share of 0.11 or more froze the video on its opening (pers
 change 0.7--1.1 grey levels over 50--60\,s, against 2.4 with the sink in place; Appendix Fig.~\ref{fig:s25frames}),
 every distance below kept moving (2.2--4.9), and the change between the two was abrupt (exploratory; Appendix
 Fig.~\ref{fig:held}). A burst is thus a brief copy
-of the opening while the sink's distance passes a peak. A second probe on four other openings, to 723 frames
-(180\,s), reproduces the curve ($r=0.999$) and, by a peak rule fixed before its output was read, finds 13 further
-peaks after 60\,s, preregistered as burst times for the 180-s videos of study 24 (study 26); the same probe on LongLive
-gives the same peaks ($r=0.96$). In the 180-s videos of study 24, persistence jumped at the 13 predicted onsets
-(Appendix Fig.~\ref{fig:long}b): $+0.19$ \ci{0.17}{0.20} in Self Forcing, with every onset's interval above zero,
+of the opening while the sink's distance passes a peak. A second probe to 723 frames (180\,s; $r=0.999$ with the first, $0.96$
+on LongLive) found 13 further peaks after 60\,s by a rule fixed before its output was read, which we preregistered as
+burst times for the 180-s videos of study 24 (study 26). Persistence jumped at these onsets (Appendix
+Fig.~\ref{fig:long}b): $+0.19$ \ci{0.17}{0.20} in Self Forcing, with every onset's interval above zero,
 and $+0.13$ \ci{0.12}{0.15} in LongLive, $+0.32$ \ci{0.29}{0.35} more than at control onsets between them; 12 of the
 13 large jumps after 60\,s followed a predicted onset (chance 0.33), and the re-rotated sink did not burst (0.00
 \ci{-0.02}{0.02}). A replication on the 120-s videos of study 6 agrees (Appendix~\ref{app:robust}).
@@ -199,8 +199,3 @@ fixed in advance (study 27) and the three of study 25 (circled); hollow: most vi
 fits the same picture (study 15; Appendix~\ref{app:other}): a shift held only in its 6-frame context fades ($-0.24$
 \ci{-0.35}{-0.14} from 5 to 30\,s, preregistered), while one sent through its CLIP image embedding, which conditions
 every chunk, persists (0.25 \ci{0.17}{0.36} at 15\,s, exploratory).
-
-\paragraph{A phenomenological recursion.} A linear recursion of a chunk's mean on the window, the sink and the prompt's
-default describes the first 20\,s; its prompt weight ($\approx0.08$) matched a bit-exact cache replay (0.088
-\ci{0.045}{0.149}, study 14), but it explains neither the share of re-rotated sinks nor the bursts
-(Appendix~\ref{app:recursion}).
