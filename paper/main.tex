@@ -31,8 +31,8 @@ scene. Attention sinks left at their absolute rotary
 positions keep more, much of it in bursts, brief copies of the opening at the query--sink distances where an
 attention probe finds the sink most attended; they move when the sink is moved and recur at the times the probe
 predicts, out of sample to 180\,s. Drift separates into forgetting the opening and an offset of the default from
-where the same prompt starts, which over 40 prompts is 5--10~\Lstar{} smaller in the two models trained on their own
-long rollouts. A
+where the same prompt starts; over 40 prompts the offset depends on inference settings as much as on training, halving
+in Self Forcing with a shorter key--value window. A
 content-aware correction and a deeper sink reduce drift without training. We report all \pend{N} preregistered primary
 tests, \pend{M} of which failed.
 \end{abstract}
@@ -72,10 +72,10 @@ findings, and tests of its assumptions (Section~\ref{sec:relax}).
 \textbf{What survives depends on whether the opening stays in the context} (Fig.~\ref{fig:hold}).
 Once the opening leaves a sliding key--value window it is forgotten, in 1.3B models and in a 14B model alike;
 re-denoising overlapping frames passes it forward and delays forgetting by about 20\,s. An opening that stays in the
-context (a re-rotated attention sink, an anchor, a clean copy in every section, full history) keeps a share whose size
+context (a re-rotated sink, an anchor, a clean copy in every section, full history) keeps a share whose size
 depends on the model and is still there at 240\,s, and tone and scene can be kept separately:
 a one-frame anchor in the 14B model keeps the scene but not its tone, LongLive's sink the reverse. A sink left at its absolute rotary
-positions keeps more, much of it in bursts in which the opening, including its scene, returns when the sink's
+positions keeps more, much of it in bursts in which the opening returns when the sink's
 distance to the current chunk passes a peak of the attention it draws; moving the sink moves the bursts, and the
 probe predicts them out of sample to 180\,s.
 
@@ -84,10 +84,9 @@ by up to 27~\Lstar, and scene words decide whether a snowy, desert or forest ope
 within 30\,s. Which parts of the conditioning carry tone and which carry the scene differs between models.
 
 \textbf{Drift has two separable parts}: forgetting the opening, $(1-\alpha)(x_{\text{open}}-\mu)$, and an
-offset of the default itself from where the same prompt starts, which over 40 prompts is 3--7~\Lstar{} in the two
-models trained on their own long rollouts and 10--16~\Lstar{} in Self Forcing and CausVid (preregistered;
-correlational). Two training-free levers act on these terms: an early-step tone
-correction and a deeper sink, each with its own cost; lighting words matched to a model's measured defaults helped on
+offset of the default itself from where the same prompt starts, 3--16~\Lstar{} over 40 prompts; it halves in Self
+Forcing with LongLive's shorter key--value window, which explains most of LongLive's smaller offset (preregistered). Training-free levers act on these terms: an early-step tone
+correction, a deeper sink and a sink held where the probe puts a moderate share, each with its own cost; lighting words matched to a model's measured defaults helped on
 one model only.
 
 \paragraph{Contributions.}
@@ -100,8 +99,8 @@ student Krea Realtime, the HunyuanVideo-based FramePack and MAGI-1), for tone an
 forgetting and attractor offset.
 \item A positional account of attention-sink bursts, predicted by an attention probe and tested by moving and
 holding the sink in two models.
-\item Training-free levers compared on the same prompts and seeds, with their costs and failures: two that raise
-$\alpha$, and a choice of prompt that moves $\mu$ on one model only.
+\item Training-free levers compared on the same prompts and seeds, with their costs and failures: three that raise
+$\alpha$ (one placing the sink where the probe says), and a choice of prompt that moves $\mu$ on one model only.
 \end{enumerate}
 We preregistered \pend{25} studies with hashed analysis code and report all \pend{N} primary tests, including the
 \pend{M} that failed (Table~\ref{tab:primary}). No model is trained; all code and per-video statistics are public.
@@ -113,7 +112,7 @@ Diffusion~\cite{historyguided} enable causal rollout with per-frame noise and gu
 distils a bidirectional teacher~\cite{wan} into a few-step causal student with DMD~\cite{dmd}; Self
 Forcing~\cite{selfforcing} and Self-Forcing++~\cite{selfforcingpp} train on the student's own (minute-long) rollouts.
 LongLive~\cite{longlive}, Rolling Forcing~\cite{rollingforcing} and Deep Forcing~\cite{deepforcing} add attention sinks,
-rolling joint denoising and deeper, re-aligned sinks; LoL~\cite{lol} traces ``sink collapse'' to positional periodicity.
+rolling joint denoising and deeper, re-aligned sinks; LoL~\cite{lol} traces ``sink collapse'' to positional periodicity~\cite{riflex,roundround}.
 Segment-wise models condition on overlapping frames~\cite{skyreels,streamingt2v,magi}, a temporal
 pyramid~\cite{pyramidflow} or packed history~\cite{framepack}; training-free schemes lengthen bidirectional
 models~\cite{fifo,freenoise,freelong,rollingdiffusion}. These works propose mechanisms against drift; we measure what

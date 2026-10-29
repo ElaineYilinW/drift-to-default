@@ -4,7 +4,7 @@
 \centering\scriptsize
 \caption{All preregistered primary tests and their outcomes. Intervals are Wald intervals from the preregistered mixed
 models in studies 1, 2 and 13 and bootstrap intervals otherwise; $p$ is Holm-adjusted within each study;
-$^{*}$supported but not significant after Holm correction across all \pend{101} tests. Study 3 LongLive rows are as executed; after regenerating four cross-architecture openings the
+$^{*}$supported but not significant after Holm correction across all \pend{107} tests. Study 3 LongLive rows are as executed; after regenerating four cross-architecture openings the
 conclusions are unchanged; in study 1, 62\% of nominal pairs crossed GPU architectures, which widens but does not
 bias its intervals. Units: $D$, $K$ drift metrics; $|\Delta L|$ and $|$off$|$ (end minus start of fresh rollouts) in \Lstar{};
 $\alpha$ persistence, $\kappa$ content persistence. Arms: G generic prompt, M VLM caption of the opening, C calibrated
@@ -65,10 +65,10 @@ Study & Test & Model & Estimate [95\% CI] & $p_{\text{Holm}}$ & Outcome \\
   & re-rotated sink 6 $-$ sink 3, $\alpha_L$ (60\,s) & SF & $-0.00$ \ci{-0.11}{0.10} & 0.94 & not supported \\
   & $\alpha$ (both routes, 60\,s) $>0$ & FramePack-F1 & $0.51$ \ci{0.29}{0.71} & 0.004 & supported$^{*}$ \\
   & $\alpha$ (context only, 60\,s) $>0$ & FramePack-F1 & $0.46$ \ci{0.28}{0.65} & 0.003 & supported$^{*}$ \\
-  & 5 frames: $\alpha$ (60\,s) $-$ $\alpha$ (20\,s) & SkyReels & $-0.57$ \ci{-0.79}{-0.39} & 0.001 & supported \\
+  & 5 frames: $\alpha$ (60\,s) $-$ $\alpha$ (20\,s) & SkyReels & $-0.57$ \ci{-0.79}{-0.39} & 0.001 & supported$^{*}$ \\
   & 17 frames: $\alpha$ (60\,s) $-$ $\alpha$ (20\,s) & SkyReels & $-0.72$ \ci{-0.81}{-0.63} & $<10^{-6}$ & supported \\
 17 FP content & content falls, class score (20\,s) & FramePack-F1 & $-6.72$ \ci{-8.29}{-5.20} & $<10^{-5}$ & supported \\
-  & $\kappa$ (context only, 20\,s) $>0$ & FramePack-F1 & $0.24$ \ci{0.12}{0.37} & 0.001 & supported \\
+  & $\kappa$ (context only, 20\,s) $>0$ & FramePack-F1 & $0.24$ \ci{0.12}{0.37} & 0.001 & supported$^{*}$ \\
   & $\kappa$ (embedding only, 20\,s) $>0$ & FramePack-F1 & $0.23$ \ci{0.16}{0.30} & $<10^{-6}$ & supported \\
   & both $-$ context only, $\kappa$ (20\,s) & FramePack-F1 & $+0.31$ \ci{0.20}{0.41} & $<10^{-4}$ & supported \\
 18 MAGI-1 & window: $\alpha$ (30\,s) $-$ $\alpha$ (5\,s) & MAGI-1 & $-0.52$ \ci{-0.70}{-0.35} & $<0.0004$ & supported \\
@@ -105,12 +105,12 @@ Study & Test & Model & Estimate [95\% CI] & $p_{\text{Holm}}$ & Outcome \\
   & predicted $-$ control onsets & SF & $+0.32$ \ci{0.29}{0.35} & $<10^{-15}$ & supported \\
 27 Held distance & persistence rises with the share ($\rho$), 14 distances & SF & $+0.83$ \ci{0.79}{0.86} & $<10^{-16}$ & supported \\
   & motion falls with the share ($\rho$) & SF & $-0.81$ \ci{-0.84}{-0.79} & $<10^{-16}$ & supported \\
-  & the same among the 7 lowest shares ($\rho$) & SF & $+0.35$ \ci{0.20}{0.49} & $<10^{-3}$ & supported \\
+  & the same among the 7 lowest shares ($\rho$) & SF & $+0.35$ \ci{0.20}{0.49} & $<10^{-3}$ & supported$^{*}$ \\
 28 LongLive sink position & sink 18 frames back: bursts move & LL & $+0.43$ \ci{0.36}{0.50} & $<10^{-10}$ & supported \\
   & sink 36 frames back: bursts move & LL & $+0.36$ \ci{0.29}{0.43} & $<10^{-8}$ & supported \\
   & held: persistence rises with LL's share ($\rho$), 17 distances & LL & $+0.81$ \ci{0.78}{0.84} & $<10^{-16}$ & supported \\
   & held: motion falls with the share ($\rho$) & LL & $-0.83$ \ci{-0.85}{-0.81} & $<10^{-16}$ & supported \\
-29 Steady share & re-rotated sink, $\alpha$ (180--240\,s) $>0$ & SF & $+0.10$ \ci{0.06}{0.14} & $<10^{-3}$ & supported \\
+29 Steady share & re-rotated sink, $\alpha$ (180--240\,s) $>0$ & SF & $+0.10$ \ci{0.06}{0.14} & $<10^{-3}$ & supported$^{*}$ \\
   & Rolling Forcing, $\alpha$ (180--240\,s) $>0$ & RF & $+0.32$ \ci{0.27}{0.38} & $<10^{-9}$ & supported \\
   & re-rotated sink steady, 60--120$\to$180--240\,s, within $\pm0.10^{\S}$ & SF & $-0.08$ \ci{-0.13}{-0.02} & 0.20 & not supported \\
   & Rolling Forcing steady, the same$^{\S}$ & RF & $+0.01$ \ci{-0.04}{0.06} & 0.002 & supported$^{*}$ \\
@@ -118,6 +118,12 @@ Study & Test & Model & Estimate [95\% CI] & $p_{\text{Holm}}$ & Outcome \\
 30 Attractor offset & $|$off$|$: SF $-$ LL, no sink & SF, LL & $+9.59$ \ci{6.62}{12.45} & $<10^{-6}$ & supported \\
   & $|$off$|$: CausVid $-$ LL, no sink & CausVid, LL & $+4.89$ \ci{1.98}{7.67} & 0.002 & supported$^{*}$ \\
   & $|$off$|$: SF re-rotated sink $-$ RF & SF, RF & $+6.33$ \ci{4.22}{8.61} & $<10^{-5}$ & supported \\
+31 Held-sink lever & held at 66 $-$ re-rotated, $\alpha$ (120--180\,s) & SF & $+0.23$ \ci{0.15}{0.31} & $<10^{-4}$ & supported \\
+  & held at 448 $-$ re-rotated, $\alpha$ (120--180\,s) & SF & $+0.07$ \ci{-0.00}{0.15} & 0.074 & not supported \\
+  & held at 66 $-$ original positions, motion & SF & $+1.10$ \ci{0.69}{1.57} & $<10^{-3}$ & supported$^{*}$ \\
+  & held at 66: burst contrast within $\pm0.05^{\S}$ & SF & $-0.02$ \ci{-0.03}{-0.01} & $<10^{-5}$ & supported \\
+32 Window-matched offset & $|$off$|$: SF window 12 $-$ LL, no sink & SF, LL & $+1.27$ \ci{-0.97}{3.56} & 0.28 & not supported \\
+  & $|$off$|$: SF window 12 $-$ LL, sink 3 & SF, LL & $+1.08$ \ci{-0.31}{2.40} & 0.27 & not supported \\
 %NEWROWS
 \bottomrule
 \end{tabular}

@@ -146,7 +146,11 @@ log sharpness & 0.37 & $-0.91$ & 0.23 & $-0.94$ \\
 shift within 4.5\,s, and SiD loses two thirds there and nothing afterwards, which looks like rejecting an off-manifold
 shift rather than forgetting it.
 
-\paragraph{Linearity.} In study 23 the least-squares line of the end brightness on the opening's over five shifts
+\paragraph{Linearity.} Every $\alpha$ in the main text comes from shifts of $\pm16$~\Lstar. Shifting the same 24
+openings by $-24$ to $+24$~\Lstar{} (study 23, Self Forcing, 60\,s, 720 videos), $\alpha$ for $\pm24$ and $\pm8$ agree
+with the sink in place (0.61 and 0.58) and re-rotated (0.20 and 0.21), darkening and brightening are kept alike (0.60
+and 0.61), and without a sink the large shift is forgotten too (0.05 \ci{0.01}{0.08}); the four equivalence tests held
+within the study but not after correction across all tests. The least-squares line of the end brightness on the opening's over five shifts
 ($-24$ to $+24$~\Lstar) has slope 0.60 \ci{0.56}{0.64} with the sink in place, 0.20 \ci{0.16}{0.24} re-rotated and 0.05
 \ci{0.01}{0.08} without a sink, and no quadratic term ($p$ = 0.88, 0.16, 0.31). The burst at 31--34\,s scales with the
 shift (jump 0.40 for $\pm8$, 0.34 for $\pm24$), so a burst copies the opening itself. A re-rotated sink keeps a darkening
@@ -173,6 +177,10 @@ $\alpha$ and $\mu$ are always reported with theirs.
 \paragraph{Re-rotated sinks across studies.} A re-rotated three-frame sink keeps 0.16 at 60\,s in study 10 and 0.23 in
 study 16 because 9 of the 24 scenes ran on another GPU architecture in study 16, which amounts to resampling them; all
 72 videos repeated on the same architecture were bit-identical.
+
+\paragraph{Which denoising step to correct.} Correcting at step 0 removes as much drift as at step 1 but erases
+tunnels, and steps 2--3 do nothing, consistent with global tone being fixed at the earliest denoising
+steps~\cite{lin2024,offsetnoise}.
 
 \paragraph{Persistence is not freezing.} A video frozen on its opening would score high. We recomputed motion (mean
 frame-to-frame grey-level change on 4$\times$-subsampled frames; $r=0.9999$ with the value from raw frames) from the 2272
@@ -236,8 +244,8 @@ deviation are matched to the held opening's before encoding, the city-versus-cla
 \centering
 \includegraphics[width=\linewidth]{fig_mech.pdf}
 \caption{(a) Two components of drift: persistence of the opening at 60\,s (studies 7, 10) against the attractor offset
-of fresh rollouts (mean $|$end$-$start$|$ brightness over 40 prompts, 3 seeds, 60\,s; study 30), 95\% CIs; models
-trained on their own long rollouts have a smaller offset but still forget. (b) The prompt's per-chunk pull measured by bit-exact replay (study 14; 16 seeds; 95\% CIs): one chunk
+of fresh rollouts (mean $|$end$-$start$|$ brightness over 40 prompts, 3 seeds, 60\,s; study 30), 95\% CIs;
+LongLive and Rolling Forcing have a smaller offset but still forget; Self Forcing with LongLive's 12-frame window ends 8.0~\Lstar{} away (study 32, not shown). (b) The prompt's per-chunk pull measured by bit-exact replay (study 14; 16 seeds; 95\% CIs): one chunk
 regenerated from identical cache, noise and random state with only the text conditioning swapped; grey: the value
 implied by the recursion fitted to 120-s curves, preregistered for 15\,s. (c) The swapped chunk's change against the
 difference of the prompts' defaults; a prompt with the same default has no effect.}
@@ -275,6 +283,12 @@ leaves the window and is forgotten, while the rollout drifts toward the CLIP-emb
 scene-bootstrap 95\% CIs.}
 \label{fig:framepack}
 \end{figure}
+
+\paragraph{SkyReels-V2-DF.} It extends videos in 97-frame segments that re-denoise the last 17 frames of the previous
+segment jointly with the new ones. It holds the opening for 20\,s ($\alpha = 0.96$ \ci{0.86}{1.07}) whatever its
+guidance, history noise or number of steps, and then forgets steadily, to 0.29 at 60\,s ($-0.72$ \ci{-0.81}{-0.63}
+from 20 to 60\,s, study 16); with a 5-frame overlap it relaxes earlier ($-0.24$ \ci{-0.40}{-0.09} at 15--20\,s,
+preregistered) and keeps 0.08 at 60\,s.
 
 \paragraph{Matrix-Game-2.0.} The preregistered tests of study 15 used 7 scenes, as the model often collapses to black:
 the context-only shift fades ($-0.24$ \ci{-0.35}{-0.14} from 5 to 30\,s), and the embedding-only shift keeps 0.43

@@ -46,6 +46,8 @@ This folder holds the summary outputs of every experiment: tables, JSON summarie
 | The sink's position in LongLive (study 28, preregistered) | `corr/s28_out/` | `analysis/analyze_s28.py`, `s27_distances.py` | `docs/lab-notes/36_longlive_sink_position_results.md` |
 | Attractor offset on 40 prompts (study 30, preregistered) | `corr/s30_out/` | `analysis/analyze_s30.py` | `docs/lab-notes/37_attractor_offset_results.md` |
 | Steady share to 240 s (study 29, preregistered) | `corr/s29_out/` | `analysis/analyze_s29.py` | `docs/lab-notes/38_steady_share_results.md` |
+| A held sink as a lever (study 31, preregistered) | `corr/s31_out/` | `analysis/analyze_s31.py` | `docs/lab-notes/40_held_sink_lever_results.md` |
+| Window-matched attractor offset (study 32, preregistered) | `corr/s32_out/` | `analysis/analyze_s32.py` | `docs/lab-notes/41_window_matched_offset_results.md` |
 | Third-review analyses: motion audit, opening source, μ over time, DINOv2 content (exploratory) | `corr/review3_out/` | `analysis/review3_analyses.py`, `motion_audit.py`, `motion_summary.py`, `dino_content.py`, `analyze_dino_content.py` | `docs/lab-notes/39_review3_analyses.md` |
 | Dose–response of tone persistence (study 23, preregistered) | `corr/s23_out/` | `analysis/analyze_s23.py` | `docs/lab-notes/35_dose_response_results.md` |
 
