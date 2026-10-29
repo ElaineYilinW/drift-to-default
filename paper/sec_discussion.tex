@@ -19,5 +19,5 @@ forgetting its errors is the open problem.
 \paragraph{Limitations.} Six of the nine models share the Wan2.1-1.3B architecture and a seventh is a student of its
 14B sibling; FramePack and MAGI-1 have other bases. Content relaxation was replicated on FramePack, but the prompt dependence
 and the decomposition rest on Wan-based models, and the world model collapses after 20--30\,s. Interventions shift global tone or select a scene class (CLIP scores are a
-coarse proxy for content); openings are held images; scene content is compared across openings rather than shifted within one; most configurations use one seed per scene (the Self Forcing sink results on tone and content replicate with three more); Holm correction is
-applied within studies only; the correction was not compared with Pathwise test-time correction or FreqForcing.
+coarse proxy for content); openings are held images; scene content is compared across openings rather than shifted within one; most configurations use one seed per scene (the Self Forcing sink results on tone and content replicate with three more); with Holm correction across all \pend{89} primary tests, \pend{49} of the \pend{67}
+supported ones remain significant; the correction was not compared with Pathwise test-time correction or FreqForcing.

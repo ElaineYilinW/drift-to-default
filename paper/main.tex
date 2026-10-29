@@ -68,7 +68,7 @@ x(T) \approx \alpha(T)\,x_{\text{open}} + \bigl(1-\alpha(T)\bigr)\,\mu .
 This is a linear-response summary, not a law: $\alpha$ and $\mu$ come from one regression. What it organises are three
 findings, and tests of its assumptions (Section~\ref{sec:relax}).
 
-\textbf{What survives depends on whether the opening stays in the context, not on model size} (Fig.~\ref{fig:hold}).
+\textbf{What survives depends on whether the opening stays in the context} (Fig.~\ref{fig:hold}).
 Once the opening leaves a sliding key--value window it is forgotten, in 1.3B models and in a 14B model alike;
 re-denoising overlapping frames passes it forward and delays forgetting by about 20\,s. An opening that stays in the
 context (a re-rotated attention sink, an anchor, a clean copy in every section, full history) keeps a share whose size
@@ -97,7 +97,8 @@ student Krea Realtime, the HunyuanVideo-based FramePack and MAGI-1), for tone an
 180\,s: what sets $\mu$, what sets the long-run share, and an exploratory decomposition of drift into
 forgetting and attractor offset.
 \item A positional account of attention-sink bursts, predicted by an attention probe and tested by moving the sink.
-\item Training-free levers matched to the two terms, compared on the same prompts and seeds, with their costs and failures.
+\item Training-free levers compared on the same prompts and seeds, with their costs and failures: two that raise
+$\alpha$, and a choice of prompt that moves $\mu$ on one model only.
 \end{enumerate}
 We preregistered \pend{25} studies with hashed analysis code and report all \pend{N} primary tests, including the
 \pend{M} that failed (Table~\ref{tab:primary}). No model is trained; all code and per-video statistics are public.

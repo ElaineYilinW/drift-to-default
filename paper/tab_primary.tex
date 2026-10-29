@@ -3,8 +3,8 @@
 \begin{table}[h]
 \centering\scriptsize
 \caption{All preregistered primary tests and their outcomes. Intervals are Wald intervals from the preregistered mixed
-models in studies 1, 2 and 13 and bootstrap intervals otherwise; $p$ is Holm-adjusted within each study (no correction
-across studies). Study 3 LongLive rows are as executed; after regenerating four cross-architecture openings the
+models in studies 1, 2 and 13 and bootstrap intervals otherwise; $p$ is Holm-adjusted within each study;
+$^{*}$supported but not significant after Holm correction across all \pend{89} tests. Study 3 LongLive rows are as executed; after regenerating four cross-architecture openings the
 conclusions are unchanged; in study 1, 62\% of nominal pairs crossed GPU architectures, which widens but does not
 bias its intervals. Units: $D$, $K$ drift metrics; $|\Delta L|$ in \Lstar{};
 $\alpha$ persistence, $\kappa$ content persistence. Arms: G generic prompt, M VLM caption of the opening, C calibrated
@@ -27,18 +27,18 @@ Study & Test & Model & Estimate [95\% CI] & $p_{\text{Holm}}$ & Outcome \\
   & M $-$ G, $|\Delta L|$ & LL & $-0.19$ \ci{-2.00}{1.63} & 1.0 & not supported \\
   & M+ttc $-$ M, $|\Delta L|$ & LL & $-0.36$ \ci{-1.48}{0.75} & 1.0 & not supported \\
 4 Calibrated & C $-$ M, $|\Delta L|$ & SF & $-1.24$ \ci{-2.54}{0.12} & 0.25 & not supported \\
-  & C $-$ G, $|\Delta L|$ & SF & $-2.45$ \ci{-4.08}{-1.04} & 0.013 & supported \\
+  & C $-$ G, $|\Delta L|$ & SF & $-2.45$ \ci{-4.08}{-1.04} & 0.013 & supported$^{*}$ \\
   & C $-$ M, $|\Delta L|$ & LL & $-1.15$ \ci{-2.59}{0.29} & 0.26 & not supported \\
   & C $-$ G, $|\Delta L|$ & LL & $-1.34$ \ci{-3.19}{0.55} & 0.26 & not supported \\
 5 Calibrated (LL scale) & C $-$ M, $|\Delta L|$ & LL & $-1.36$ \ci{-3.06}{0.32} & 0.26 & not supported \\
   & C $-$ G, $|\Delta L|$ & LL & $-1.55$ \ci{-3.50}{0.39} & 0.26 & not supported \\
 6 Relaxation & no sink $-$ sink, $\alpha_L$ (31\,s) & SF & $-0.06$ \ci{-0.17}{0.05} & 0.34 & not supported \\
-  & no sink $-$ sink, $\alpha_L$ (31\,s) & LL & $-0.17$ \ci{-0.28}{-0.06} & 0.013 & supported \\
-  & ttc $-$ none, $\alpha_L$ (31\,s) & SF & $+0.12$ \ci{0.05}{0.20} & 0.013 & supported \\
+  & no sink $-$ sink, $\alpha_L$ (31\,s) & LL & $-0.17$ \ci{-0.28}{-0.06} & 0.013 & supported$^{*}$ \\
+  & ttc $-$ none, $\alpha_L$ (31\,s) & SF & $+0.12$ \ci{0.05}{0.20} & 0.013 & supported$^{*}$ \\
   & no sink $-$ sink, $\alpha_b$ (31\,s) & SF & $-0.26$ \ci{-0.34}{-0.18} & $<10^{-5}$ & supported \\
 7 Sink at 60\,s & sink $-$ no sink, $\alpha_L$ & SF & $+0.55$ \ci{0.45}{0.65} & $<10^{-9}$ & supported \\
   & sink $-$ no sink, $\alpha_L$ & CausVid & $+0.19$ \ci{0.14}{0.24} & $<10^{-6}$ & supported \\
-8 Overlap & 5 $-$ 17 frames, $\alpha_L$ (20\,s) & SkyReels & $-0.24$ \ci{-0.40}{-0.09} & 0.014 & supported \\
+8 Overlap & 5 $-$ 17 frames, $\alpha_L$ (20\,s) & SkyReels & $-0.24$ \ci{-0.40}{-0.09} & 0.014 & supported$^{*}$ \\
 9 Content & class $-$ city prompt, class score (30\,s) & SF & $+9.33$ \ci{8.11}{10.51} & $<10^{-9}$ & supported \\
   & sink $-$ no sink, $\kappa$ (30\,s) & LL & $-0.02$ \ci{-0.10}{0.07} & 0.72 & not supported \\
   & sink $-$ no sink, $\kappa$ (60\,s) & SF & $+0.48$ \ci{0.39}{0.57} & $<10^{-7}$ & supported \\
@@ -46,16 +46,16 @@ Study & Test & Model & Estimate [95\% CI] & $p_{\text{Holm}}$ & Outcome \\
   & sink 1 $-$ no sink, $\alpha_L$ (60\,s) & SF & $+0.24$ \ci{0.14}{0.34} & $<0.0002$ & supported \\
   & sink $-$ no sink, $\alpha_L$ (60\,s) & LL & $+0.46$ \ci{0.39}{0.53} & $<10^{-10}$ & supported \\
   & re-rotated $-$ original sink, $\alpha_L$ (60\,s) & SF & $-0.44$ \ci{-0.54}{-0.35} & $<10^{-7}$ & supported \\
-11 FramePack & $\alpha$ (both routes, 20\,s) $> 0.5$ & FramePack-F1 & $0.68$ \ci{0.57}{0.79} & 0.033 & supported \\
+11 FramePack & $\alpha$ (both routes, 20\,s) $> 0.5$ & FramePack-F1 & $0.68$ \ci{0.57}{0.79} & 0.033 & supported$^{*}$ \\
   & $\alpha$ (embedding only, 20\,s) $> 0$ & FramePack-F1 & $0.01$ \ci{-0.14}{0.17} & 0.87 & not supported \\
   & both $-$ context only, $\alpha$ (20\,s) & FramePack-F1 & $+0.14$ \ci{-0.05}{0.33} & 0.38 & not supported \\
 12 Prompts & sink $-$ no sink, $\alpha_L$ (60\,s), 4 domains & SF & $+0.53$ \ci{0.45}{0.61} & $<10^{-10}$ & supported \\
-  & sink $-$ no sink, $\alpha_L$ (30\,s), 4 domains & LL & $+0.19$ \ci{0.11}{0.28} & 0.005 & supported \\
-  & $\alpha_L$ differs between domains (ANOVA) & SF & $F=3.12$ & 0.049 & supported \\
+  & sink $-$ no sink, $\alpha_L$ (30\,s), 4 domains & LL & $+0.19$ \ci{0.11}{0.28} & 0.005 & supported$^{*}$ \\
+  & $\alpha_L$ differs between domains (ANOVA) & SF & $F=3.12$ & 0.049 & supported$^{*}$ \\
 13 Deep sink & sink 6, $D$ & SF & $-1.30$ \ci{-1.68}{-0.93} & $<10^{-6}$ & supported \\
   & sink 9, $D$ & SF & $-1.93$ \ci{-2.31}{-1.55} & $<10^{-6}$ & supported \\
-14 Prompt pull & $w_p > 0$ at 15\,s (replay) & SF & $+0.088$ \ci{0.045}{0.149} & 0.006 & supported \\
-15 World model & ctx-only shift fades (30 vs 5\,s) & Matrix-Game & $-0.24$ \ci{-0.35}{-0.14} & 0.024 & supported \\
+14 Prompt pull & $w_p > 0$ at 15\,s (replay) & SF & $+0.088$ \ci{0.045}{0.149} & 0.006 & supported$^{*}$ \\
+15 World model & ctx-only shift fades (30 vs 5\,s) & Matrix-Game & $-0.24$ \ci{-0.35}{-0.14} & 0.024 & supported$^{*}$ \\
   & emb-only shift persists, $\alpha$ (30\,s) & Matrix-Game & $+0.43$ \ci{0.13}{0.71} & 0.075 & not supported \\
   & both $-$ ctx-only, $\alpha$ (30\,s) & Matrix-Game & $+0.33$ \ci{-0.07}{0.71} & 0.18 & not supported \\
 16 Re-rotation & re-rotated $-$ original, burst contrast $R$ & SF & $-0.29$ \ci{-0.37}{-0.22} & $<10^{-5}$ & supported \\
@@ -63,8 +63,8 @@ Study & Test & Model & Estimate [95\% CI] & $p_{\text{Holm}}$ & Outcome \\
   & re-rotated sink $-$ none, $\kappa$ (60\,s) & SF & $+0.10$ \ci{-0.00}{0.21} & 0.11 & not supported \\
   & re-rotated $-$ original sink 6, $\alpha_L$ (60\,s) & SF & $-0.54$ \ci{-0.62}{-0.45} & $<10^{-9}$ & supported \\
   & re-rotated sink 6 $-$ sink 3, $\alpha_L$ (60\,s) & SF & $-0.00$ \ci{-0.11}{0.10} & 0.94 & not supported \\
-  & $\alpha$ (both routes, 60\,s) $>0$ & FramePack-F1 & $0.51$ \ci{0.29}{0.71} & 0.004 & supported \\
-  & $\alpha$ (context only, 60\,s) $>0$ & FramePack-F1 & $0.46$ \ci{0.28}{0.65} & 0.003 & supported \\
+  & $\alpha$ (both routes, 60\,s) $>0$ & FramePack-F1 & $0.51$ \ci{0.29}{0.71} & 0.004 & supported$^{*}$ \\
+  & $\alpha$ (context only, 60\,s) $>0$ & FramePack-F1 & $0.46$ \ci{0.28}{0.65} & 0.003 & supported$^{*}$ \\
   & 5 frames: $\alpha$ (60\,s) $-$ $\alpha$ (20\,s) & SkyReels & $-0.57$ \ci{-0.79}{-0.39} & 0.001 & supported \\
   & 17 frames: $\alpha$ (60\,s) $-$ $\alpha$ (20\,s) & SkyReels & $-0.72$ \ci{-0.81}{-0.63} & $<10^{-6}$ & supported \\
 17 FP content & content falls, class score (20\,s) & FramePack-F1 & $-6.72$ \ci{-8.29}{-5.20} & $<10^{-5}$ & supported \\
@@ -72,7 +72,7 @@ Study & Test & Model & Estimate [95\% CI] & $p_{\text{Holm}}$ & Outcome \\
   & $\kappa$ (embedding only, 20\,s) $>0$ & FramePack-F1 & $0.23$ \ci{0.16}{0.30} & $<10^{-6}$ & supported \\
   & both $-$ context only, $\kappa$ (20\,s) & FramePack-F1 & $+0.31$ \ci{0.20}{0.41} & $<10^{-4}$ & supported \\
 18 MAGI-1 & window: $\alpha$ (30\,s) $-$ $\alpha$ (5\,s) & MAGI-1 & $-0.52$ \ci{-0.70}{-0.35} & $<0.0004$ & supported \\
-  & full history $-$ window, $\alpha$ (30\,s) & MAGI-1 & $+0.30$ \ci{0.17}{0.43} & 0.002 & supported \\
+  & full history $-$ window, $\alpha$ (30\,s) & MAGI-1 & $+0.30$ \ci{0.17}{0.43} & 0.002 & supported$^{*}$ \\
   & $\alpha$ (full history, 30\,s) $>0$ & MAGI-1 & $0.64$ \ci{0.45}{0.83} & $<0.0002$ & supported \\
 %S19ROWS
 20 Seeds & sink 3 $-$ none, $\alpha$ (60\,s) & SF & $+0.62$ \ci{0.56}{0.67} & $<10^{-15}$ & supported \\
@@ -80,18 +80,18 @@ Study & Test & Model & Estimate [95\% CI] & $p_{\text{Holm}}$ & Outcome \\
   & re-rotated sink $-$ none, $\alpha$ (60\,s) & SF & $+0.22$ \ci{0.15}{0.29} & $<10^{-5}$ & supported \\
 21 Content seeds & sink 3 $-$ none, $\kappa$ (60\,s) & SF & $+0.48$ \ci{0.40}{0.56} & $<10^{-10}$ & supported \\
   & re-rotated $-$ original sink, $\kappa$ (60\,s) & SF & $-0.40$ \ci{-0.47}{-0.34} & $<10^{-12}$ & supported \\
-  & re-rotated sink $-$ none, $\kappa$ (60\,s) & SF & $+0.08$ \ci{-0.01}{0.16}$^\ddagger$ & 0.006 & supported \\
+  & re-rotated sink $-$ none, $\kappa$ (60\,s) & SF & $+0.08$ \ci{-0.01}{0.16}$^\ddagger$ & 0.006 & supported$^{*}$ \\
   & re-rotated $-$ original, burst contrast $R$ & SF & $-0.34$ \ci{-0.38}{-0.28} & $<10^{-10}$ & supported \\
 22 Krea & window: $\alpha$ (60\,s) $-$ $\alpha$ (10\,s) & Krea 14B & $-0.38$ \ci{-0.45}{-0.31} & $<10^{-9}$ & supported \\
   & anchor $-$ window, $\alpha$ (60\,s) & Krea 14B & $+0.08$ \ci{-0.03}{0.18} & 0.32 & not supported \\
   & $\alpha$ (anchor, 60\,s) $>0$ & Krea 14B & $0.03$ \ci{-0.03}{0.08} & 0.37 & not supported \\
   & content falls, class score (55--60\,s) & Krea 14B & $-12.02$ \ci{-12.64}{-11.37} & $<10^{-15}$ & supported \\
   & anchor $-$ window, $\kappa$ (55--60\,s) & Krea 14B & $+0.33$ \ci{0.18}{0.47} & $<10^{-5}$ & supported \\
-23 Dose--response & sink: $\alpha$ ($\pm24$) $-$ $\alpha$ ($\pm8$) within $\pm0.15^{\S}$ & SF & $+0.03$ \ci{-0.03}{0.10} & 0.005 & supported \\
-  & re-rotated sink: the same$^{\S}$ & SF & $-0.01$ \ci{-0.14}{0.11} & 0.020 & supported \\
-  & sink: brightening $-$ darkening within $\pm0.15^{\S}$ & SF & $+0.01$ \ci{-0.06}{0.08} & 0.003 & supported \\
-  & no sink: $\alpha$ ($\pm24$) within $\pm0.10^{\S}$ & SF & $+0.05$ \ci{0.01}{0.08} & 0.005 & supported \\
-24 180-s horizon & re-rotated sink, $\alpha$ (180\,s) $>0$ & SF & $+0.12$ \ci{0.04}{0.20} & 0.044 & supported \\
+23 Dose--response & sink: $\alpha$ ($\pm24$) $-$ $\alpha$ ($\pm8$) within $\pm0.15^{\S}$ & SF & $+0.03$ \ci{-0.03}{0.10} & 0.005 & supported$^{*}$ \\
+  & re-rotated sink: the same$^{\S}$ & SF & $-0.01$ \ci{-0.14}{0.11} & 0.020 & supported$^{*}$ \\
+  & sink: brightening $-$ darkening within $\pm0.15^{\S}$ & SF & $+0.01$ \ci{-0.06}{0.08} & 0.003 & supported$^{*}$ \\
+  & no sink: $\alpha$ ($\pm24$) within $\pm0.10^{\S}$ & SF & $+0.05$ \ci{0.01}{0.08} & 0.005 & supported$^{*}$ \\
+24 180-s horizon & re-rotated sink, $\alpha$ (180\,s) $>0$ & SF & $+0.12$ \ci{0.04}{0.20} & 0.044 & supported$^{*}$ \\
   & Rolling Forcing, $\alpha$ (180\,s) $>0$ & RF & $+0.29$ \ci{0.21}{0.37} & $<10^{-5}$ & supported \\
   & re-rotated sink steady, 60$\to$180\,s, within $\pm0.10^{\S}$ & SF & $-0.09$ \ci{-0.22}{0.03} & 0.55 & not supported \\
   & Rolling Forcing steady, 60$\to$180\,s, within $\pm0.10^{\S}$ & RF & $-0.07$ \ci{-0.16}{0.01} & 0.55 & not supported \\

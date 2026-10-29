@@ -24,8 +24,8 @@ by CLIP before any continuation) and continued each under the generic city promp
 eight configurations (study 9). Content relaxes like tone (Fig.~\ref{fig:content}). Under the city prompt, $\kappa$ at
 30\,s ranges from 0.07 (SiD) to 0.61 (Rolling Forcing), and the opening's class is CLIP's top label in only 34\% of Self
 Forcing frames at 30\,s. Under the opening's own class prompt the class persists ($\kappa$ 0.71--1.05; 9.3
-\ci{8.1}{10.5} more log-odds, preregistered), as a fresh rollout of that prompt would. Content and tone persistence tend to go together across
-configurations ($\rho=0.67$, $n=8$, $p=0.07$). Class scores could partly reflect colour (snow is bright, sand is
+\ci{8.1}{10.5} more log-odds, preregistered), as a fresh rollout of that prompt would. Across the eight
+configurations, content and tone persistence are correlated, but not significantly ($\rho=0.67$, $p=0.07$). Class scores could partly reflect colour (snow is bright, sand is
 yellow), but scoring frames whose CIELAB mean and spread are matched to the opening's gives the same results, as does
 SigLIP (Appendix~\ref{app:robust}).
 
@@ -33,10 +33,10 @@ Sinks act differently on content. Self Forcing's sink keeps more of it at 60\,s 
 \ci{0.39}{0.57}, preregistered), but not steadily: $\kappa$ falls to 0.32 at 30\,s and rises again, and the dunes, the
 sea and the mountains of the opening reappear after a minute of city (Fig.~\ref{fig:content}, left). The returns are
 positional (study 16, 24 openings): with the sink's keys re-rotated to sit just before the window, they vanish (burst
-contrast $-0.29$ \ci{-0.37}{-0.22}), and the content kept at 60\,s falls from 0.56 to 0.25 ($-0.31$
+contrast, $\kappa$ over 50--55\,s minus 45--50\,s: $-0.29$ \ci{-0.37}{-0.22}), and the content kept at 60\,s falls from 0.56 to 0.25 ($-0.31$
 \ci{-0.37}{-0.25}). Three new seeds per opening (study 21) reproduce the sink's advantage, the loss under re-rotation ($-0.40$
-\ci{-0.47}{-0.34}) and the return, and detect a small share kept by the re-rotated sink: 0.19 against 0.11 without a
-sink ($+0.08$, Holm $p=0.006$). What a Self Forcing sink keeps of the scene, it keeps mostly by periodically
+\ci{-0.47}{-0.34}) and the return, and suggest a small share kept by the re-rotated sink: 0.19 against 0.11 without a
+sink ($+0.08$, Holm $p=0.006$, though an interval that also resamples the fresh starts is \ci{-0.01}{0.16}). What a Self Forcing sink keeps of the scene, it keeps mostly by periodically
 re-injecting the opening. LongLive's sink, which keeps tone, does not keep content (0.22 vs 0.24, preregistered test not
 supported).
 
@@ -76,7 +76,7 @@ copy of the cache with only its text conditioning swapped measures the prompt's 
 term ($\mu$), but $\alpha$ itself varies: Self Forcing keeps 0.34 of the opening under a sunny prompt and 0.05 under a
 night prompt (exploratory interaction, $p=0.001$). In four new scene types with their own prompts and self-generated
 openings (a park walk, a drone flight over a coast, a kitchen, a market; study 12), its persistence at 60\,s differs
-between them (0.44 to 0.67, $p=0.049$, preregistered), as does LongLive's at 30\,s (0.10 to 0.43). The sink effect
+between them (0.44 to 0.67, $p=0.049$, preregistered; not significant across all tests), as does LongLive's at 30\,s (0.10 to 0.43). The sink effect
 replicates almost exactly outside driving scenes: 0.55 with a sink and 0.02 without ($+0.53$ \ci{0.45}{0.61}).
 
 \paragraph{Two components of drift.} For a prompt-only rollout, Eq.~\ref{eq:law} says nothing about why the default
@@ -114,14 +114,14 @@ its context after about 4\,s; persistence falls from 0.87 at 5\,s to 0.34 at 30\
 18) \pend{and to [x] at 60\,s (study 19)}. Krea Realtime 14B~\cite{krea}, a Self Forcing student of Wan2.1-14B,
 recomputes its cache over a window of three latent frames (study 22, 24 scenes): it keeps 0.33 at 10\,s and nothing
 from 20\,s on ($-0.05$ at 60\,s; $-0.38$ \ci{-0.45}{-0.31} from 10 to 60\,s), and its class evidence falls to $\kappa=0.05$.
-The pattern holds at 14B parameters, although Krea's window also differs, so this is not a controlled test of scale. Re-denoising overlapping frames delays forgetting but does not stop it.
+The pattern holds at 14B parameters, though Krea's window also differs (not a controlled test of scale). Re-denoising overlapping frames delays forgetting but does not stop it.
 SkyReels-V2-DF extends videos in 97-frame segments that re-denoise the last 17 frames of the previous segment jointly
 with the new ones. It holds the opening for 20\,s ($\alpha = 0.96$ \ci{0.86}{1.07}, whatever its guidance, history
 noise or number of steps) and then forgets steadily, to 0.29 at 60\,s ($-0.72$ \ci{-0.81}{-0.63} from 20 to 60\,s,
 study 16); with a 5-frame overlap it relaxes
 earlier ($-0.24$ \ci{-0.40}{-0.09} at 15--20\,s, preregistered) and keeps 0.08 at 60\,s.
 
-\paragraph{An opening that stays in the context keeps a share.} Self Forcing keeps the sink's keys at their absolute
+\paragraph{An opening that stays in the context keeps a share of its tone, its scene or both.} Self Forcing keeps the sink's keys at their absolute
 rotary positions, ever further from the current chunk. Re-rotated to sit just before the window, as in Rolling Forcing
 and Deep Forcing, the sink stays at query distances seen in training. Re-rotated sinks of three and six frames keep
 the same share at 60\,s (0.23 and 0.22, $-0.00$ \ci{-0.11}{0.10}, study 16; the preregistered depth test is not
@@ -158,7 +158,8 @@ identically in every chunk and opening, so the peaks are positional, not content
 positions passes the first three 16.5, 32.3 and 49.5\,s after the opening, the times of the bursts. Moving the sink
 moves the bursts (study 25, preregistered; Fig.~\ref{fig:probe}b): 18 or 36 latent frames further back, the probe puts
 every burst 4.5 or 9\,s earlier, and persistence rose in the windows predicted for the moved sink rather than in the
-original ones (difference in differences $+0.53$ \ci{0.45}{0.61} and $+0.25$ \ci{0.21}{0.30}). A sink held at one
+original ones (predicted minus original windows, net of the sink in place: $+0.53$ \ci{0.45}{0.61} and $+0.25$
+\ci{0.21}{0.30}). A sink held at one
 distance does not burst, and the probe's share at that distance sets how much is kept (Fig.~\ref{fig:probe}c): 0.86
 at 60\,s at the peak distance 203 and 0.01 at the trough before it ($+0.85$ \ci{0.78}{0.91}, study 25), and over 14
 further distances chosen by a rule fixed in advance, 9 of them beyond any distance a sink reaches within 60\,s,
