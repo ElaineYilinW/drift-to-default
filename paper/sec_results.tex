@@ -7,7 +7,7 @@ shifted the brightness and colour temperature of the same opening within each of
 and continued every version with the generic prompt (study 6, 31\,s; study 10, 60\,s). The versions converge
 (Fig.~\ref{fig:teaser}). At 60\,s every cache configuration has relaxed (Appendix Fig.~\ref{fig:atlas}a): $\alpha$ ranges from
 $-0.01$ (LongLive without a sink) to 0.79 (Self Forcing GAN), ranked as at 31\,s (Spearman $\rho=0.78$, $p=0.008$).
-Colour temperature behaves like brightness. Persistence varies by checkpoint even with architecture,
+Colour temperature behaves like brightness, and high persistence is not a frozen video (Appendix~\ref{app:robust}). Persistence varies by checkpoint even with architecture,
 context and sampler fixed (Self Forcing: 0.35 to 0.79 at 60\,s; two SiD checkpoints differ by 0.36), so the training
 objective alone does not set it.
 
@@ -26,7 +26,7 @@ eight configurations (study 9). Content relaxes like tone (Fig.~\ref{fig:content
 Forcing frames at 30\,s. Under the opening's own class prompt the class persists ($\kappa$ 0.71--1.05; 9.3
 \ci{8.1}{10.5} more log-odds, preregistered), as a fresh rollout of that prompt would. Across the eight
 configurations, content and tone persistence are correlated, but not significantly ($\rho=0.67$, $p=0.07$). Scoring frames whose CIELAB mean and spread are matched to the
-opening's, or scoring with SigLIP, gives the same results (Appendix~\ref{app:robust}).
+opening's, or scoring with SigLIP or DINOv2, gives the same results (Appendix~\ref{app:robust}).
 
 Sinks act differently on content. Self Forcing's sink keeps more of it at 60\,s ($\kappa$ 0.61 vs 0.14, $+0.48$
 \ci{0.39}{0.57}, preregistered), but not steadily: $\kappa$ falls to 0.32 at 30\,s and rises again, and the dunes, the

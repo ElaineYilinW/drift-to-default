@@ -174,6 +174,38 @@ $\alpha$ and $\mu$ are always reported with theirs.
 study 16 because 9 of the 24 scenes ran on another GPU architecture in study 16, which amounts to resampling them; all
 72 videos repeated on the same architecture were bit-identical.
 
+\paragraph{Persistence is not freezing.} A video frozen on its opening would score high. We recomputed motion (mean
+frame-to-frame grey-level change on 4$\times$-subsampled frames; $r=0.9999$ with the value from raw frames) from the 2272
+saved videos (exploratory). Across 38 configuration--study pairs at 60\,s, persistence and motion are uncorrelated
+(Spearman $\rho=-0.13$, $p=0.43$), and freezing (motion below 1.5 over 50--60\,s) is more common without a sink (42--58\%
+of Self Forcing videos, 71\% of CausVid's) than with one (18--29\%). Restricted to scenes whose two versions both move,
+every Wan-based configuration keeps within 0.07 of its full-sample $\alpha$ (three-frame sink 0.59 vs 0.61, six frames
+0.75 vs 0.76, GAN 0.73 vs 0.80, Rolling Forcing 0.44 vs 0.44); in FramePack, MAGI-1 and Matrix-Game (other frame rates)
+it is 0.08--0.20 lower (FramePack's prefix alone 0.26 on 6 moving scenes vs 0.46), so part of their persistence comes
+from videos that stopped moving. Only a sink held at a high-share distance freezes Self Forcing or LongLive on its
+opening (Fig.~\ref{fig:held}).
+
+\paragraph{Real and generated openings.} Half of the 24 tone openings are NAVSIM camera frames and half the model's own
+generations. At 60\,s the difference in $\alpha$ between them averages $-0.02$ over 23 configuration--study pairs and
+no 95\% interval excludes zero (at 30\,s, near a burst, 4 of 23 do, in both directions).
+
+\paragraph{The default across horizons.} The zero-drift level $\mu=b_0/(1-\alpha)$ of the same regressions changes by
+at most 4.5~\Lstar{} between 20 and 60\,s without a sink, with re-rotated sinks and for LongLive and CausVid, but by
+6--12~\Lstar{} with a Self Forcing sink at its absolute positions, where $\alpha$ moves with the bursts and $\mu$ is
+ill-conditioned as $\alpha$ nears 1; SiD's and Rolling Forcing's rise as their rollouts brighten (by 15 and
+6~\Lstar).
+
+\paragraph{Content beyond CLIP.} With DINOv2 features (exploratory; class score = mean cosine similarity to the other
+three openings of the class minus that to the 20 openings of other classes, normalised as $\kappa$), content
+persistence at 30\,s agrees with CLIP's across the 16 configuration--prompt cells of study 9 (Pearson $r=0.92$). An
+instance score, the similarity to the video's own opening minus that to the other openings of its class (1 = the
+opening, 0 = an unrelated scene of the class), separates the scene from its class. Under the opening's own class
+prompt, where a fresh rollout would also show the class, the class persists (DINOv2 $\kappa$ 0.30--0.99) but the
+particular scene keeps only 0.20--0.75 at 30\,s; the matching prompt adds to the instance in CausVid, LongLive and
+Rolling Forcing ($+0.19$ to $+0.31$) but not in the Self Forcing checkpoints. A Self Forcing sink at its absolute
+positions brings back the particular opening, not just its class: at 60\,s under the city prompt it adds $+0.33$
+\ci{0.23}{0.42} to the instance score.
+
 \paragraph{The default and fresh rollouts.} Across 10 configurations, the zero-drift level correlates $r=0.93$ with
 where prompt-only rollouts end, but the slope is 1.58 and the mean absolute difference 4.9~\Lstar{} (largest for the
 GAN and SiD v2 checkpoints, whose zero-drift levels are extrapolated from slopes far from 0). Fresh rollouts give the

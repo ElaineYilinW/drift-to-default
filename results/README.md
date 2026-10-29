@@ -46,6 +46,7 @@ This folder holds the summary outputs of every experiment: tables, JSON summarie
 | The sink's position in LongLive (study 28, preregistered) | `corr/s28_out/` | `analysis/analyze_s28.py`, `s27_distances.py` | `docs/lab-notes/36_longlive_sink_position_results.md` |
 | Attractor offset on 40 prompts (study 30, preregistered) | `corr/s30_out/` | `analysis/analyze_s30.py` | `docs/lab-notes/37_attractor_offset_results.md` |
 | Steady share to 240 s (study 29, preregistered) | `corr/s29_out/` | `analysis/analyze_s29.py` | `docs/lab-notes/38_steady_share_results.md` |
+| Third-review analyses: motion audit, opening source, μ over time, DINOv2 content (exploratory) | `corr/review3_out/` | `analysis/review3_analyses.py`, `motion_audit.py`, `motion_summary.py`, `dino_content.py`, `analyze_dino_content.py` | `docs/lab-notes/39_review3_analyses.md` |
 | Dose–response of tone persistence (study 23, preregistered) | `corr/s23_out/` | `analysis/analyze_s23.py` | `docs/lab-notes/35_dose_response_results.md` |
 
 `corr/` stands for "correction". The folder grew out of the correction work and later held all the opening-based experiments.
