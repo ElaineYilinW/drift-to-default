@@ -11,24 +11,20 @@ Colour temperature behaves like brightness. Persistence varies by checkpoint eve
 context and sampler fixed (Self Forcing: 0.35 to 0.79 at 60\,s; two SiD checkpoints differ by 0.36), so the training
 objective alone does not set it.
 
-\paragraph{Is the response linear in the shift?} Equation~\ref{eq:law} treats $\alpha$ as independent of how far the
-opening was shifted, but every $\alpha$ above comes from one pair of shifts ($\pm16$~\Lstar). Study 23 shifted the same
-24 openings by $-24$, $-8$, 0, $+8$ and $+24$~\Lstar{} (Self Forcing, 60\,s, two seeds, 720 videos), and all four
-equivalence tests held: $\alpha$ for $\pm24$ and $\pm8$ agree with the sink in place (0.61 and 0.58, difference $+0.03$
-\ci{-0.03}{0.10}, margin $\pm0.15$) and re-rotated (0.20 and 0.21), darkening and brightening are kept alike (0.60 and
-0.61), and without a sink the large shift is forgotten too (0.05 \ci{0.01}{0.08}, margin $\pm0.10$). Over the five
-openings the end brightness is a straight line in the opening's ($R^2=0.95$ with the sink, no curvature;
-Appendix~\ref{app:robust}).
+\paragraph{Is the response linear in the shift?} Every $\alpha$ above comes from shifts of $\pm16$~\Lstar. Shifting
+the same 24 openings by $-24$ to $+24$~\Lstar{} (study 23, Self Forcing, 60\,s, 720 videos), all four equivalence tests
+held: $\alpha$ for $\pm24$ and $\pm8$ agree with the sink in place (0.61 and 0.58, margin $\pm0.15$) and re-rotated
+(0.20 and 0.21), darkening and brightening are kept alike (0.60 and 0.61), and without a sink the large shift is
+forgotten too (0.05 \ci{0.01}{0.08}, margin $\pm0.10$); the end brightness is a straight line in the opening's
+($R^2=0.95$ with the sink; Appendix~\ref{app:robust}).
 
 \subsection{Scene content}\label{sec:content}
-Global tone is the easiest statistic to shift and measure, but it is not what a user sees as ``the scene''. We
-therefore generated openings of six scene classes (snow, desert, forest, coast, mountain, farmland; four each, selected
+Tone is not what a user sees as ``the scene''. We generated openings of six scene classes (snow, desert, forest, coast, mountain, farmland; four each, selected
 by CLIP before any continuation) and continued each under the generic city prompt and under its own class prompt, with
 eight configurations (study 9). Content relaxes like tone (Fig.~\ref{fig:content}). Under the city prompt, $\kappa$ at
 30\,s ranges from 0.07 (SiD) to 0.61 (Rolling Forcing), and the opening's class is CLIP's top label in only 34\% of Self
 Forcing frames at 30\,s. Under the opening's own class prompt the class persists ($\kappa$ 0.71--1.05; 9.3
-\ci{8.1}{10.5} more log-odds than under the city prompt, preregistered), as a fresh rollout of that prompt would also
-show it; the informative result is the loss under the city prompt. Content and tone persistence tend to go together across
+\ci{8.1}{10.5} more log-odds, preregistered), as a fresh rollout of that prompt would. Content and tone persistence tend to go together across
 configurations ($\rho=0.67$, $n=8$, $p=0.07$). Class scores could partly reflect colour (snow is bright, sand is
 yellow), but scoring frames whose CIELAB mean and spread are matched to the opening's gives the same results, as does
 SigLIP (Appendix~\ref{app:robust}).
@@ -38,9 +34,9 @@ Sinks act differently on content. Self Forcing's sink keeps more of it at 60\,s 
 sea and the mountains of the opening reappear after a minute of city (Fig.~\ref{fig:content}, left). The returns are
 positional (study 16, 24 openings): with the sink's keys re-rotated to sit just before the window, they vanish (burst
 contrast $-0.29$ \ci{-0.37}{-0.22}), and the content kept at 60\,s falls from 0.56 to 0.25 ($-0.31$
-\ci{-0.37}{-0.25}). Three new seeds per opening (study 21, 240 videos) reproduce the sink's advantage, the loss under
-re-rotation ($-0.40$ \ci{-0.47}{-0.34}) and the positional return, and detect a small share kept by the re-rotated
-sink that one seed had missed: 0.19 against 0.11 without a sink ($+0.08$, Holm $p=0.006$; Table~\ref{tab:primary}). What a Self Forcing sink keeps of the scene, it keeps mostly by periodically
+\ci{-0.37}{-0.25}). Three new seeds per opening (study 21) reproduce the sink's advantage, the loss under re-rotation ($-0.40$
+\ci{-0.47}{-0.34}) and the return, and detect a small share kept by the re-rotated sink: 0.19 against 0.11 without a
+sink ($+0.08$, Holm $p=0.006$). What a Self Forcing sink keeps of the scene, it keeps mostly by periodically
 re-injecting the opening. LongLive's sink, which keeps tone, does not keep content (0.22 vs 0.24, preregistered test not
 supported).
 
@@ -51,8 +47,8 @@ routes different images separates them (Appendix Fig.~\ref{fig:framepack}b): the
 \emph{pulls} the video toward the opening's class, to 0.23 \ci{0.16}{0.30} at 20\,s and still rising. The same
 embedding has no effect on tone (study 11), so in FramePack it sets the default of the scene but not of its
 brightness. Tone and content can also part the other way: Krea Realtime 14B's first-frame anchor keeps the
-opening's class ($\kappa$ 0.37 vs 0.05 without it at 60\,s, study 22; SigLIP and tone-normalised scores agree) but none
-of its tone (Section~\ref{sec:mech}). \pend{[MAGI-1 (study 19) content results.]}
+opening's class ($\kappa$ 0.37 vs 0.05 without it at 60\,s, $+0.33$ \ci{0.18}{0.47}, study 22; the class is CLIP's top
+label in 37\% of frames against 14\%) but none of its tone (Section~\ref{sec:mech}). \pend{[MAGI-1 (study 19) content results.]}
 
 \begin{figure}[t]
 \centering
@@ -121,9 +117,9 @@ from 20\,s on ($-0.05$ at 60\,s; $-0.38$ \ci{-0.45}{-0.31} from 10 to 60\,s), an
 The pattern holds at 14B parameters, although Krea's window also differs, so this is not a controlled test of scale. Re-denoising overlapping frames delays forgetting but does not stop it.
 SkyReels-V2-DF extends videos in 97-frame segments that re-denoise the last 17 frames of the previous segment jointly
 with the new ones. It holds the opening for 20\,s ($\alpha = 0.96$ \ci{0.86}{1.07}, whatever its guidance, history
-noise or number of steps, exploratory; with a 5-frame overlap it relaxes, $-0.24$ \ci{-0.40}{-0.09} at 15--20\,s,
-preregistered) and then forgets steadily, to 0.29 at 60\,s ($-0.72$ \ci{-0.81}{-0.63} from 20 to 60\,s; 5 frames: 0.08;
-study 16).
+noise or number of steps) and then forgets steadily, to 0.29 at 60\,s ($-0.72$ \ci{-0.81}{-0.63} from 20 to 60\,s,
+study 16); with a 5-frame overlap it relaxes
+earlier ($-0.24$ \ci{-0.40}{-0.09} at 15--20\,s, preregistered) and keeps 0.08 at 60\,s.
 
 \paragraph{An opening that stays in the context keeps a share.} Self Forcing keeps the sink's keys at their absolute
 rotary positions, ever further from the current chunk. Re-rotated to sit just before the window, as in Rolling Forcing
@@ -132,9 +128,8 @@ the same share at 60\,s (0.23 and 0.22, $-0.00$ \ci{-0.11}{0.10}, study 16; the 
 supported) and one frame keeps 0.08 (study 10); with three new seeds per scene a three-frame sink keeps 0.21 against
 $-0.01$ without one ($+0.22$ \ci{0.15}{0.29}, study 20, in each seed alone too). Rolling Forcing, which re-aligns its
 anchor and was trained on longer rollouts, keeps 0.45. Krea's optional first-frame anchor, one latent frame next to its
-window, keeps scene content but not tone: $\kappa=0.37$ against 0.05 without it ($+0.33$ \ci{0.18}{0.47}, preregistered;
-the opening's class is CLIP's top label in 37\% of frames against 14\%), but $\alpha=0.03$ \ci{-0.03}{0.08} (both tone
-tests not supported), close to the 0.08 of a one-frame re-rotated sink in Self Forcing. FramePack~\cite{framepack} (13B, fine-tuned from HunyuanVideo~\cite{hunyuan})
+window, keeps the scene (Section~\ref{sec:content}) but not tone: $\alpha=0.03$ \ci{-0.03}{0.08} (both tone tests not
+supported), close to the 0.08 of a one-frame re-rotated sink in Self Forcing. FramePack~\cite{framepack} (13B, fine-tuned from HunyuanVideo~\cite{hunyuan})
 places the opening as a clean prefix frame in the context of \emph{every} 33-frame section and also feeds its SigLIP
 embedding as a global condition. The shift travels through the prefix: sent only through the prefix it keeps about
 half at 20\,s, only through the embedding nothing (0.01 \ci{-0.14}{0.17}, study 11); at 60\,s FramePack keeps 0.51
@@ -173,13 +168,11 @@ every distance with a share of 0.11 or more froze the video on its opening (pers
 change 0.7--1.1 grey levels over 50--60\,s, against 2.4 with the sink in place; Appendix Fig.~\ref{fig:s25frames}),
 every distance below kept moving (2.2--4.9), and the change between the two was abrupt (exploratory; Appendix
 Fig.~\ref{fig:held}). A burst is thus a brief copy
-of the opening while the sink's distance passes a peak. A second probe to 723 frames (180\,s; $r=0.999$ with the first, $0.96$
-on LongLive) found 13 further peaks after 60\,s by a rule fixed before its output was read, which we preregistered as
-burst times for the 180-s videos of study 24 (study 26). Persistence jumped at these onsets (Appendix
-Fig.~\ref{fig:long}b): $+0.19$ \ci{0.17}{0.20} in Self Forcing, with every onset's interval above zero,
-and $+0.13$ \ci{0.12}{0.15} in LongLive, $+0.32$ \ci{0.29}{0.35} more than at control onsets between them; 12 of the
-13 large jumps after 60\,s followed a predicted onset (chance 0.33), and the re-rotated sink did not burst (0.00
-\ci{-0.02}{0.02}). A replication on the 120-s videos of study 6 agrees (Appendix~\ref{app:robust}).
+of the opening while the sink's distance passes a peak. A second probe to 180\,s ($r=0.999$ with the first) found 13 further peaks, which we preregistered
+as burst times for the 180-s videos of study 24 (study 26; Appendix Fig.~\ref{fig:long}b): persistence jumped at these
+onsets, by $+0.19$ \ci{0.17}{0.20} in Self Forcing ($+0.32$ \ci{0.29}{0.35} more than at control onsets between them)
+and $+0.13$ \ci{0.12}{0.15} in LongLive, but not with a re-rotated sink (0.00 \ci{-0.02}{0.02}), and 12 of the 13 large
+jumps after 60\,s followed a predicted onset (chance 0.33).
 LoL~\cite{lol} relates a similar failure, ``sink collapse'', to rotary phases~\cite{riflex,roundround}.
 
 \begin{figure}[t]

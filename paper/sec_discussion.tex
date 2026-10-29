@@ -2,13 +2,10 @@
 \section{Discussion}\label{sec:discussion}
 Any autoregressive sampler with finite memory that is ergodic under a fixed conditioning will eventually forget its
 initial state, so that video rollouts relax is expected; what we measure is how much is kept and what decides it.
-Across nine models the answer is whether the opening stays in the context. Once it leaves a key--value window it is
-forgotten, and overlapping frames only delay this; an opening that stays (a re-rotated sink, an anchor, a per-section
-prefix, full history) keeps a share whose size depends on the model and that is still there at 180\,s. The larger shares
-and returning scenes of sinks at their absolute positions are positional bursts, brief copies of the opening at the distances where the sink draws the most attention. The
-default is set by the conditioning, for tone and for scene content, and models differ in which part of the
-conditioning carries which attribute: FramePack's image embedding sets the scene but not its brightness. Fresh rollouts
-of the two models trained on their own long rollouts barely drift, though they still forget (exploratory).
+Across nine models the answer is whether the opening stays in the context and, for a sink at its absolute positions,
+where it sits: the larger shares and returning scenes of such sinks are brief copies of the opening at the distances
+where the sink draws the most attention. The default is set by the conditioning, and models differ in which part of
+the conditioning carries tone and which the scene.
 
 A high $\alpha$ is not always better. Under a conflicting prompt (a snowy opening, a city prompt), forgetting the
 opening is following the prompt, and an anchor that keeps the opening also passes its errors forward (SkyReels
