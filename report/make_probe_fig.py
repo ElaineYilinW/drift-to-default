@@ -2,9 +2,10 @@
 each query-sink distance (sinkprobe_long_out to 723 when present, else sinkprobe_out to 300; markers show the major
 peaks, those after 60 s being study 26's predictions; the first probe's curve is the same, r = 0.999); (b) persistence
 over time (1-s windows) with the sink at its original positions and moved 18 or 36 frames further back (study 25;
-study 10's sink 3 if study 25 is missing), with the burst onsets the probe predicts; (c) persistence with the sink
-held at a peak distance, a trough and next to the window (study 25, when present). Entries whose results file is
-missing are skipped.
+study 10's sink 3 if study 25 is missing), with the burst onsets the probe predicts; (c) with the sink held at one
+distance, persistence at 60 s against the probe's share there (study 27's 17 distances, study 25's circled; LongLive
+from study 28 when present; hollow: most videos frozen, motion < 1.5), or, without study 27, persistence over time at
+study 25's three distances. Entries whose results file is missing are skipped.
 usage: python report/make_probe_fig.py [RESULTS_DIR] [OUT_PDF]   (defaults: results/corr/, paper/fig_probe.pdf)"""
 import json
 import os
@@ -33,6 +34,7 @@ def load(p):
 
 PR, S25, ATL = load("sinkprobe_out/sinkprobe_out.json"), load("s25_out/s25_results.json"), load("atlas_out/atlas_results.json")
 PL = load("sinkprobe_long_out/sinkprobe_long_out.json")
+S27, S28 = load("s27_out/s27_results.json"), load("s28_out/s28_results.json")
 onset = lambda P, d: (P - 5 - d) / 4
 
 
@@ -93,7 +95,28 @@ b.set_title("b  bursts at the predicted onsets", loc="left", fontsize=8.5, pad=T
 b.legend(fontsize=6.5, loc="lower center", bbox_to_anchor=(0.5, 0.98), ncol=3, handlelength=1.0, columnspacing=0.8)
 
 # (c) held distances
-if S25:
+if S27:
+    c = ax[2]
+    sets = [("Self Forcing", BLUE, "o", S27["per_distance"], {D: q["share"] for D, q in S27["per_distance"].items()},
+             S27["distances"]["study25"])]
+    if S28:
+        sets.append(("LongLive", GREEN, "s", {k[4:].lstrip("0") or "0": v for k, v in S28["per_arm"].items()
+                                              if k.startswith("ll_d")}, S28["share_ll"], []))
+    for name, col, mk, per, share, old in sets:
+        for D, q in per.items():
+            x, a60 = float(share[str(D)]), q["alpha"]["60"]
+            frozen = q.get("frozen_share_50_60", 0) > 0.5
+            c.errorbar(x, a60["mean"], yerr=[[a60["mean"] - a60["ci"][0]], [a60["ci"][1] - a60["mean"]]], fmt=mk,
+                       ms=3.6, color=col, mfc="white" if frozen else col, mec=col, ecolor=col, elinewidth=0.7)
+            if int(D) in old:
+                c.plot(x, a60["mean"], marker=mk, ms=7.5, mfc="none", mec=INK, mew=0.6, lw=0)
+        c.plot([], [], mk, ms=3.6, color=col, label=name)
+    c.plot([], [], "o", ms=3.6, mfc="white", mec=MUTED, label="frozen")
+    c.axhline(0, color=MUTED, lw=0.6)
+    c.set(xlabel="share at the held distance", ylabel=r"$\alpha$ at 60 s", ylim=(-0.1, 1))
+    c.set_title("c  a held sink", loc="left", fontsize=8.5, pad=TPAD)
+    c.legend(fontsize=6.5, loc="upper left", handlelength=1.0)
+elif S25:
     for arm, col, lab in (("sp_d203", BLUE, "203 (peak)"), ("sp_d187", ORANGE, "187 (trough)"),
                           ("sp_d20", GREEN, "20 (window)")):
         c = S25["alpha_1s"][arm]
