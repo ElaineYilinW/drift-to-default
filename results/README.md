@@ -43,5 +43,6 @@ This folder holds the summary outputs of every experiment: tables, JSON summarie
 | The 180-s horizon (study 24, preregistered; 60-s windows exploratory) | `corr/s24_out/` | `analysis/analyze_s24.py`, `explore_s24_windows.py` | `docs/lab-notes/33_long_horizon_results.md` |
 | Out-of-sample burst times (study 26, preregistered; 120-s replication on study 6) | `corr/s26_out/`, `corr/s26_rep120_out/` | `analysis/analyze_s26.py` | `docs/lab-notes/32_burst_prediction_results.md` |
 | A sink held at one distance (study 27, preregistered) | `corr/s27_out/` | `analysis/analyze_s27.py`, `s27_distances.py` | `docs/lab-notes/34_held_distance_results.md` |
+| Dose–response of tone persistence (study 23, preregistered) | `corr/s23_out/` | `analysis/analyze_s23.py` | `docs/lab-notes/35_dose_response_results.md` |
 
 `corr/` stands for "correction". The folder grew out of the correction work and later held all the opening-based experiments.

@@ -16,10 +16,10 @@ bootstrap interval also resamples the fresh starts that estimate it (pooled with
 \toprule
 Study & Test & Model & Estimate [95\% CI] & $p_{\text{Holm}}$ & Outcome \\
 \midrule
-1 Context & sink 3 vs none, $D$ & SF & $-7.56$ \ci{-8.32}{-6.81} & $<0.001$ & supported \\
-  & sink 3 vs none, $K$ & SF & $-0.90$ \ci{-1.04}{-0.76} & $<0.001$ & supported \\
-  & window $\times$ sink, $D$ & SF & $+5.71$ \ci{4.21}{7.22} & $<0.001$ & supported \\
-  & window $\times$ sink, $K$ & SF & $+0.67$ \ci{0.38}{0.95} & $<0.001$ & supported \\
+1 Context & sink 3 vs none, $D$ & SF & $-7.56$ \ci{-8.32}{-6.81} & $<10^{-16}$ & supported \\
+  & sink 3 vs none, $K$ & SF & $-0.90$ \ci{-1.04}{-0.76} & $<10^{-16}$ & supported \\
+  & window $\times$ sink, $D$ & SF & $+5.71$ \ci{4.21}{7.22} & $<10^{-12}$ & supported \\
+  & window $\times$ sink, $K$ & SF & $+0.67$ \ci{0.38}{0.95} & $<10^{-5}$ & supported \\
 2 Correction & ttc $\beta{=}1$, $D$ & SF & $-1.48$ \ci{-1.76}{-1.19} & $<10^{-23}$ & supported \\
   & ttc $\beta{=}1.5$, $D$ & SF & $-1.78$ \ci{-2.11}{-1.45} & $<10^{-24}$ & supported \\
 3 Caption & M $-$ G, $|\Delta L|$ & SF & $-1.21$ \ci{-3.09}{0.36} & 0.58 & not supported \\
@@ -35,7 +35,7 @@ Study & Test & Model & Estimate [95\% CI] & $p_{\text{Holm}}$ & Outcome \\
 6 Relaxation & no sink $-$ sink, $\alpha_L$ (31\,s) & SF & $-0.06$ \ci{-0.17}{0.05} & 0.34 & not supported \\
   & no sink $-$ sink, $\alpha_L$ (31\,s) & LL & $-0.17$ \ci{-0.28}{-0.06} & 0.013 & supported \\
   & ttc $-$ none, $\alpha_L$ (31\,s) & SF & $+0.12$ \ci{0.05}{0.20} & 0.013 & supported \\
-  & no sink $-$ sink, $\alpha_b$ (31\,s) & SF & $-0.26$ \ci{-0.34}{-0.18} & $<0.001$ & supported \\
+  & no sink $-$ sink, $\alpha_b$ (31\,s) & SF & $-0.26$ \ci{-0.34}{-0.18} & $<10^{-5}$ & supported \\
 7 Sink at 60\,s & sink $-$ no sink, $\alpha_L$ & SF & $+0.55$ \ci{0.45}{0.65} & $<10^{-9}$ & supported \\
   & sink $-$ no sink, $\alpha_L$ & CausVid & $+0.19$ \ci{0.14}{0.24} & $<10^{-6}$ & supported \\
 8 Overlap & 5 $-$ 17 frames, $\alpha_L$ (20\,s) & SkyReels & $-0.24$ \ci{-0.40}{-0.09} & 0.014 & supported \\
@@ -43,7 +43,7 @@ Study & Test & Model & Estimate [95\% CI] & $p_{\text{Holm}}$ & Outcome \\
   & sink $-$ no sink, $\kappa$ (30\,s) & LL & $-0.02$ \ci{-0.10}{0.07} & 0.72 & not supported \\
   & sink $-$ no sink, $\kappa$ (60\,s) & SF & $+0.48$ \ci{0.39}{0.57} & $<10^{-7}$ & supported \\
 10 Atlas & sink 6 $-$ sink 3, $\alpha_L$ (60\,s) & SF & $+0.15$ \ci{0.11}{0.20} & $<10^{-6}$ & supported \\
-  & sink 1 $-$ no sink, $\alpha_L$ (60\,s) & SF & $+0.24$ \ci{0.14}{0.34} & $<0.001$ & supported \\
+  & sink 1 $-$ no sink, $\alpha_L$ (60\,s) & SF & $+0.24$ \ci{0.14}{0.34} & $<0.0002$ & supported \\
   & sink $-$ no sink, $\alpha_L$ (60\,s) & LL & $+0.46$ \ci{0.39}{0.53} & $<10^{-10}$ & supported \\
   & re-rotated $-$ original sink, $\alpha_L$ (60\,s) & SF & $-0.44$ \ci{-0.54}{-0.35} & $<10^{-7}$ & supported \\
 11 FramePack & $\alpha$ (both routes, 20\,s) $> 0.5$ & FramePack-F1 & $0.68$ \ci{0.57}{0.79} & 0.033 & supported \\
@@ -70,10 +70,10 @@ Study & Test & Model & Estimate [95\% CI] & $p_{\text{Holm}}$ & Outcome \\
 17 FP content & content falls, class score (20\,s) & FramePack-F1 & $-6.72$ \ci{-8.29}{-5.20} & $<10^{-5}$ & supported \\
   & $\kappa$ (context only, 20\,s) $>0$ & FramePack-F1 & $0.24$ \ci{0.12}{0.37} & 0.001 & supported \\
   & $\kappa$ (embedding only, 20\,s) $>0$ & FramePack-F1 & $0.23$ \ci{0.16}{0.30} & $<10^{-6}$ & supported \\
-  & both $-$ context only, $\kappa$ (20\,s) & FramePack-F1 & $+0.31$ \ci{0.20}{0.41} & $<0.001$ & supported \\
-18 MAGI-1 & window: $\alpha$ (30\,s) $-$ $\alpha$ (5\,s) & MAGI-1 & $-0.52$ \ci{-0.70}{-0.35} & $<0.001$ & supported \\
+  & both $-$ context only, $\kappa$ (20\,s) & FramePack-F1 & $+0.31$ \ci{0.20}{0.41} & $<10^{-4}$ & supported \\
+18 MAGI-1 & window: $\alpha$ (30\,s) $-$ $\alpha$ (5\,s) & MAGI-1 & $-0.52$ \ci{-0.70}{-0.35} & $<0.0004$ & supported \\
   & full history $-$ window, $\alpha$ (30\,s) & MAGI-1 & $+0.30$ \ci{0.17}{0.43} & 0.002 & supported \\
-  & $\alpha$ (full history, 30\,s) $>0$ & MAGI-1 & $0.64$ \ci{0.45}{0.83} & $<0.001$ & supported \\
+  & $\alpha$ (full history, 30\,s) $>0$ & MAGI-1 & $0.64$ \ci{0.45}{0.83} & $<0.0002$ & supported \\
 %S19ROWS
 20 Seeds & sink 3 $-$ none, $\alpha$ (60\,s) & SF & $+0.62$ \ci{0.56}{0.67} & $<10^{-15}$ & supported \\
   & re-rotated $-$ original sink, $\alpha$ (60\,s) & SF & $-0.39$ \ci{-0.46}{-0.32} & $<10^{-8}$ & supported \\
@@ -87,7 +87,10 @@ Study & Test & Model & Estimate [95\% CI] & $p_{\text{Holm}}$ & Outcome \\
   & $\alpha$ (anchor, 60\,s) $>0$ & Krea 14B & $0.03$ \ci{-0.03}{0.08} & 0.37 & not supported \\
   & content falls, class score (55--60\,s) & Krea 14B & $-12.02$ \ci{-12.64}{-11.37} & $<10^{-15}$ & supported \\
   & anchor $-$ window, $\kappa$ (55--60\,s) & Krea 14B & $+0.33$ \ci{0.18}{0.47} & $<10^{-5}$ & supported \\
-%S23ROWS
+23 Dose--response & sink: $\alpha$ ($\pm24$) $-$ $\alpha$ ($\pm8$) within $\pm0.15^{\S}$ & SF & $+0.03$ \ci{-0.03}{0.10} & 0.005 & supported \\
+  & re-rotated sink: the same$^{\S}$ & SF & $-0.01$ \ci{-0.14}{0.11} & 0.020 & supported \\
+  & sink: brightening $-$ darkening within $\pm0.15^{\S}$ & SF & $+0.01$ \ci{-0.06}{0.08} & 0.003 & supported \\
+  & no sink: $\alpha$ ($\pm24$) within $\pm0.10^{\S}$ & SF & $+0.05$ \ci{0.01}{0.08} & 0.005 & supported \\
 24 180-s horizon & re-rotated sink, $\alpha$ (180\,s) $>0$ & SF & $+0.12$ \ci{0.04}{0.20} & 0.044 & supported \\
   & Rolling Forcing, $\alpha$ (180\,s) $>0$ & RF & $+0.29$ \ci{0.21}{0.37} & $<10^{-5}$ & supported \\
   & re-rotated sink steady, 60$\to$180\,s, within $\pm0.10^{\S}$ & SF & $-0.09$ \ci{-0.22}{0.03} & 0.55 & not supported \\
