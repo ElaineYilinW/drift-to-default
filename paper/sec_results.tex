@@ -195,14 +195,12 @@ fixed in advance (study 27) and the three of study 25 (circled); hollow: most vi
 \label{fig:probe}
 \end{figure}
 
-\paragraph{An action-conditioned world model.} Matrix-Game-2.0~\cite{matrixgame2}, driven by keyboard and mouse
-actions with no text, fits the same picture (study 15): a shift held only in its 6-frame context fades ($-0.24$
-\ci{-0.35}{-0.14} from 5 to 30\,s, preregistered; 7 scenes, as the model often collapses to black), while a shift sent
-only through its CLIP image embedding, which conditions every chunk, persists (0.43 \ci{0.13}{0.71} at 30\,s, Holm
-$p=0.075$; 0.25 \ci{0.17}{0.36} at 15\,s over 20 scenes, exploratory; Appendix Fig.~\ref{fig:framepack}d).
+\paragraph{An action-conditioned world model.} Matrix-Game-2.0~\cite{matrixgame2}, driven by actions with no text,
+fits the same picture (study 15; Appendix~\ref{app:other}): a shift held only in its 6-frame context fades ($-0.24$
+\ci{-0.35}{-0.14} from 5 to 30\,s, preregistered), while one sent through its CLIP image embedding, which conditions
+every chunk, persists (0.25 \ci{0.17}{0.36} at 15\,s, exploratory).
 
-\paragraph{A phenomenological recursion.} A linear recursion of a chunk's mean statistic on the window, the sink and the
-prompt's default describes the first 20\,s of these curves. Its prompt weight, $w_p\approx0.08$ from a fit to 120-s
-curves, matched a bit-exact cache-replay measurement that swaps only the text conditioning for one chunk (0.088
-\ci{0.045}{0.149} at 15\,s, study 14). It does not hold beyond 20\,s and explains neither the share of re-rotated sinks
-nor the bursts (Appendix~\ref{app:recursion}).
+\paragraph{A phenomenological recursion.} A linear recursion of a chunk's mean on the window, the sink and the prompt's
+default describes the first 20\,s; its prompt weight ($\approx0.08$) matched a bit-exact cache replay (0.088
+\ci{0.045}{0.149}, study 14), but it explains neither the share of re-rotated sinks nor the bursts
+(Appendix~\ref{app:recursion}).
