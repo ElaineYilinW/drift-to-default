@@ -41,7 +41,7 @@ routes different images separates them (Appendix Fig.~\ref{fig:framepack}b): the
 embedding has no effect on tone (study 11), so in FramePack it sets the default of the scene but not of its
 brightness. Tone and content can also part the other way: Krea Realtime 14B's first-frame anchor keeps the
 opening's class ($\kappa$ 0.37 vs 0.05 without it at 60\,s, $+0.33$ \ci{0.18}{0.47}, study 22; the class is CLIP's top
-label in 37\% of frames against 14\%) but none of its tone (Section~\ref{sec:mech}). \pend{[MAGI-1 (study 19) content results.]}
+label in 37\% of frames against 14\%) but none of its tone (Section~\ref{sec:mech}). MAGI-1 behaves like the Wan models (study 19, preregistered): under the city prompt its class score falls by 10.7 \ci{9.4}{11.8} by 25--30\,s, its own class prompt sets a different default ($+7.3$ \ci{5.8}{8.8}), and full history keeps $\kappa=0.43$ against 0.29 with the released window ($+0.14$ \ci{-0.01}{0.30}, not supported).
 
 \begin{figure}[t]
 \centering
@@ -105,7 +105,7 @@ Persistence over time (10-s windows) for one or two configurations per group.}
 \paragraph{Once the opening leaves the context, it is forgotten.} Without a sink, Self Forcing and LongLive keep 0.05
 and $-0.01$ at 60\,s (study 10). MAGI-1~\cite{magi} (4.5B, distilled; another architecture) attends in its released
 configuration to the four previous 1-s chunks, so the opening leaves its context after about 4\,s; persistence falls from 0.87 at 5\,s to 0.34 at 30\,s ($-0.52$ \ci{-0.70}{-0.35}, study
-18) \pend{and to [x] at 60\,s (study 19)}. Krea Realtime 14B~\cite{krea}, a Self Forcing student of Wan2.1-14B,
+18), and to 0.05 \ci{-0.10}{0.20} at 60\,s (study 19, 12 scenes; the fall after 30\,s, $-0.17$ \ci{-0.41}{0.08}, is not significant). Krea Realtime 14B~\cite{krea}, a Self Forcing student of Wan2.1-14B,
 recomputes its cache over a window of three latent frames (study 22, 24 scenes): it keeps 0.33 at 10\,s and nothing
 from 20\,s on ($-0.05$ at 60\,s; $-0.38$ \ci{-0.45}{-0.31} from 10 to 60\,s), and its class evidence falls to $\kappa=0.05$.
 The pattern holds at 14B, though Krea's window also differs. Re-denoising overlapping frames delays forgetting but does not stop it.
@@ -127,7 +127,7 @@ embedding as a global condition. The shift travels through the prefix: sent only
 half at 20\,s, only through the embedding nothing (0.01 \ci{-0.14}{0.17}, study 11); at 60\,s FramePack keeps 0.51
 \ci{0.29}{0.71}, and 0.46 \ci{0.28}{0.65} with the prefix alone (study 16), partly in videos that stopped moving
 (Appendix~\ref{app:robust}). MAGI-1 with full history keeps 0.64
-\ci{0.45}{0.83} at 30\,s ($+0.30$ \ci{0.17}{0.43} over the released window, study 18) \pend{and [x] at 60\,s}. These
+\ci{0.45}{0.83} at 30\,s ($+0.30$ \ci{0.17}{0.43} over the released window, study 18). These
 shares are still falling at 60\,s. At 180\,s (study 24, preregistered) the re-rotated sink still keeps 0.12
 \ci{0.04}{0.20} and Rolling Forcing 0.29 \ci{0.21}{0.37}; on new seeds to 240\,s, over 60-s windows (study 29,
 preregistered), Rolling Forcing's share is steady from the second minute (0.32, 0.29, 0.32; change $+0.01$ \ci{-0.04}{0.06}, equivalent within $\pm0.10$), the re-rotated sink
