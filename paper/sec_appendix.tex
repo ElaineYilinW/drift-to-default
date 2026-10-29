@@ -202,9 +202,9 @@ deviation are matched to the held opening's before encoding, the city-versus-cla
 \begin{figure}[h]
 \centering
 \includegraphics[width=\linewidth]{fig_mech.pdf}
-\caption{(a) Two components of drift: persistence of the opening (study 6) against the attractor offset of fresh
-rollouts (end minus start brightness, 4 seeds); models trained on their own long rollouts have almost no offset but
-still forget. (b) The prompt's per-chunk pull measured by bit-exact replay (study 14; 16 seeds; 95\% CIs): one chunk
+\caption{(a) Two components of drift: persistence of the opening at 60\,s (studies 7, 10) against the attractor offset
+of fresh rollouts (mean $|$end$-$start$|$ brightness over 40 prompts, 3 seeds, 60\,s; study 30), 95\% CIs; models
+trained on their own long rollouts have a smaller offset but still forget. (b) The prompt's per-chunk pull measured by bit-exact replay (study 14; 16 seeds; 95\% CIs): one chunk
 regenerated from identical cache, noise and random state with only the text conditioning swapped; grey: the value
 implied by the recursion fitted to 120-s curves, preregistered for 15\,s. (c) The swapped chunk's change against the
 difference of the prompts' defaults; a prompt with the same default has no effect.}

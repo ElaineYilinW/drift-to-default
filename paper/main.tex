@@ -30,8 +30,9 @@ an anchor still keep 0.12 and 0.29 at 180\,s), while a single anchored latent fr
 scene. Attention sinks left at their absolute rotary
 positions keep more, much of it in bursts, brief copies of the opening at the query--sink distances where an
 attention probe finds the sink most attended; they move when the sink is moved and recur at the times the probe
-predicts, out of sample to 180\,s. In an exploratory analysis, drift separates into forgetting the opening and an
-offset of the default from where the same prompt starts, small in the two models trained on their own long rollouts. A
+predicts, out of sample to 180\,s. Drift separates into forgetting the opening and an offset of the default from
+where the same prompt starts, which over 40 prompts is 5--10~\Lstar{} smaller in the two models trained on their own
+long rollouts. A
 content-aware correction and a deeper sink reduce drift without training. We report all \pend{N} preregistered primary
 tests, \pend{M} of which failed.
 \end{abstract}
@@ -82,9 +83,10 @@ probe predicts them out of sample to 180\,s.
 by up to 27~\Lstar, and scene words decide whether a snowy, desert or forest opening stays or becomes a city street
 within 30\,s. Which parts of the conditioning carry tone and which carry the scene differs between models.
 
-\textbf{Drift has two separable parts} (exploratory): forgetting the opening, $(1-\alpha)(x_{\text{open}}-\mu)$, and an
-offset of the default itself from where the same prompt starts, which is small in the two models trained on their own
-long rollouts and 4--20~\Lstar{} in the others we measured. Two training-free levers act on these terms: an early-step tone
+\textbf{Drift has two separable parts}: forgetting the opening, $(1-\alpha)(x_{\text{open}}-\mu)$, and an
+offset of the default itself from where the same prompt starts, which over 40 prompts is 3--7~\Lstar{} in the two
+models trained on their own long rollouts and 10--16~\Lstar{} in Self Forcing and CausVid (preregistered;
+correlational). Two training-free levers act on these terms: an early-step tone
 correction and a deeper sink, each with its own cost; lighting words matched to a model's measured defaults helped on
 one model only.
 

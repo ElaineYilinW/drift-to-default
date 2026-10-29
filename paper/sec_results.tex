@@ -25,9 +25,8 @@ eight configurations (study 9). Content relaxes like tone (Fig.~\ref{fig:content
 30\,s ranges from 0.07 (SiD) to 0.61 (Rolling Forcing), and the opening's class is CLIP's top label in only 34\% of Self
 Forcing frames at 30\,s. Under the opening's own class prompt the class persists ($\kappa$ 0.71--1.05; 9.3
 \ci{8.1}{10.5} more log-odds, preregistered), as a fresh rollout of that prompt would. Across the eight
-configurations, content and tone persistence are correlated, but not significantly ($\rho=0.67$, $p=0.07$). Class scores could partly reflect colour (snow is bright, sand is
-yellow), but scoring frames whose CIELAB mean and spread are matched to the opening's gives the same results, as does
-SigLIP (Appendix~\ref{app:robust}).
+configurations, content and tone persistence are correlated, but not significantly ($\rho=0.67$, $p=0.07$). Scoring frames whose CIELAB mean and spread are matched to the
+opening's, or scoring with SigLIP, gives the same results (Appendix~\ref{app:robust}).
 
 Sinks act differently on content. Self Forcing's sink keeps more of it at 60\,s ($\kappa$ 0.61 vs 0.14, $+0.48$
 \ci{0.39}{0.57}, preregistered), but not steadily: $\kappa$ falls to 0.32 at 30\,s and rises again, and the dunes, the
@@ -80,16 +79,17 @@ between them (0.44 to 0.67, $p=0.049$, preregistered; not significant across all
 replicates almost exactly outside driving scenes: 0.55 with a sink and 0.02 without ($+0.53$ \ci{0.45}{0.61}).
 
 \paragraph{Two components of drift.} For a prompt-only rollout, Eq.~\ref{eq:law} says nothing about why the default
-should differ from where the same prompt starts. It does, and by how much depends on training (Appendix
-Fig.~\ref{fig:mech}a). Fresh rollouts of Self Forcing (trained on its own 5-s rollouts; a checkpoint trained on 10-s rollouts
-alike) and CausVid end 4--11~\Lstar{} from where they start; those of LongLive and Rolling Forcing, trained or tuned on their own long rollouts, 0.7--2.3~\Lstar.
-Yet LongLive still forgets its opening ($\alpha=0.02$ without a sink at 31\,s). In this exploratory analysis drift has
-two separable parts: \emph{forgetting} the opening, $(1-\alpha)(x_{\text{open}}-\mu)$, which every attention-based
-model does, and an \emph{attractor offset} $\mu - x_{\text{start}}$, which is near zero in the two models trained on
-their own long rollouts (other differences between them and the short-clip models cannot be excluded). Two later
-models fit this pattern: fresh rollouts of Krea 14B, distilled with Self Forcing, brighten by 4.8~\Lstar{} over
-31\,s (8 seeds), and those of MAGI-1, trained chunk by chunk on real videos rather than on its own rollouts, by 15--20~\Lstar{} over
-30\,s. Prompt-only drift metrics mix the two, and both keep rising over 31\,s even with a sink
+should differ from where the same prompt starts. It does, and by how much depends on the model (Appendix
+Fig.~\ref{fig:mech}a). Over 40 prompts (study 30, preregistered), fresh 60-s rollouts of Self Forcing without a sink end 16.4~\Lstar{} from where they start (mean $|$end$-$start$|$) and those of CausVid 11.7,
+against 6.8 for LongLive, tuned from Self Forcing on its own long rollouts ($+9.6$ \ci{6.6}{12.4}, $+4.9$
+\ci{2.0}{7.7}); with re-aligned sinks Self Forcing ends 9.6 away and Rolling Forcing 3.3 ($+6.3$ \ci{4.2}{8.6}). Yet
+LongLive still forgets its opening ($\alpha=-0.01$ without a sink at 60\,s). Drift thus has two separable parts:
+\emph{forgetting} the opening, $(1-\alpha)(x_{\text{open}}-\mu)$, which every attention-based model does, and an
+\emph{attractor offset} $\mu - x_{\text{start}}$, smaller in the two models trained on their own long rollouts. The
+comparison is correlational: these models also differ in data, distillation and, for LongLive, a 12-frame window
+\pend{(study 32)}; and a sink at its absolute positions, which keeps returning to the opening, hides the difference
+(3.8 vs 3.0~\Lstar). Krea 14B, distilled with Self Forcing, and MAGI-1, trained on real videos rather than its own rollouts, fit this
+pattern (fresh rollouts brighten by 4.8 and 15--20~\Lstar{} in about 30\,s). Prompt-only drift metrics mix the two parts
 (Appendix~\ref{app:ctx}); relaxation describes the memory of the opening, not the absence of degradation.
 
 %=====================================================================================================================
@@ -126,7 +126,7 @@ rotary positions, ever further from the current chunk. Re-rotated to sit just be
 and Deep Forcing, the sink stays at query distances seen in training. Re-rotated sinks of three and six frames keep
 the same share at 60\,s (0.23 and 0.22, $-0.00$ \ci{-0.11}{0.10}, study 16; the preregistered depth test is not
 supported) and one frame keeps 0.08 (study 10); with three new seeds per scene a three-frame sink keeps 0.21 against
-$-0.01$ without one ($+0.22$ \ci{0.15}{0.29}, study 20, in each seed alone too). Rolling Forcing, which re-aligns its
+$-0.01$ without one ($+0.22$ \ci{0.15}{0.29}, study 20). Rolling Forcing, which re-aligns its
 anchor and was trained on longer rollouts, keeps 0.45. Krea's optional first-frame anchor, one latent frame next to its
 window, keeps the scene (Section~\ref{sec:content}) but not tone: $\alpha=0.03$ \ci{-0.03}{0.08} (both tone tests not
 supported), close to the 0.08 of a one-frame re-rotated sink in Self Forcing. FramePack~\cite{framepack} (13B, fine-tuned from HunyuanVideo~\cite{hunyuan})
