@@ -1,0 +1,2 @@
+{"id": "band_rx02", "cmd": "bash /Users/ywang906/vdrift/jobs/run_sinkband.sh rx02", "done": "/nfsscratch/Users/ywang906/vdrift/corr/sinkband/rx02.npz", "est_min": 90, "mem_gb": 40, "gpus": 1, "gpu_mem_gb": 40, "gpu_bf16": true, "cores": 16}
+{"id": "band_gx02", "cmd": "bash /Users/ywang906/vdrift/jobs/run_sinkband.sh gx02", "done": "/nfsscratch/Users/ywang906/vdrift/corr/sinkband/gx02.npz", "est_min": 90, "mem_gb": 40, "gpus": 1, "gpu_mem_gb": 40, "gpu_bf16": true, "cores": 16}
