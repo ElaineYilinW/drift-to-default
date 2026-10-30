@@ -123,16 +123,15 @@ anchor and was trained on longer rollouts, keeps 0.45. Krea's optional first-fra
 window, keeps the scene (Section~\ref{sec:content}) but not tone: $\alpha=0.03$ \ci{-0.03}{0.08} (both tone tests not
 supported), close to the 0.08 of a one-frame re-rotated sink in Self Forcing. FramePack~\cite{framepack} (13B, fine-tuned from HunyuanVideo~\cite{hunyuan})
 places the opening as a clean prefix frame in the context of \emph{every} 33-frame section and also feeds its SigLIP
-embedding as a global condition. The shift travels through the prefix: sent only through the prefix it keeps about
-half at 20\,s, only through the embedding nothing (0.01 \ci{-0.14}{0.17}, study 11); at 60\,s FramePack keeps 0.51
-\ci{0.29}{0.71}, and 0.46 \ci{0.28}{0.65} with the prefix alone (study 16), partly in videos that stopped moving
-(Appendix~\ref{app:robust}). MAGI-1 with full history keeps 0.64
+embedding as a global condition. The shift travels through the prefix, not the embedding (0.01 \ci{-0.14}{0.17}
+through the embedding alone, study 11); at 60\,s FramePack keeps 0.51 \ci{0.29}{0.71} (0.46 with the prefix alone,
+study 16), partly in videos that stopped moving (Appendix~\ref{app:robust}). MAGI-1 with full history keeps 0.64
 \ci{0.45}{0.83} at 30\,s ($+0.30$ \ci{0.17}{0.43} over the released window, study 18). These
 shares are still falling at 60\,s. At 180\,s (study 24, preregistered) the re-rotated sink still keeps 0.12
 \ci{0.04}{0.20} and Rolling Forcing 0.29 \ci{0.21}{0.37}; on new seeds to 240\,s, over 60-s windows (study 29,
-preregistered), Rolling Forcing's share is steady from the second minute (0.32, 0.29, 0.32; change $+0.01$ \ci{-0.04}{0.06}, equivalent within $\pm0.10$), the re-rotated sink
-still keeps 0.10 \ci{0.06}{0.14} in the fourth minute but is not shown steady (0.18, 0.18, 0.10; one of two seeds
-falls), and without a sink the opening stays forgotten (0.00 \ci{-0.05}{0.05}). Keeping the
+preregistered), Rolling Forcing's share is steady from the second minute ($+0.01$ \ci{-0.04}{0.06}, equivalent
+within $\pm0.10$), the re-rotated sink keeps 0.10 \ci{0.06}{0.14} in the fourth minute but is not shown steady (0.18,
+0.18, 0.10), and without a sink the opening stays forgotten (0.00 \ci{-0.05}{0.05}). Keeping the
 opening does not stop the drift the openings share: MAGI-1's fresh rollouts brighten by 15--20~\Lstar{} under either
 setting, so full history preserves the difference between openings, not their level.
 
@@ -148,24 +147,22 @@ each query--sink distance peaks sharply at 71, 134, 203 and 266 latent frames (0
 identically in every chunk and opening, so the peaks are positional, not content; a sink at its original
 positions passes the first three 16.5, 32.3 and 49.5\,s after the opening, the times of the bursts. Moving the sink
 moves the bursts (study 25, preregistered; Fig.~\ref{fig:probe}b): 18 or 36 latent frames further back, the probe puts
-every burst 4.5 or 9\,s earlier, and persistence rose in the windows predicted for the moved sink rather than in the
-original ones (predicted minus original windows, net of the sink in place: $+0.53$ \ci{0.45}{0.61} and $+0.25$
-\ci{0.21}{0.30}). A sink held at one
+every burst 4.5 or 9\,s earlier, and persistence rose in the predicted rather than the original windows ($+0.53$
+\ci{0.45}{0.61} and $+0.25$ \ci{0.21}{0.30}). A sink held at one
 distance does not burst, and the probe's share at that distance sets how much is kept (Fig.~\ref{fig:probe}c): 0.86
 at 60\,s at the peak distance 203 and 0.01 at the trough before it ($+0.85$ \ci{0.78}{0.91}, study 25), and over 14
-further distances chosen by a rule fixed in advance, 9 of them beyond any distance a sink reaches within 60\,s,
-persistence rose with the share (mean within-scene Spearman $\rho=+0.83$ \ci{0.79}{0.86}, study 27, preregistered),
+further distances chosen by a fixed rule, persistence rose with the share (mean within-scene Spearman $\rho=+0.83$ \ci{0.79}{0.86}, study 27, preregistered),
 also among the 7 lowest shares ($+0.35$ \ci{0.20}{0.49}). The price is motion ($\rho=-0.81$ \ci{-0.84}{-0.79}):
-every distance with a share of 0.11 or more froze the video on its opening (persistence 0.78--0.87, frame-to-frame
-change 0.7--1.1 grey levels against 2.4 with the sink in place; Appendix Figs.~\ref{fig:s25frames},~\ref{fig:held}),
+every distance with a share of 0.11 or more froze the video on its opening (Appendix Figs.~\ref{fig:s25frames},~\ref{fig:held}),
 every distance below kept moving, and the change was abrupt (exploratory). So does LongLive (study 28, preregistered): moving its sink
 moves its bursts ($+0.43$ and $+0.36$), and held, its persistence rises with its own probe's share ($\rho=+0.81$
 \ci{0.78}{0.84}), correlating 0.94 with Self Forcing's across distances. A burst
-is thus a brief copy of the opening while the sink's distance passes a peak. A second probe to 180\,s found 13 further peaks, which we preregistered
-as burst times for the 180-s videos of study 24 (study 26; Appendix Fig.~\ref{fig:long}b): persistence jumped at these
-onsets, by $+0.19$ \ci{0.17}{0.20} in Self Forcing ($+0.32$ \ci{0.29}{0.35} more than at control onsets between them)
-and $+0.13$ \ci{0.12}{0.15} in LongLive, and 12 of the 13 large
-jumps after 60\,s followed a predicted onset (chance 0.33).
+is thus a brief copy of the opening while the sink's distance passes a peak. A second probe predicted 13 further
+onsets to 180\,s, and persistence jumped at them (study 26, preregistered; $+0.19$ \ci{0.17}{0.20} in Self Forcing,
+$+0.13$ \ci{0.12}{0.15} in LongLive; Appendix Fig.~\ref{fig:long}b). The peaks come from one of the 22 temporal rotary
+frequencies (exploratory band probe; Appendix Fig.~\ref{fig:band}): without the one of period 34 latent frames no peak
+remains, and holding only it at the re-rotated distance in generation removed the bursts ($+0.33$ \ci{0.26}{0.39}) and
+cut persistence at 60\,s from 0.58 to 0.16 (study 34, preregistered; two finer predictions failed).
 
 \begin{figure}[t]
 \centering

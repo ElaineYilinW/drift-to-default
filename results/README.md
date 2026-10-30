@@ -50,7 +50,8 @@ This folder holds the summary outputs of every experiment: tables, JSON summarie
 | Window-matched attractor offset (study 32, preregistered) | `corr/s32_out/` | `analysis/analyze_s32.py` | `docs/lab-notes/41_window_matched_offset_results.md` |
 | Third-review analyses: motion audit, opening source, μ over time, DINOv2 content (exploratory) | `corr/review3_out/` | `analysis/review3_analyses.py`, `motion_audit.py`, `motion_summary.py`, `dino_content.py`, `analyze_dino_content.py` | `docs/lab-notes/39_review3_analyses.md` |
 | Band probe: which temporal RoPE frequencies make the probe's peaks; probe peaks by layer, head and pass (exploratory) | `corr/sinkband_out/`, `corr/sinkprobe_out/sinkprobe_heads.json` | `analysis/analyze_sinkband.py`, `analyze_sinkprobe_heads.py` | `docs/lab-notes/42_band_probe.md` |
-| MAGI-1 content and 60-s horizon (study 19, preregistered) | `corr/magi19_out/` | `analysis/analyze_magi19.py` | `docs/lab-notes/43_magi_content_horizon_results.md` |
+| MAGI-1 content and 60-s horizon (study 19, preregistered) | `corr/magi19_out/`, `corr/magi19_out_siglip/` (SigLIP rescoring) | `analysis/analyze_magi19.py` | `docs/lab-notes/43_magi_content_horizon_results.md` |
+| One rotary frequency of the sink held in generation (study 34, preregistered) | `corr/s34_out/` | `analysis/analyze_s34.py` | `docs/lab-notes/44_band_hold_results.md` |
 | Dose–response of tone persistence (study 23, preregistered) | `corr/s23_out/` | `analysis/analyze_s23.py` | `docs/lab-notes/35_dose_response_results.md` |
 
 `corr/` stands for "correction". The folder grew out of the correction work and later held all the opening-based experiments.

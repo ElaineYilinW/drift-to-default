@@ -6,7 +6,7 @@
 \begin{longtable}{@{}llllll@{}}
 \caption{All preregistered primary tests and their outcomes. Intervals are Wald intervals from the preregistered mixed
 models in studies 1, 2 and 13 and bootstrap intervals otherwise; $p$ is Holm-adjusted within each study;
-$^{*}$supported but not significant after Holm correction across all \pend{111} tests. Study 3 LongLive rows are as executed; after regenerating four cross-architecture openings the
+$^{*}$supported but not significant after Holm correction across all \pend{115} tests. Study 3 LongLive rows are as executed; after regenerating four cross-architecture openings the
 conclusions are unchanged; in study 1, 62\% of nominal pairs crossed GPU architectures, which widens but does not
 bias its intervals. Units: $D$, $K$ drift metrics; $|\Delta L|$ and $|$off$|$ (end minus start of fresh rollouts) in \Lstar{};
 $\alpha$ persistence, $\kappa$ content persistence. Arms: G generic prompt, M VLM caption of the opening, C calibrated
@@ -133,6 +133,10 @@ Study & Test & Model & Estimate [95\% CI] & $p_{\text{Holm}}$ & Outcome \\
   & held at 66: burst contrast within $\pm0.05^{\S}$ & SF & $-0.02$ \ci{-0.03}{-0.01} & $<10^{-5}$ & supported \\
 32 Window-matched & $|$off$|$: SF window 12 $-$ LL, no sink & SF, LL & $+1.27$ \ci{-0.97}{3.56} & 0.28 & not supported \\
   & $|$off$|$: SF window 12 $-$ LL, sink 3 & SF, LL & $+1.08$ \ci{-0.31}{2.40} & 0.27 & not supported \\
+34 Band hold & sink frequency $j{=}4$ held: bursts go & SF & $+0.33$ \ci{0.26}{0.39} & $<10^{-8}$ & supported \\
+  & $j{=}8$--11 held: bursts stay, $\pm0.10^{\S}$ & SF & $-0.06$ \ci{-0.11}{-0.00} & 0.13 & not supported \\
+  & $j{=}3$ held: bursts at the probe's new times & SF & $+0.05$ \ci{0.00}{0.11} & 0.13 & not supported \\
+  & $j{=}4$ held: less kept, $\alpha$ (50--60\,s) & SF & $+0.42$ \ci{0.35}{0.49} & $<10^{-9}$ & supported \\
 %NEWROWS
 \end{longtable}
 }

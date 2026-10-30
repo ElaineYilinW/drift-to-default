@@ -78,7 +78,8 @@ three distances of study 25) and LongLive against its own probe's shares (study 
 mean frame-to-frame change over 50--60\,s against the probe's attention share at that distance, with scene-bootstrap
 95\% CIs. Dashed: the sink at its original positions (blue Self Forcing, green LongLive). Above a share of about 0.105
 (Self Forcing) or 0.13 (LongLive) almost every distance freezes the video on its opening; below it the video moves and
-persistence rises with the share, more noisily.}
+persistence rises with the share, more noisily. Frozen distances keep 0.78--0.87 with a frame-to-frame change of
+0.7--1.1 grey levels, against 2.4 with the sink in place.}
 \label{fig:held}
 \end{figure}
 
@@ -175,12 +176,46 @@ part of the shift early and regain it), and Rolling Forcing is still declining a
 the shares of Rolling Forcing and the re-rotated sink are the same in the second and third minutes over 60-s windows
 (0.30 and 0.30; 0.17 and 0.16; exploratory), but the preregistered equivalence tests over 10-s windows failed;
 on new seeds to 240\,s (study 29) Rolling Forcing's share passed the 60-s-window test and the re-rotated sink's did not; a
-sink at its original positions keeps 0.44 at 180\,s, $+0.32$ \ci{0.21}{0.45} over the re-rotated one. In the 120-s
+sink at its original positions keeps 0.44 at 180\,s, $+0.32$ \ci{0.21}{0.45} over the re-rotated one. At the 13
+onsets after 60\,s that the 180-s probe predicted (study 26), Self Forcing's jump was $+0.32$ \ci{0.29}{0.35} larger
+than at control onsets between them, and 12 of the 13 large jumps after 60\,s followed a predicted onset (chance
+0.33). In the 120-s
 subset of study 6 (6 scenes), Self Forcing with a sink keeps 0.54, 0.48 and 0.44 at 60, 90 and 118\,s; on this subset
 a preregistered replication of study 26 found bursts at the 6 predicted onsets between 60 and 120\,s (Self Forcing
 $+0.23$ \ci{0.16}{0.31}, LongLive $+0.20$ \ci{0.11}{0.31}; predicted $-$ control onsets $+0.32$ \ci{0.21}{0.45}).
 No value we report is shown to be an asymptote; Eq.~\ref{eq:law} is a statement at a stated horizon $T$, and
 $\alpha$ and $\mu$ are always reported with theirs.
+
+\paragraph{Which rotary frequencies make the bursts.} Wan2.1's temporal rotary embedding rotates 22 frequency pairs
+with periods $2\pi\cdot10000^{2j/44}$ latent frames ($j=0,\dots,21$: 6.3, 9.5, 14.5, 22.1, 33.5, 51.0, \dots,
+$4\cdot10^4$). A band probe (exploratory; 2 openings, 2 chunks) placed the sink's keys at distance 20 and rotated one
+band of frequencies to each distance of the grid. Without $j=4$ (period 33.5) no major peak remains (peak contrast 0.058
+to 0.018; Fig.~\ref{fig:band}a); $j=4$--7 alone give a comb with a tooth every ${\approx}34$ frames (69, 103, 169, 203,
+237), and $j=3$ (period $22.1\approx33.5/1.5$) cancels every other tooth: without it the odd teeth return (33, 103,
+165, 234). Removing $j=8$--11, $j=12$--21 or any single $j$ of 5--11 leaves the curve unchanged ($r\ge0.99$); $j=0$--2
+shape the peaks. The peaks are present in all 30 layers, in 272 of 360 layer--head pairs and at every denoising step.
+Study 34 (preregistered; 24 scenes, a new seed, 60\,s) held these bands of the sink at distance 20 in generation, the
+others at their original positions (Fig.~\ref{fig:band}b). Holding $j=4$ removed the bursts (burst contrast at the
+original onsets $-0.02$ against $+0.31$; difference $+0.33$ \ci{0.26}{0.39}) and lowered persistence at 50--60\,s
+from 0.58 to 0.16 ($+0.42$ \ci{0.35}{0.49}), below the fully re-rotated sink's 0.28 ($-0.11$ \ci{-0.19}{-0.03},
+exploratory), while the video kept moving (motion 4.0 against 2.3; no frozen video). Holding $j=8$--11 kept
+persistence (0.59) and the bursts at 32 and 50\,s but made them smaller ($-0.06$ \ci{-0.11}{-0.00}), so equivalence
+within $\pm0.10$ was not shown. Holding $j=3$ raised the contrast at the four new onsets the probe predicts only
+slightly ($+0.05$ \ci{0.00}{0.11}, not supported; $+0.10$ at 24.5\,s): the probe's finer prediction did not carry
+over to generation. With this seed the sink at its original positions did not burst at 16.5\,s ($-0.02$), so whether
+holding $j=3$ removes that burst could not be tested.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\linewidth]{fig_band.pdf}
+\caption{One rotary frequency of the sink makes the bursts. (a) Band probe (exploratory): the share of attention to a
+three-frame sink at each query--sink distance with all temporal frequencies rotated to that distance (black) and with
+one band held at distance 20 (colours); grey lines: the four major peaks. Top axis: when a sink at its original
+positions reaches the distance. (b) Generation with the same bands of the sink held at distance 20 (study 34; scene
+means of 1-s persistence, 24 scenes). Black triangles: burst onsets of the full probe; orange: the new onsets of the
+probe without $j=3$.}
+\label{fig:band}
+\end{figure}
 
 \paragraph{Re-rotated sinks across studies.} A re-rotated three-frame sink keeps 0.16 at 60\,s in study 10 and 0.23 in
 study 16 because 9 of the 24 scenes ran on another GPU architecture in study 16, which amounts to resampling them; all
