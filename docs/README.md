@@ -4,7 +4,7 @@ The [paper draft](../paper/main.pdf) is the English write-up of the whole study 
 
 ## Preregistrations
 
-Each preregistration was written and frozen before any of its videos were generated. It records the hypotheses, the decision rules and the SHA-256 hashes of the analysis code. Preregistrations 03–15 were also committed to this repository before generation. English translations are in [`preregistrations/en/`](preregistrations/en/README.md); the Chinese files are the frozen, authoritative versions. To check that the published code matches the frozen versions, run `python analysis/verify_preregistration.py`.
+Each preregistration was written and frozen before any of its videos were generated. It records the hypotheses, the decision rules and the SHA-256 hashes of the analysis code. Preregistrations 03–36 were also committed to this repository before generation. English translations are in [`preregistrations/en/`](preregistrations/en/README.md); the Chinese files are the frozen, authoritative versions. To check that the published code matches the frozen versions, run `python analysis/verify_preregistration.py`.
 
 | # | Study | Primary hypotheses | Outcome |
 |---|---|---|---|

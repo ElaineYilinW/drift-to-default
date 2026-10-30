@@ -281,8 +281,8 @@ part of this. Study 12 confirms the prompt dependence in four new scene types (S
 \paragraph{Content verdicts barely depend on the encoder.} Every content result uses CLIP ViT-L/14 class log-odds. We
 rescored all content videos with SigLIP so400m-patch14-384~\cite{siglip}, with its own text embeddings of the same seven
 labels, and reran each frozen analysis unchanged (Table~\ref{tab:encoder}). Every verdict but one agrees: MAGI-1's full
-history keeps more content than its released window by $+0.14$ with CLIP ($p=0.10$, not supported) and $+0.20$ with
-SigLIP ($p=0.009$); we keep the preregistered CLIP verdict. Other estimates in $\kappa$ agree within 0.03; raw log-odds differ in scale between encoders. This includes FramePack's embedding route,
+history keeps more content than its released window by $+0.14$ with CLIP ($p=0.10$, not supported) and $+0.19$ with
+SigLIP ($p=0.009$); we keep the preregistered CLIP verdict. Other estimates in $\kappa$ agree within 0.03 except Krea's anchor ($+0.33$ and $+0.44$); raw log-odds differ in scale between encoders. This includes FramePack's embedding route,
 whose conditioning encoder is itself a SigLIP model: CLIP and SigLIP give it the same content share (0.23 and 0.25).
 Class scores might also carry global colour (snow is bright, sand is yellow). On frames whose CIELAB mean and standard
 deviation are matched to the held opening's before encoding, the city-versus-class-prompt difference of study 9 is 9.0

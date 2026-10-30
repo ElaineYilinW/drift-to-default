@@ -41,7 +41,7 @@ routes different images separates them (Appendix Fig.~\ref{fig:framepack}b): the
 embedding has no effect on tone (study 11), so in FramePack it sets the default of the scene but not of its
 brightness. Tone and content can also part the other way: Krea Realtime 14B's first-frame anchor keeps the
 opening's class ($\kappa$ 0.37 vs 0.05 without it at 60\,s, $+0.33$ \ci{0.18}{0.47}, study 22; the class is CLIP's top
-label in 37\% of frames against 14\%) but none of its tone (Section~\ref{sec:mech}). MAGI-1 behaves like the Wan models (study 19, preregistered): under the city prompt its class score falls by 10.7 \ci{9.4}{11.8} by 25--30\,s, its own class prompt sets a different default ($+7.3$ \ci{5.8}{8.8}), and full history keeps $\kappa=0.43$ against 0.29 with the released window ($+0.14$ \ci{-0.01}{0.30}, not supported; $+0.20$ and significant on SigLIP embeddings, Appendix~\ref{app:robust}).
+label in 37\% of frames against 14\%) but none of its tone (Section~\ref{sec:mech}). MAGI-1 behaves like the Wan models (study 19, preregistered): under the city prompt its class score falls by 10.7 \ci{9.4}{11.8} by 25--30\,s, its own class prompt sets a different default ($+7.3$ \ci{5.8}{8.8}), and full history keeps $\kappa=0.43$ against 0.29 with the released window ($+0.14$ \ci{-0.01}{0.30}, not supported; $+0.19$ and significant on SigLIP embeddings, Appendix~\ref{app:robust}).
 
 \begin{figure}[t]
 \centering
@@ -110,7 +110,7 @@ recomputes its cache over a window of three latent frames (study 22, 24 scenes):
 from 20\,s on ($-0.05$ at 60\,s; $-0.38$ \ci{-0.45}{-0.31} from 10 to 60\,s), and its class evidence falls to $\kappa=0.05$.
 The pattern holds at 14B, though Krea's window also differs. Re-denoising overlapping frames delays forgetting but does not stop it.
 SkyReels-V2-DF, which re-denoises the last 17 frames of each 97-frame segment with the next, holds the opening for
-20\,s ($\alpha = 0.96$ \ci{0.86}{1.07}, study 8; 1.00 in study 16) and then forgets, to 0.29 at 60\,s (study 16; with a 5-frame overlap, 0.08;
+20\,s ($\alpha = 0.96$ \ci{0.86}{1.07}, study 6; 1.00 in study 16) and then forgets, to 0.29 at 60\,s (study 16; with a 5-frame overlap, 0.08;
 Appendix~\ref{app:other}).
 
 \paragraph{An opening that stays in the context keeps a share of its tone, its scene or both.} Self Forcing keeps the sink's keys at their absolute
