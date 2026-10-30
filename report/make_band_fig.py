@@ -1,7 +1,7 @@
 """Band figure: (a) the attention-to-sink probe with all temporal RoPE frequencies rotated to each distance and with one
 band held at the reference distance 20 (band probe, lab note 42); (b) persistence of the sink with the same bands held
-in generation (study 34, 1-s alpha, scene means), with the burst onsets the probe predicts. Panel (b) is skipped if the
-study 34 results are missing.
+in generation (study 34, 1-s alpha, scene means), with the burst onsets the probe predicts; (c) LongLive with j4 or the
+neighbouring j5 held (study 35). Panels (b) and (c) are skipped if the study 34 / 35 results are missing.
 usage: python report/make_band_fig.py [RESULTS_DIR] [OUT_PDF]   (defaults: results/corr/, paper/fig_band.pdf)"""
 import json
 import os
@@ -28,8 +28,11 @@ SERIES = [("all", "bh_abs", INK, "original positions"),
 band = json.load(open(os.path.join(R, "sinkband_out", "sinkband.json")))
 p34 = os.path.join(R, "s34_out", "s34_results.json")
 s34 = json.load(open(p34)) if os.path.exists(p34) else None
-panels = 2 if s34 else 1
-fig, ax = plt.subplots(1, panels, figsize=(6.9 if panels == 2 else 3.6, 2.3), squeeze=False)
+p35 = os.path.join(R, "s35_out", "s35_results.json")
+s35 = json.load(open(p35)) if os.path.exists(p35) and s34 else None
+panels = 1 + bool(s34) + bool(s35)
+fig, ax = plt.subplots(1, panels, figsize=({1: 3.6, 2: 6.9, 3: 6.9}[panels], 2.3), squeeze=False,
+                       gridspec_kw={"width_ratios": [1.25, 1, 1][:panels]} if panels == 3 else None)
 ax = ax[0]
 
 a = ax[0]
@@ -63,13 +66,29 @@ if s34:
     yl = b.get_ylim()
     b.plot(ORIG, [yl[0]] * 3, "^", color=INK, ms=4.5, clip_on=False, zorder=4)
     b.plot(NEW, [yl[0]] * 4, "^", color=ORANGE, ms=4.5, clip_on=False, zorder=4)
-    b.set_ylim(yl)
+    b.set_ylim(yl[0], 1.15)
+    b.set_yticks([0, 0.25, 0.5, 0.75, 1.0])
     b.set_xlim(0, 60)
     b.set_xlabel("s after the opening")
     b.set_ylabel(r"persistence $\alpha$ (1-s)")
     b.text(0.01, 0.98, "(b) generation (study 34)", transform=b.transAxes, va="top", fontsize=8.5, color=INK)
-h, l = (ax[1] if panels == 2 else ax[0]).get_legend_handles_labels()
-fig.legend(h, l, loc="lower center", bbox_to_anchor=(0.5, 1.0), ncol=5, fontsize=7.2, handlelength=1.6,
+if s35:
+    b = ax[2]
+    for arm, col, lab in (("ll_abs", INK, None), ("ll_j4", BLUE, None), ("ll_j5", PURPLE, "$j{=}5$ held (period 51)")):
+        c = s35["alpha_1s"][arm]
+        t = sorted(int(k) for k in c)
+        b.plot([x - 0.5 for x in t], [c[str(x)] for x in t], color=col, lw=1.0, label=lab)
+    b.set_ylim(ax[1].get_ylim())
+    b.set_yticks([0, 0.25, 0.5, 0.75, 1.0])
+    b.plot(ORIG, [b.get_ylim()[0]] * 3, "^", color=INK, ms=4.5, clip_on=False, zorder=4)
+    b.set_xlim(0, 60)
+    b.set_xlabel("s after the opening")
+    b.text(0.01, 0.98, "(c) LongLive (study 35)", transform=b.transAxes, va="top", fontsize=8.5, color=INK)
+h, l = (ax[1] if panels >= 2 else ax[0]).get_legend_handles_labels()
+if s35:
+    h2, l2 = ax[2].get_legend_handles_labels()
+    h, l = h + h2, l + l2
+fig.legend(h, l, loc="lower center", bbox_to_anchor=(0.5, 1.0), ncol=6 if s35 else 5, fontsize=7.2, handlelength=1.6,
            columnspacing=1.2)
 fig.tight_layout(w_pad=1.5)
 fig.savefig(OUT, bbox_inches="tight")
