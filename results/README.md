@@ -49,6 +49,7 @@ This folder holds the summary outputs of every experiment: tables, JSON summarie
 | A held sink as a lever (study 31, preregistered) | `corr/s31_out/` | `analysis/analyze_s31.py` | `docs/lab-notes/40_held_sink_lever_results.md` |
 | Window-matched attractor offset (study 32, preregistered) | `corr/s32_out/` | `analysis/analyze_s32.py` | `docs/lab-notes/41_window_matched_offset_results.md` |
 | Attractor offset against the window (study 33, preregistered) | `corr/s33_out/` | `analysis/analyze_s33.py` | `docs/lab-notes/45_window_dose_results.md` |
+| One sink frequency held in two models (study 35, preregistered) | `corr/s35_out/` | `analysis/analyze_s35.py` | `docs/lab-notes/46_band_hold_ll_results.md` |
 | Third-review analyses: motion audit, opening source, μ over time, DINOv2 content (exploratory) | `corr/review3_out/` | `analysis/review3_analyses.py`, `motion_audit.py`, `motion_summary.py`, `dino_content.py`, `analyze_dino_content.py` | `docs/lab-notes/39_review3_analyses.md` |
 | Band probe: which temporal RoPE frequencies make the probe's peaks; probe peaks by layer, head and pass (exploratory) | `corr/sinkband_out/`, `corr/sinkprobe_out/sinkprobe_heads.json` | `analysis/analyze_sinkband.py`, `analyze_sinkprobe_heads.py` | `docs/lab-notes/42_band_probe.md` |
 | MAGI-1 content and 60-s horizon (study 19, preregistered) | `corr/magi19_out/`, `corr/magi19_out_siglip/` (SigLIP rescoring) | `analysis/analyze_magi19.py` | `docs/lab-notes/43_magi_content_horizon_results.md` |

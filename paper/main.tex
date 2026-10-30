@@ -30,10 +30,10 @@ still keeps 0.10 at 240\,s, and an anchor a steady 0.3), while a single anchored
 scene. Attention sinks left at their absolute rotary
 positions keep more, much of it in bursts, brief copies of the opening at the query--sink distances where an
 attention probe finds the sink most attended; they move when the sink is moved and recur at the times the probe
-predicts, out of sample to 180\,s. Drift separates into forgetting the opening and an offset of the default from
+predicts, out of sample to 180\,s, and vanish in two models when one of the sink's 22 rotary frequencies is held. Drift separates into forgetting the opening and an offset of the default from
 where the same prompt starts; over 40 prompts the offset depends on inference settings as much as on training: it grows
 with the key--value window in Self Forcing (5 to 16~\Lstar) and LongLive, though not in CausVid. A
-content-aware correction and a deeper sink reduce drift without training. We report all \pend{118} preregistered primary
+content-aware correction and a deeper sink reduce drift without training. We report all \pend{122} preregistered primary
 tests, \pend{31} of which failed.
 \end{abstract}
 
@@ -76,8 +76,8 @@ context (a re-rotated sink, an anchor, a clean copy in every section, full histo
 depends on the model and, in the two we ran to 240\,s, is still there then; tone and scene can be kept separately:
 a one-frame anchor in the 14B model keeps the scene but not its tone, LongLive's sink the reverse. A sink left at its absolute rotary
 positions keeps more, much of it in bursts in which the opening returns when the sink's
-distance to the current chunk passes a peak of the attention it draws; moving the sink moves the bursts, and the
-probe predicts them out of sample to 180\,s.
+distance to the current chunk passes a peak of the attention it draws; moving the sink moves the bursts, the
+probe predicts them out of sample to 180\,s, and holding one rotary frequency of the sink removes them in two models.
 
 \textbf{For a given checkpoint, the default is set by the conditioning.} Lighting words move the default brightness
 by up to 27~\Lstar, and scene words decide whether a snowy, desert or forest opening stays or becomes a city street
@@ -103,7 +103,7 @@ holding the sink in two models.
 \item Training-free levers, with their costs and failures: three that raise
 $\alpha$ (one placing the sink where the probe says), and a choice of prompt that moves $\mu$ on one model only.
 \end{enumerate}
-We preregistered \pend{25} studies with hashed analysis code and report all \pend{118} primary tests, including the
+We preregistered \pend{25} studies with hashed analysis code and report all \pend{122} primary tests, including the
 \pend{31} that failed (Table~\ref{tab:primary}). No model is trained; all code and per-video statistics are public.
 
 %=====================================================================================================================
