@@ -294,6 +294,18 @@ implied by the recursion fitted to 120-s curves, preregistered for 15\,s. (c) Th
 difference of the prompts' defaults; a prompt with the same default has no effect.}
 \label{fig:mech}
 \end{figure}
+\begin{figure}[h]
+\centering
+\includegraphics[width=\linewidth]{fig_window.pdf}
+\caption{The attractor offset of fresh rollouts against the key--value window (studies 30, 32, 33; 40 prompts, 3 seeds,
+no sink, [50, 60)\,s; prompt-bootstrap 95\% CIs; circles: released windows). (a) Mean $|$end$-$start$|$ brightness;
+(b) mean signed offset. In Self Forcing the offset grows with the window (preregistered slope $+0.63$~\Lstar{} per
+frame \ci{0.49}{0.77}), mostly between 18 and 21 frames, and rollouts darken more; LongLive's grows from 12 to 21
+frames ($+2.1$ \ci{0.6}{3.5}); CausVid's does not change ($-0.5$ \ci{-1.9}{0.9}). Short windows reach their final
+offset sooner (Self Forcing: 90\% of it within 5\,s at 6 frames, 44\,s at 21) and change slightly more from frame to
+frame (mean $|\Delta L^*|$ 0.38 against 0.29), without losing sharpness.}
+\label{fig:window}
+\end{figure}
 Model a chunk's mean statistic as $x_{k+1} = w_w\,\bar x_{\text{window}} + w_s\,x_{\text{sink}} + w_p\,\mu$ with
 $w_w + w_s + w_p = 1$, where the opening counts as a window chunk until it rolls out and $\mu$ is the prompt's default.
 Without a sink the opening is eventually forgotten; with one, $\alpha_\infty = w_s/(w_s+w_p)$, so a small sink weight
