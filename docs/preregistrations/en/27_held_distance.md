@@ -1,38 +1,28 @@
-> English translation of the frozen Chinese preregistration [`../27_held_distance.md`](../27_held_distance.md). The Chinese file is the authoritative version; its hashes and wording were fixed before data collection.
+# Preregistration 27: with the sink held at one distance, are how much is kept and how much the video moves set by the probe's attention share at that distance? (Self Forcing, 17 distances, 60 s) (2026-10-28, frozen before generation)
 
-# Preregistration 27: with the sink held at one distance, does the probe's attention share there decide how much is kept and how much the video moves? (Self Forcing, 17 distances, 60 s) (2026-10-28, frozen before generation)
+*English translation; the Chinese file `../27_held_distance.md` is the frozen, authoritative version.*
 
 ## Background
 - Results of preregistration 25 (lab note 31):
-  - The bursts follow the sink's rotary distance. With the sink 18 or 36 latent frames further back, the bursts come
-    4.5 or 9 s earlier, as the probe predicts.
-  - A sink held at one distance no longer bursts. At 60 s it keeps 0.86 at distance 203 (a peak), 0.22 at distance 20
-    (next to the window) and 0.01 at distance 187 (a trough). These are in the same order as the probe's shares at the
-    three distances (0.165, 0.086, 0.054 in the second probe).
-  - The cost: held at the peak distance, the video nearly freezes on its opening. Motion over [50, 60) s is 1.10,
-    against 2.38 at the original positions and 5.11 at the trough.
-- That the share decides how much is kept rests on 3 points, and the 3 distances were chosen after looking at the
-  probe. This study tests the relation at 14 new distances chosen by a rule, and tests whether motion falls with the
-  share.
-- **Probe:** the second probe (exploratory, `sinkprobe_long_out.json`, distances 3–723; 4 openings × 6 chunks; see
-  preregistration 26 and lab note 30).
-- **State of the data:** at freezing, this study has generated no video. The videos of preregistration 25 (the same 24
-  scenes, seed 0) have been analysed; its 3 distances (20, 187, 203) are generated again here for secondary analyses
-  only.
+  - The bursts follow the sink's rotary distance: moving the sink 18 or 36 latent frames further back makes the bursts come 4.5 or 9 s earlier, as the probe predicts.
+  - With the sink held at one distance there are no more bursts. The share kept at 60 s is 0.86 at distance 203 (peak), 0.22 at distance 20 (next to the window) and 0.01 at distance 187 (trough). These three numbers are in the same order as the probe's shares at these three distances (0.165, 0.086, 0.054, from the second probe).
+  - Cost: with the sink held at the peak distance, the video almost freezes at the opening. Motion over [50, 60) s is 1.10, against 2.38 at the original positions and 5.11 at the trough.
+- "The share sets how much is kept" is so far supported by only 3 points, and these 3 distances were chosen after looking at the probe. This study tests the relation at 14 new distances chosen by a rule, and tests whether motion falls with the share.
+- **Probe:** the second probe (exploratory, `sinkprobe_long_out.json`, distances 3–723; 4 openings × 6 chunks; see preregistration 26 and lab note 30).
+- **Data status:** no video of this study had been generated when it was frozen. The videos of preregistration 25 (the same 24 scenes, seed 0) have been analysed; 3 of their distances (20, 187, 203) are regenerated in this study and used only in secondary analyses.
 
 ## Design
 - **Scenes:** the 24 scenes of preregistration 06 (rx00–rx11, gx00–gx11), generic prompt (`prompts/relax.jsonl`).
 - **Model:** Self Forcing DMD, sink 3, window 21, 60 s (243 latent frames).
   - Generator `hold_gen_sinkpos.py --sink_mode dist:D`, run in Self-Forcing-b, as in preregistration 25.
-  - From the first chunk after the opening, a copy of the sink keys is rotated to distance D.
-- **Openings:** L\* shifts −16 / +16 (versions m16, p16).
+  - From the first chunk after the opening on, a copy of the sink keys is rotated to distance D.
+- **Openings:** L\* shifted by −16 / +16 (versions m16, p16).
 - **Seed:** 0.
 - **Rule for choosing the distances** (`s27_distances.py`, fixed before any video):
-  - candidates: the probe's grid distances with 24 ≤ D ≤ 720, except those within 2 of 187 or 203 (used in
-    preregistration 25);
-  - targets: 14 equally spaced share values from the smallest to the largest candidate share;
-  - for each target in turn, the unused candidate whose share is closest (ties: smaller D).
-- **Result (14 new distances; shares from the second probe):**
+  - candidates: the probe-grid distances with 24 ≤ D ≤ 720, excluding those within 2 of 187 or 203 (used in preregistration 25);
+  - targets: 14 equally spaced share values from the candidates' smallest share to their largest;
+  - for each target in turn, the not-yet-chosen candidate with the closest share (ties go to the smaller D).
+- **Result (14 new distances, shares from the second probe):**
 
 | D | share | D | share |
 |---|---|---|---|
@@ -44,80 +34,64 @@
 | 335 | 0.1516 | 643 | 0.1348 |
 | 345 | 0.0601 | 650 | 0.0516 |
 
-  - The 7 with the lowest share (used by Q3): 589, 650, 345, 448, 147, 513, 66.
-  - The rank correlation between distance and share is −0.27 (not significant), so the two are largely unconfounded.
-  - 132 and 135, and 466 and 468, are only 2–3 frames apart but have different shares, which tests the specificity
-    of the share.
-  - 9 distances exceed 245, which a sink at its original positions never reaches within 60 s.
-- **Also generated again:** the 3 distances of preregistration 25, 20 (0.0859), 187 (0.0543) and 203 (0.1648), for
-  secondary analyses only.
+  - The 7 with the lowest share (used in Q3): 589, 650, 345, 448, 147, 513, 66.
+  - The rank correlation between distance and share is −0.27 (not significant), so the two are largely not confounded.
+  - 132 and 135, and 466 and 468, differ by only 2–3 frames but have different shares, which allows a test of the specificity of the share.
+  - 9 distances are above 245, i.e. distances that a sink at its original positions never reaches within 60 s.
+- **Also regenerated:** the 3 distances of preregistration 25: 20 (0.0859), 187 (0.0543), 203 (0.1648), used only in secondary analyses.
 - **Execution:**
-  - one task per scene with all 17 distances and both versions (34 videos); arch_guard keeps all outputs of a scene on
-    one GPU architecture;
-  - a distance whose p16 output already exists is skipped, so an interrupted task can resume;
-  - any GPU model (≥ 40 GB, bf16);
-  - video files only for rx00 and gx00;
-  - task list made by `make_s27_tasks.py` (`jobs/s27.jsonl`, 24 tasks).
-  - In total 24 × 17 × 2 = 816 videos.
+  - One task per scene, with the 17 distances and both versions (34 videos); arch_guard keeps all of a scene's outputs on one GPU architecture.
+  - A distance is skipped if its p16 output already exists, so that interrupted tasks can resume.
+  - Any GPU with ≥ 40 GB and bf16 support.
+  - Video files are written only for rx00 and gx00.
+  - The task list is generated by `make_s27_tasks.py` (`jobs/s27.jsonl`, 24 tasks).
+  - 24 × 17 × 2 = 816 videos in total.
 
-## Measures
+## Metric
 - α[t0, t1) = (end_p16 − end_m16) / (open_p16 − open_m16):
   - open is the mean L\* of frames 1–8;
   - end is the mean L\* over seconds [t0, t1) after the opening;
   - undefined if open_p16 − open_m16 < 4 L\*.
 - No collapse exclusion.
-- **motion[t0, t1):** the generator's per-frame motion (mean absolute grey-level difference from the previous frame,
-  0–100) averaged over seconds [t0, t1) and over the two versions.
+- **motion[t0, t1):** the mean over [t0, t1) s of the per-frame motion recorded by the generator (mean absolute grey difference from the previous frame, 0–100), averaged over the two versions.
 - **share(D):** the second probe's mean share at distance D.
 
-## Hypotheses (`analyze_s27.py`, frozen; Holm correction over 3 tests)
-- One Spearman correlation per scene (across distances), averaged over scenes:
-  - **Q1 persistence rises with the share:** ρ_s(share, α[50, 60)) over the 14 new distances (at least 10 defined per
-    scene); mean > 0.
-  - **Q2 motion falls with the share:** ρ_s(share, motion[50, 60)) over the 14 new distances; mean < 0.
-  - **Q3 graded below the peaks:** ρ_s(share, α[50, 60)) over the 7 new distances with the lowest share (at least 5
-    per scene); mean > 0.
+## Hypotheses (`analyze_s27.py`, frozen; Holm over 3 tests)
+- One Spearman correlation (across distances) is computed per scene, then averaged over scenes:
+  - **Q1, the share kept rises with the share:** ρ_s(share, α[50, 60)), 14 new distances (at least 10 defined distances per scene), mean > 0.
+  - **Q2, motion falls with the share:** ρ_s(share, motion[50, 60)), 14 new distances, mean < 0.
+  - **Q3, the relation is graded below the peaks too:** ρ_s(share, α[50, 60)), only the 7 new distances with the lowest share (at least 5 per scene), mean > 0.
 - **Tests:**
-  - two-sided one-sample t-tests over scenes;
-  - supported if Holm p < 0.05 and the estimate has the hypothesised sign;
+  - two-sided one-sample t-test over scenes;
+  - supported if Holm p < 0.05 and the sign of the estimate agrees with the hypothesis;
   - 95% CIs by scene bootstrap (10,000 draws).
 
 ## Secondary analyses
-- Q1–Q3 over [40, 50) s;
-- Q1 and Q2 over all 17 distances;
-- per distance:
-  - α (10-s windows and the 1-s curve);
-  - motion and open_diff;
-  - the share of videos with motion < 1.5 over [50, 60) s ("frozen");
-- across distances:
+- Q1–Q3 over the [40, 50) s window.
+- Q1 and Q2 with all 17 distances.
+- Per distance:
+  - α (10-s windows and 1-s curves);
+  - motion, open_diff;
+  - the share of videos with motion < 1.5 over [50, 60) s ("frozen").
+- Across distances:
   - Pearson and Spearman correlations of the scene-mean α and motion with the share (scene-bootstrap CIs);
-  - the Spearman partial correlation given the distance;
-  - a linear fit of the scene-mean α on the share, and the share at which α = 0.5;
-- against preregistration 25:
-  - per-scene differences in α between the two studies at the 3 old distances;
-  - the distances whose mean α exceeds that of distance 20 while their mean motion is at least that of preregistration
-    25's sink at its original positions (2.38) (exploratory: is there a distance that keeps more without freezing?).
+  - Spearman partial correlations controlling for distance;
+  - a linear fit of the scene-mean α on the share, and the share at which α = 0.5.
+- Comparison with preregistration 25:
+  - the difference in α between the two studies at the 3 old distances (per scene);
+  - a list of the distances whose mean α is above that of distance 20 and whose mean motion is not below that of the sink at its original positions in preregistration 25 (2.38) (exploratory: "is there a distance that keeps more without freezing?").
 
 ## Predictions
-- **Q1 supported:** mean ρ about +0.6 to +0.85.
-- **Q2 supported:** mean ρ about −0.4 to −0.8.
-- **Q3 supported, less certainly than Q1:** mean ρ about +0.2 to +0.5. At the lowest shares α may be near 0 at every
-  distance (a floor), which would weaken the correlation.
-- **Exploratory question:** is there a distance that keeps more without freezing? Distances with shares of 0.10–0.12
-  (90, 132, 466) may keep 0.3–0.6 with motion near that of the original positions; whether one meets both conditions
-  is about even.
-- **Replication:** at the 3 old distances, α within ±0.1 of preregistration 25 (numerical differences between GPU
-  architectures may add small deviations).
-- **Rules for interpretation:**
-  - if Q1 and Q2 are supported: the probe's share quantitatively predicts how much a sink held at a distance keeps
-    and how much the video moves, at 14 distances never tested, 9 of them beyond any distance a 60-s video reaches;
-    keeping and freezing trade along one axis;
-  - if Q1 is supported and Q3 is not: the relation is concentrated at the peaks (threshold-like), with no gradation
-    at lower shares;
-  - if Q1 is not supported: the 3 distances of preregistration 25 were special and the probe only coarsely orders
-    distances; the paper's statement that the share decides how much is kept is withdrawn;
-  - if Q2 is not supported while Q1 is: keeping more does not have to cost motion; the per-distance motion is then
-    examined.
+- **Q1 holds:** mean ρ about +0.6 to +0.85.
+- **Q2 holds:** mean ρ about −0.4 to −0.8.
+- **Q3 holds, but less certainly than Q1:** mean ρ about +0.2 to +0.5. At the distances with the lowest shares α may all be close to 0 (a floor effect), which would weaken the correlation.
+- **Exploratory question:** is there a distance that keeps more without freezing? The distances with shares between 0.10 and 0.12 (90, 132, 466) may keep 0.3–0.6 with motion close to the original positions; whether both conditions can be met at once is roughly even odds.
+- **Replication:** at the 3 old distances, α differs from preregistration 25 by no more than ±0.1 (numerical differences between GPU architectures may cause small deviations).
+- **Interpretation rules:**
+  - If Q1 and Q2 hold: the probe's share quantitatively predicts how much is kept and how much the video moves when the sink is parked at a distance. This holds at 14 distances never tested before, 9 of which lie beyond the distances a 60-s video can reach. Keeping and freezing trade off along the same axis.
+  - If Q1 holds and Q3 does not: the relation is concentrated at the peaks (threshold-like), with no gradation at lower shares.
+  - If Q1 does not hold: the 3 distances of preregistration 25 were special cases, and the probe can only rank distances roughly; the paper's statement "the share sets how much is kept" is withdrawn.
+  - If Q2 does not hold while Q1 does: keeping more does not necessarily come at the cost of freezing; this has to be examined together with each distance's motion.
 
 ## Frozen files (SHA-256)
 ```
