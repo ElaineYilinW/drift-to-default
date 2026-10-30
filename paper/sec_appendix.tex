@@ -235,10 +235,11 @@ test $p=0.001$): persistence is 0.34 under sunny, 0.24 overcast, 0.17 dusk and 0
 interaction is weaker ($p=0.053$). Dark defaults compress the range of brightness the model produces, which may explain
 part of this. Study 12 confirms the prompt dependence in four new scene types (Section~\ref{sec:default}).
 
-\paragraph{Content scores do not depend on the encoder.} Every content result uses CLIP ViT-L/14 class log-odds. We
+\paragraph{Content verdicts barely depend on the encoder.} Every content result uses CLIP ViT-L/14 class log-odds. We
 rescored all content videos with SigLIP so400m-patch14-384~\cite{siglip}, with its own text embeddings of the same seven
-labels, and reran each frozen analysis unchanged (Table~\ref{tab:encoder}). Every verdict agrees. Estimates in
-$\kappa$ agree within 0.03; raw log-odds differ in scale between encoders. This includes FramePack's embedding route,
+labels, and reran each frozen analysis unchanged (Table~\ref{tab:encoder}). Every verdict but one agrees: MAGI-1's full
+history keeps more content than its released window by $+0.14$ with CLIP ($p=0.10$, not supported) and $+0.20$ with
+SigLIP ($p=0.009$); we keep the preregistered CLIP verdict. Other estimates in $\kappa$ agree within 0.03; raw log-odds differ in scale between encoders. This includes FramePack's embedding route,
 whose conditioning encoder is itself a SigLIP model: CLIP and SigLIP give it the same content share (0.23 and 0.25).
 Class scores might also carry global colour (snow is bright, sand is yellow). On frames whose CIELAB mean and standard
 deviation are matched to the held opening's before encoding, the city-versus-class-prompt difference of study 9 is 9.0

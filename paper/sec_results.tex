@@ -20,7 +20,7 @@ eight configurations (study 9). Content relaxes like tone (Fig.~\ref{fig:content
 Forcing frames at 30\,s. Under the opening's own class prompt the class persists ($\kappa$ 0.71--1.05; 9.3
 \ci{8.1}{10.5} more log-odds, preregistered), as a fresh rollout of that prompt would. Across the eight
 configurations, content and tone persistence are correlated, but not significantly ($\rho=0.67$, $p=0.07$). Scoring frames whose CIELAB mean and spread are matched to the
-opening's, or scoring with SigLIP or DINOv2, gives the same results (Appendix~\ref{app:robust}).
+opening's, or scoring with SigLIP or DINOv2, gives the same verdicts (SigLIP: 18 of 19 tests; Appendix~\ref{app:robust}).
 
 Sinks act differently on content. Self Forcing's sink keeps more of it at 60\,s ($\kappa$ 0.61 vs 0.14, $+0.48$
 \ci{0.39}{0.57}, preregistered), but not steadily: $\kappa$ falls to 0.32 at 30\,s and rises again, and the dunes, the
@@ -41,7 +41,7 @@ routes different images separates them (Appendix Fig.~\ref{fig:framepack}b): the
 embedding has no effect on tone (study 11), so in FramePack it sets the default of the scene but not of its
 brightness. Tone and content can also part the other way: Krea Realtime 14B's first-frame anchor keeps the
 opening's class ($\kappa$ 0.37 vs 0.05 without it at 60\,s, $+0.33$ \ci{0.18}{0.47}, study 22; the class is CLIP's top
-label in 37\% of frames against 14\%) but none of its tone (Section~\ref{sec:mech}). MAGI-1 behaves like the Wan models (study 19, preregistered): under the city prompt its class score falls by 10.7 \ci{9.4}{11.8} by 25--30\,s, its own class prompt sets a different default ($+7.3$ \ci{5.8}{8.8}), and full history keeps $\kappa=0.43$ against 0.29 with the released window ($+0.14$ \ci{-0.01}{0.30}, not supported).
+label in 37\% of frames against 14\%) but none of its tone (Section~\ref{sec:mech}). MAGI-1 behaves like the Wan models (study 19, preregistered): under the city prompt its class score falls by 10.7 \ci{9.4}{11.8} by 25--30\,s, its own class prompt sets a different default ($+7.3$ \ci{5.8}{8.8}), and full history keeps $\kappa=0.43$ against 0.29 with the released window ($+0.14$ \ci{-0.01}{0.30}, not supported; $+0.20$ and significant on SigLIP embeddings, Appendix~\ref{app:robust}).
 
 \begin{figure}[t]
 \centering
