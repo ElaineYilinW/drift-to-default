@@ -6,7 +6,7 @@
 \begin{longtable}{@{}llllll@{}}
 \caption{All preregistered primary tests and their outcomes. Intervals are Wald intervals from the preregistered mixed
 models in studies 1, 2 and 13 and bootstrap intervals otherwise; $p$ is Holm-adjusted within each study;
-$^{*}$supported but not significant after Holm correction across all \pend{122} tests. Study 3 LongLive rows are as executed; after regenerating four cross-architecture openings the
+$^{*}$supported but not significant after Holm correction across all \pend{125} tests. Study 3 LongLive rows are as executed; after regenerating four cross-architecture openings the
 conclusions are unchanged; in study 1, 62\% of nominal pairs crossed GPU architectures, which widens but does not
 bias its intervals. Units: $D$, $K$ drift metrics; $|\Delta L|$ and $|$off$|$ (end minus start of fresh rollouts) in \Lstar{};
 $\alpha$ persistence, $\kappa$ content persistence. Arms: G generic prompt, M VLM caption of the opening, C calibrated
@@ -144,6 +144,9 @@ Study & Test & Model & Estimate [95\% CI] & $p_{\text{Holm}}$ & Outcome \\
   & $j{=}4$ held: less kept, $\alpha$ (50--60\,s) & LL & $+0.24$ \ci{0.16}{0.33} & $<10^{-4}$ & supported \\
   & $j{=}5$ held $-$ $j{=}4$ held, bursts & SF & $+0.30$ \ci{0.24}{0.37} & $<10^{-7}$ & supported \\
   & $j{=}5$ held $-$ $j{=}4$ held, bursts & LL & $+0.23$ \ci{0.16}{0.30} & $<10^{-5}$ & supported \\
+36 Window beyond & $|$off$|$: SF window 24 $-$ 21 & SF & $-0.23$ \ci{-1.52}{1.08} & 1 & not supported \\
+  & $|$off$|$: SF window 27 $-$ 21 & SF & $+1.86$ \ci{0.30}{3.43} & 0.081 & not supported \\
+  & $|$off$|$: LongLive window 24 $-$ 21 & LongLive & $+0.08$ \ci{-0.74}{0.87} & 1 & not supported \\
 %NEWROWS
 \end{longtable}
 }

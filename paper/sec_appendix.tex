@@ -305,11 +305,15 @@ difference of the prompts' defaults; a prompt with the same default has no effec
 \begin{figure}[h]
 \centering
 \includegraphics[width=\linewidth]{fig_window.pdf}
-\caption{The attractor offset of fresh rollouts against the key--value window (studies 30, 32, 33; 40 prompts, 3 seeds,
+\caption{The attractor offset of fresh rollouts against the key--value window (studies 30, 32, 33, 36; 40 prompts, 3 seeds,
 no sink, [50, 60)\,s; prompt-bootstrap 95\% CIs; circles: released windows). (a) Mean $|$end$-$start$|$ brightness;
 (b) mean signed offset. In Self Forcing the offset grows with the window (preregistered slope $+0.63$~\Lstar{} per
-frame \ci{0.49}{0.77}), mostly between 18 and 21 frames, and rollouts darken more; LongLive's grows from 12 to 21
-frames ($+2.1$ \ci{0.6}{3.5}); CausVid's does not change ($-0.5$ \ci{-1.9}{0.9}). Short windows reach their final
+frame \ci{0.49}{0.77} over 6--21), most of it from 18 to 19 frames ($+3.9$ \ci{2.7}{5.1}; 19 to 20: $+1.4$; 20 to 21: $+1.4$ \ci{-0.2}{2.9}),
+not at the training length, and rollouts darken more; LongLive's grows from 12 to 21 frames ($+2.1$ \ci{0.6}{3.5});
+CausVid's does not change ($-0.5$ \ci{-1.9}{0.9}). Beyond 21 frames (study 36, preregistered) neither model's offset grew
+significantly: at 24 frames it is within $\pm2$~\Lstar{} of 21 in both (Self Forcing $-0.2$ \ci{-1.5}{1.1}, LongLive
+$+0.1$ \ci{-0.7}{0.9}); at 27 Self Forcing's is $+1.9$ \ci{0.3}{3.4} larger (Holm $p=0.08$), with more frame-to-frame
+change (0.77) and less sharpness (ratio 1.5 against 2.0). Short windows reach their final
 offset sooner (Self Forcing: 90\% of it within 5\,s at 6 frames, 44\,s at 21) and change slightly more from frame to
 frame (mean $|\Delta L^*|$ 0.38 against 0.29), without losing sharpness.}
 \label{fig:window}
