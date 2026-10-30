@@ -21,7 +21,15 @@ Prompt-only reference rollouts were renamed after generation; no analysis code c
 18 other scenes, the sink effect is $+0.53$ \ci{0.42}{0.63} (Self Forcing) and $+0.18$ \ci{0.13}{0.24} (CausVid).
 \item \emph{Studies 10 and 11} were run on two non-preemptible 4-GPU jobs and A40-only array tasks instead of the
 preregistered all-queue arrays, because no large GPU was free on the shared queue; all their videos ran on A40 GPUs, so
-pairing is unaffected. The other studies ran as preregistered.
+pairing is unaffected.
+\item \emph{Study 16:} its last two arms were preregistered for A40 GPUs only; with no A40 free, half of the 12 scenes
+were moved to the Ada group (L40S, RTX 6000 Ada) before any of their videos existed, keeping both versions of a scene on
+one architecture. Its 60-s SkyReels videos ran out of GPU memory in the final post-processing step, which a wrapper moved
+to the CPU without changing the frozen generator (differences within the 0.2~\Lstar{} run-to-run variation of SkyReels).
+\item \emph{Study 22:} Krea's released code does not output the starting frame, so the frozen generator held the opening
+for 8 frames instead of 9. One line was corrected after 32 tone videos had been generated; for those, the per-frame
+statistics were completed with a copy of frame 0, which is identical to what the corrected generator writes. The
+analysis code was not changed. The other studies ran as preregistered.
 \end{itemize}
 
 \paragraph{Withdrawn or revised claims.} During the project we withdrew four claims after checks: that MUSIQ rewards
@@ -46,8 +54,8 @@ above 1 mean the correction amplified the change.
 \caption{Persistence at 60\,s (study 10; CausVid from study 7). (a) $\alpha$ of an \Lstar{} shift with
 scene-bootstrap 95\% CIs; hollow markers: 31\,s (study 6). (b) Self Forcing with sinks of 0, 1, 3 and 6 latent frames,
 at their original positions or re-rotated to sit just before the window (dashed). (c) Other models. Curves: 1-s windows,
-3-s moving average; shaded: 31--35\,s and 50--54\,s, where sinks of three or more frames at their original positions
-produce bursts. The 60-s endpoint window, [50, 60)\,s, overlaps the second burst; Appendix~\ref{app:robust} reports a
+3-s moving average; shaded: 16--19\,s, 31--35\,s and 50--54\,s, where sinks of three or more frames at their original positions
+produce bursts. The 60-s endpoint window, [50, 60)\,s, overlaps the third burst; Appendix~\ref{app:robust} reports a
 burst-free window.}
 \label{fig:atlas}
 \end{figure}
@@ -87,7 +95,7 @@ preregistered predictions (study 26). Ticks: control onsets midway between them.
 
 \begin{table}[h]
 \centering\scriptsize
-\caption{Persistence over the same window, 15--20\,s after the opening, for every model (exploratory; scene-bootstrap
+\caption{Persistence over the same window, 15--20\,s after the opening, for every model except Krea and MAGI-1 (exploratory; scene-bootstrap
 95\% CIs; Matrix-Game: scenes without a black second before 20\,s).}
 \label{tab:matched}
 \begin{tabular}{@{}lccc@{}}
@@ -160,7 +168,7 @@ from $\pm8$ and from $\pm16$ shifts differs by at most 0.09 at 31\,s, with inter
 a brightening (0.36 vs 0.04). The linear law is a first-order description.
 
 \paragraph{The 60-s endpoint and the positional bursts.} The preregistered 60-s window, 50--60\,s, overlaps the
-second burst. Over 40--50\,s, Self Forcing keeps 0.48 with a three-frame sink and 0.20 with a re-rotated one (difference
+third burst. Over 40--50\,s, Self Forcing keeps 0.48 with a three-frame sink and 0.20 with a re-rotated one (difference
 $-0.27$ \ci{-0.38}{-0.16}); over the full period 35--60\,s, 0.53 and 0.19. Sink depth is monotone in every window
 (40--50\,s: no sink 0.08, one frame 0.23, three 0.48, six 0.63). Some curves are not monotone decays (GAN and SiD v2 lose
 part of the shift early and regain it), and Rolling Forcing is still declining at 60\,s. To 180\,s (study 24, Fig.~\ref{fig:long}a),
@@ -187,7 +195,7 @@ frame-to-frame grey-level change on 4$\times$-subsampled frames; $r=0.9999$ with
 saved videos (exploratory). Across 38 configuration--study pairs at 60\,s, persistence and motion are uncorrelated
 (Spearman $\rho=-0.13$, $p=0.43$), and freezing (motion below 1.5 over 50--60\,s) is more common without a sink (42--58\%
 of Self Forcing videos, 71\% of CausVid's) than with one (18--29\%). Restricted to scenes whose two versions both move,
-every Wan-based configuration keeps within 0.07 of its full-sample $\alpha$ (three-frame sink 0.59 vs 0.61, six frames
+every Wan-based configuration keeps within 0.07 of its $\alpha$ over all scenes, as recomputed here (three-frame sink 0.59 vs 0.61, six frames
 0.75 vs 0.76, GAN 0.73 vs 0.80, Rolling Forcing 0.44 vs 0.44); in FramePack, MAGI-1 and Matrix-Game (other frame rates)
 it is 0.08--0.20 lower (FramePack's prefix alone 0.26 on 6 moving scenes vs 0.46), so part of their persistence comes
 from videos that stopped moving. Only a sink held at a high-share distance freezes Self Forcing or LongLive on its
@@ -195,7 +203,9 @@ opening (Fig.~\ref{fig:held}).
 
 \paragraph{Real and generated openings.} Half of the 24 tone openings are NAVSIM camera frames and half the model's own
 generations. At 60\,s the difference in $\alpha$ between them averages $-0.02$ over 23 configuration--study pairs and
-no 95\% interval excludes zero (at 30\,s, near a burst, 4 of 23 do, in both directions).
+no 95\% interval excludes zero (at 30\,s, near a burst, 4 of 23 do, in both directions). In the drift regressions of
+the early studies, real and generated openings fall on the same line on Self Forcing ($p=0.80$); on LongLive,
+generated openings end 4.3~\Lstar{} brighter than real ones of equal brightness ($p=0.03$).
 
 \paragraph{The default across horizons.} The zero-drift level $\mu=b_0/(1-\alpha)$ of the same regressions changes by
 at most 4.5~\Lstar{} between 20 and 60\,s without a sink, with re-rotated sinks and for LongLive and CausVid, but by
@@ -235,9 +245,6 @@ deviation are matched to the held opening's before encoding, the city-versus-cla
 \ci{7.9}{10.2} log-odds (9.3 without matching), and the four tests of study 21 give $+0.45$, $-0.38$, $+0.08$ and $-0.32$
 ($+0.48$, $-0.40$, $+0.08$, $-0.34$ without).
 \input{tab_encoder.tex}
-
-\paragraph{Real and generated openings.} On Self Forcing, real and generated openings fall on the same line
-($p=0.80$); on LongLive, generated openings end 4.3~\Lstar{} brighter than real ones of equal brightness ($p=0.03$).
 
 \section{The recursion and the replay}\label{app:recursion}
 \begin{figure}[h]
@@ -285,7 +292,7 @@ scene-bootstrap 95\% CIs.}
 \end{figure}
 
 \paragraph{SkyReels-V2-DF.} It extends videos in 97-frame segments that re-denoise the last 17 frames of the previous
-segment jointly with the new ones. It holds the opening for 20\,s ($\alpha = 0.96$ \ci{0.86}{1.07}) whatever its
+segment jointly with the new ones. It holds the opening for 20\,s ($\alpha = 0.96$ \ci{0.86}{1.07} in study 8, 1.00 in study 16) whatever its
 guidance, history noise or number of steps, and then forgets steadily, to 0.29 at 60\,s ($-0.72$ \ci{-0.81}{-0.63}
 from 20 to 60\,s, study 16); with a 5-frame overlap it relaxes earlier ($-0.24$ \ci{-0.40}{-0.09} at 15--20\,s,
 preregistered) and keeps 0.08 at 60\,s.

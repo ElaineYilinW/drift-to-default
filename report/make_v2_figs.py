@@ -76,6 +76,7 @@ if at:
                 k = np.ones(3) / 3
                 ax.plot(t[1:-1], np.convolve(a, k, "valid"), color=col, ls=ls, lw=1.6, label=NAME[c])
         ax.axhline(0, color=MUTED, lw=.8)
+        ax.axvspan(16, 19, color=GRID, alpha=.5, lw=0)
         ax.axvspan(31, 35, color=GRID, alpha=.5, lw=0)
         ax.axvspan(50, 54, color=GRID, alpha=.5, lw=0)
         ax.set_xlabel("seconds after the opening")
@@ -238,7 +239,6 @@ ps = load("corr/pswap_out/pswap_results.json")
 # ---- combined mechanism figure: drift decomposition + prompt pull ----------------------------------------------------
 if dc and ps:
     fig, ax = plt.subplots(1, 3, figsize=(10.5, 2.9))
-    LONG = {"ll_s3", "ll_s0", "rf"}
     s30, at, l60 = load("corr/s30_out/s30_results.json"), load("corr/atlas_out/atlas_results.json"), \
         load("corr/long60_out/long_results.json")
     if s30 and at and l60:   # study 30: |offset| over 40 prompts at 60 s, against alpha at 60 s (studies 10, 7)
@@ -251,7 +251,7 @@ if dc and ps:
                "ll_s3": (-62, -10)}
         for c, a in A60.items():
             q, x = s30["per_arm"][c]["magnitude"], a["60"]
-            col = ORANGE if c in LONG else BLUE
+            col = BLUE
             ax[0].errorbar(x["mean"], q["mean"], xerr=[[x["mean"] - x["ci"][0]], [x["ci"][1] - x["mean"]]],
                            yerr=[[q["mean"] - q["ci"][0]], [q["ci"][1] - q["mean"]]], fmt="o", ms=4, lw=0.8, color=col)
             ax[0].annotate(LAB[c], (x["mean"], q["mean"]), textcoords="offset points", xytext=OFF[c], fontsize=7)
@@ -261,16 +261,13 @@ if dc and ps:
     else:
         P = dc["A_decomposition"]["per_cfg"]
         for c, v in P.items():
-            ax[0].scatter(v["alpha"], v["offset"], s=22, color=ORANGE if c in LONG else BLUE)
+            ax[0].scatter(v["alpha"], v["offset"], s=22, color=BLUE)
             off = {"sf_s3": (-30, 6), "sidv2_s3": (4, 4), "sf10s_s3": (4, -9), "ll_s0": (4, 3), "ll_s3": (4, -8)}.get(c, (3, 2))
             ax[0].annotate({"sf_s3": "SF-DMD"}.get(c, NAME.get(c, c)), (v["alpha"], v["offset"]), textcoords="offset points",
                            xytext=off, fontsize=7)
         ax[0].axhline(0, color=MUTED, lw=.8)
         ax[0].set_xlabel("persistence α of the opening (31 s)")
         ax[0].set_ylabel("fresh end − fresh start (L*)")
-    ax[0].scatter([], [], color=ORANGE, s=22, label="trained for long rollouts")
-    ax[0].scatter([], [], color=BLUE, s=22, label="trained on 5–10-s clips")
-    ax[0].legend(fontsize=7.2, loc="upper right")
     ax[0].set_title("(a) forgetting vs attractor offset", fontsize=9, loc="left")
     ax[1].axhspan(0.04, 0.14, color=GRID, alpha=.6, lw=0, label="predicted (120-s fit)")
     for s, col, lab, dx in (("3", BLUE, "sink 3", -0.25), ("0", GREY, "no sink", 0.25)):

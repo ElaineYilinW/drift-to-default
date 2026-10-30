@@ -83,8 +83,8 @@ LongLive still forgets its opening ($\alpha=-0.01$ without a sink at 60\,s). Dri
 LongLive's 12-frame window instead of its 21, Self Forcing ends 8.0~\Lstar{} away ($-8.3$ \ci{-10.1}{-6.5}), no longer
 significantly further than LongLive ($+1.3$ \ci{-1.0}{3.6}, study 32, preregistered), though it still darkens on
 average ($-7.3$ against $-0.4$, exploratory). A sink at its absolute positions, which keeps returning to the opening,
-hides these differences (3.8 vs 3.0~\Lstar). Krea 14B, distilled with Self Forcing, and MAGI-1, trained on real videos rather than its own rollouts, fit this
-pattern (fresh rollouts brighten by 4.8 and 15--20~\Lstar{} in about 30\,s). Prompt-only drift metrics mix the two parts
+hides these differences (3.8 vs 3.0~\Lstar). Fresh rollouts of Krea 14B brighten by about 4~\Lstar{} in 30\,s, those of
+MAGI-1 by 15--20. Prompt-only drift metrics mix the two parts
 (Appendix~\ref{app:ctx}); relaxation describes the memory of the opening, not the absence of degradation.
 
 %=====================================================================================================================
@@ -105,12 +105,12 @@ Persistence over time (10-s windows) for one or two configurations per group.}
 \paragraph{Once the opening leaves the context, it is forgotten.} Without a sink, Self Forcing and LongLive keep 0.05
 and $-0.01$ at 60\,s (study 10). MAGI-1~\cite{magi} (4.5B, distilled; another architecture) attends in its released
 configuration to the four previous 1-s chunks, so the opening leaves its context after about 4\,s; persistence falls from 0.87 at 5\,s to 0.34 at 30\,s ($-0.52$ \ci{-0.70}{-0.35}, study
-18), and to 0.05 \ci{-0.10}{0.20} at 60\,s (study 19, 12 scenes; the fall after 30\,s, $-0.17$ \ci{-0.41}{0.08}, is not significant). Krea Realtime 14B~\cite{krea}, a Self Forcing student of Wan2.1-14B,
+18), and to 0.05 \ci{-0.10}{0.20} at 60\,s (study 19, 12 scenes; from 0.21 at 30\,s, a fall of $-0.17$ \ci{-0.41}{0.08} that is not significant). Krea Realtime 14B~\cite{krea}, a Self Forcing student of Wan2.1-14B,
 recomputes its cache over a window of three latent frames (study 22, 24 scenes): it keeps 0.33 at 10\,s and nothing
 from 20\,s on ($-0.05$ at 60\,s; $-0.38$ \ci{-0.45}{-0.31} from 10 to 60\,s), and its class evidence falls to $\kappa=0.05$.
 The pattern holds at 14B, though Krea's window also differs. Re-denoising overlapping frames delays forgetting but does not stop it.
 SkyReels-V2-DF, which re-denoises the last 17 frames of each 97-frame segment with the next, holds the opening for
-20\,s ($\alpha = 0.96$ \ci{0.86}{1.07}) and then forgets, to 0.29 at 60\,s (study 16; with a 5-frame overlap, 0.08;
+20\,s ($\alpha = 0.96$ \ci{0.86}{1.07}, study 8; 1.00 in study 16) and then forgets, to 0.29 at 60\,s (study 16; with a 5-frame overlap, 0.08;
 Appendix~\ref{app:other}).
 
 \paragraph{An opening that stays in the context keeps a share of its tone, its scene or both.} Self Forcing keeps the sink's keys at their absolute
@@ -139,12 +139,12 @@ setting, so full history preserves the difference between openings, not their le
 \paragraph{Sinks at their absolute positions: bursts.} Without re-rotation a sink keeps more, and depth helps: no sink,
 one, three and six frames keep 0.05, 0.29, 0.61 and 0.76 at 60\,s ($+0.15$ \ci{0.11}{0.20} for six vs three; studies 7,
 10), and LongLive's sink 0.45 against $-0.01$. Much of this is positional. Persistence jumps near 17, 33 and 51\,s in
-every configuration with a sink at its absolute positions, across five Self Forcing checkpoints and LongLive (Appendix
+every configuration with a sink of three or more frames at its absolute positions, across five Self Forcing checkpoints and LongLive (Appendix
 Fig.~\ref{fig:atlas}b, c), never with a re-rotated sink or without one, and the opening's scene returns at these times
 (Section~\ref{sec:content}). Re-rotation lowers persistence at 60\,s from 0.61 to 0.16 ($-0.44$ \ci{-0.54}{-0.35},
 preregistered), and by $-0.27$ \ci{-0.38}{-0.16} between the bursts (40--50\,s). An attention probe locates the bursts
 (exploratory; Fig.~\ref{fig:probe}a): the share of attention a chunk's queries would give the sink if its keys sat at
-each query--sink distance peaks sharply at 71, 134, 203 and 266 latent frames (0.11--0.15 against a median of 0.07),
+each query--sink distance peaks sharply at 71, 134, 203 and 266 latent frames (0.11--0.17 against a median of 0.07),
 identically in every chunk and opening, so the peaks are positional, not content; a sink at its original
 positions passes the first three 16.5, 32.3 and 49.5\,s after the opening, the times of the bursts. Moving the sink
 moves the bursts (study 25, preregistered; Fig.~\ref{fig:probe}b): 18 or 36 latent frames further back, the probe puts

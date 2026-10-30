@@ -1,7 +1,9 @@
 % Every preregistered primary test, in order of freezing. Estimates are differences in the preregistered unit;
 % intervals are 95% (Wald for studies 1-2 as preregistered, bootstrap otherwise); p is Holm-adjusted within the study.
-\begin{table}[h]
-\centering\scriptsize
+{\scriptsize
+\setlength{\tabcolsep}{3pt}
+\setlength{\LTcapwidth}{\textwidth}
+\begin{longtable}{@{}llllll@{}}
 \caption{All preregistered primary tests and their outcomes. Intervals are Wald intervals from the preregistered mixed
 models in studies 1, 2 and 13 and bootstrap intervals otherwise; $p$ is Holm-adjusted within each study;
 $^{*}$supported but not significant after Holm correction across all \pend{111} tests. Study 3 LongLive rows are as executed; after regenerating four cross-architecture openings the
@@ -9,13 +11,17 @@ conclusions are unchanged; in study 1, 62\% of nominal pairs crossed GPU archite
 bias its intervals. Units: $D$, $K$ drift metrics; $|\Delta L|$ and $|$off$|$ (end minus start of fresh rollouts) in \Lstar{};
 $\alpha$ persistence, $\kappa$ content persistence. Arms: G generic prompt, M VLM caption of the opening, C calibrated
 lighting plus caption, ttc content-aware correction. $^\ddagger$The $t$-test treats the default $\mu$ as fixed; the
-bootstrap interval also resamples the fresh starts that estimate it (pooled with seed 0: \ci{0.02}{0.15}). $^{\S}$Equivalence by two one-sided tests; $p$ is the larger one-sided $p$.}
-\label{tab:primary}
-\setlength{\tabcolsep}{3pt}
-\begin{tabular}{@{}llllll@{}}
+bootstrap interval also resamples the fresh starts that estimate it (pooled with seed 0: \ci{0.02}{0.15}). $^{\S}$Equivalence by two one-sided tests; $p$ is the larger one-sided $p$.}\label{tab:primary}\\
 \toprule
 Study & Test & Model & Estimate [95\% CI] & $p_{\text{Holm}}$ & Outcome \\
 \midrule
+\endfirsthead
+\toprule
+Study & Test & Model & Estimate [95\% CI] & $p_{\text{Holm}}$ & Outcome \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
 1 Context & sink 3 vs none, $D$ & SF & $-7.56$ \ci{-8.32}{-6.81} & $<10^{-16}$ & supported \\
   & sink 3 vs none, $K$ & SF & $-0.90$ \ci{-1.04}{-0.76} & $<10^{-16}$ & supported \\
   & window $\times$ sink, $D$ & SF & $+5.71$ \ci{4.21}{7.22} & $<10^{-12}$ & supported \\
@@ -128,6 +134,5 @@ Study & Test & Model & Estimate [95\% CI] & $p_{\text{Holm}}$ & Outcome \\
 32 Window-matched & $|$off$|$: SF window 12 $-$ LL, no sink & SF, LL & $+1.27$ \ci{-0.97}{3.56} & 0.28 & not supported \\
   & $|$off$|$: SF window 12 $-$ LL, sink 3 & SF, LL & $+1.08$ \ci{-0.31}{2.40} & 0.27 & not supported \\
 %NEWROWS
-\bottomrule
-\end{tabular}
-\end{table}
+\end{longtable}
+}
