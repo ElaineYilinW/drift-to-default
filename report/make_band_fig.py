@@ -1,5 +1,5 @@
 """Band figure: (a) the attention-to-sink probe with all temporal RoPE frequencies rotated to each distance and with one
-band held at the reference distance 20 (band probe, lab note 42); (b) persistence of the sink with the same bands held
+band held at the reference distance 20 (band probe); (b) persistence of the sink with the same bands held
 in generation (study 34, 1-s alpha, scene means), with the burst onsets the probe predicts; (c) LongLive with j4 or the
 neighbouring j5 held (study 35). Panels (b) and (c) are skipped if the study 34 / 35 results are missing.
 usage: python report/make_band_fig.py [RESULTS_DIR] [OUT_PDF]   (defaults: results/corr/, paper/fig_band.pdf)"""

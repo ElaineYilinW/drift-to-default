@@ -29,7 +29,7 @@ for p in glob.glob(f"{ROOT}/**/*", recursive=True):
 # a few frozen paths are not unique by name; resolve them by their recorded relative path
 by_rel = {os.path.relpath(p, ROOT): p for ps in index.values() for p in ps}
 # (preregistration, file) -> the note that documents a change made after freezing
-DEVIATIONS = {("22_krea.md", "krea_gen.py"): "docs/lab-notes/29_krea_results.md"}
+DEVIATIONS = {("22_krea.md", "krea_gen.py"): "docs/lab-notes/29_krea_results.md at commit 8709d09"}
 
 
 def sha(p):
