@@ -1,4 +1,4 @@
-"""Exploratory (third internal review, W9): which layers, heads and denoising passes carry the peaks of the
+"""Exploratory: which layers, heads and denoising passes carry the peaks of the
 attention-to-sink probe? Not preregistered.
 
 Probe files of jobs/run_sinkprobe.sh (openings rx00, rx01, gx00, gx01; chunks 12..240; distances 3..300): mass[chunk] of

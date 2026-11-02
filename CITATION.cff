@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: "If you use this work, please cite it as below."
-title: "Drift to Default: Brightness Drift in Autoregressive Video Diffusion Is Regression to a Prompt-Set Level"
+title: "Drift to Default: How Autoregressive Video Rollouts Forget Their Opening"
 authors:
   - family-names: Wang
     given-names: Yilin

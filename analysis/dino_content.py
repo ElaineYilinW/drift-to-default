@@ -1,4 +1,4 @@
-"""Exploratory (third internal review, W4): DINOv2 features of the study 9 content videos, for an instance-level and a
+"""Exploratory: DINOv2 features of the study 9 content videos, for an instance-level and a
 second-encoder view of content persistence. Not preregistered.
 
 For every video {opening}_{cond}_s{seed}.mp4 in VIDEO_DIR matching PATTERN: DINOv2-base CLS token and mean patch token

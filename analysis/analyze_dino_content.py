@@ -1,4 +1,4 @@
-"""Exploratory (third internal review, W4): class- and instance-level content persistence of the study 9 videos from
+"""Exploratory: class- and instance-level content persistence of the study 9 videos from
 DINOv2 features (dino_content.py). Not preregistered.
 
 Openings ct{class}{i} (6 classes x 4); each continued under the city prompt (mis) and its own class prompt (mat) by 8

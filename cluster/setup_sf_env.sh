@@ -1,14 +1,14 @@
 #!/bin/bash
-# Self Forcing (Wan2.1-T2V-1.3B) environment + weights on Argon (CentOS 7, glibc 2.17).
+# Self Forcing (Wan2.1-T2V-1.3B) environment + weights on a cluster (CentOS 7, glibc 2.17).
 # - torch 2.5.1 (needs >=2.5 for flex_attention; 2.6+ wheels need glibc 2.28)
 # - pillow/av/etc. from conda-forge (see below)
 # - transformers pinned: newer releases disable themselves on torch < 2.6
 # - no flash-attn: Wan falls back to torch SDPA
 # - training/demo-only deps (tensorrt, pycuda, onnx, flask, wandb, dashscope) skipped
 set -ex
-H=/Users/ywang906/vdrift
-export MAMBA_ROOT_PREFIX=/Users/ywang906/wmsel/mamba
-MM=/Users/ywang906/wmsel/bin/micromamba
+H=${H:-$HOME/vdrift}
+export MAMBA_ROOT_PREFIX=${MAMBA_ROOT_PREFIX:-$H/mamba}
+MM=${MM:-micromamba}
 E=$H/envs/sf
 [ -x $E/bin/python ] || $MM create -y -p $E -c conda-forge python=3.10 pip
 # compiled deps from conda-forge: the PyTorch index only has a pillow sdist, and new PyPI wheels need glibc >= 2.28

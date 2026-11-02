@@ -1,4 +1,4 @@
-"""Exploratory: persistence against motion per configuration (third internal review, W1). Not preregistered.
+"""Exploratory: persistence against motion per configuration. Not preregistered.
 
 Each argument RUN_DIR:AUDIT_DIR pairs a run directory of held, L*-shifted openings ({scene}_{arm}__{m16|p16}_s{seed}.npz
 with lab_mean) with the motion_audit.py output for its videos. Per arm (prefixed with the run directory's name) and

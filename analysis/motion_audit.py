@@ -1,4 +1,4 @@
-"""Exploratory motion audit for the third internal review (W1: is a high persistence a frozen video?). Not preregistered.
+"""Exploratory motion audit (is a high persistence a frozen video?). Not preregistered.
 
 For every video {scene}_{arm}__{ver}_s{seed}.mp4 in RUN_DIR matching PATTERN (default *), decoded from the mp4 (crf 12):
   motion[i]    mean absolute grey change from frame i-1 to frame i on 4x-subsampled frames, 0-100 (motion[0] = 0)

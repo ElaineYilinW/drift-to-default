@@ -5,6 +5,7 @@ This folder holds the summary outputs of every experiment: tables, JSON summarie
 | Experiment | Folder | Written by |
 |---|---|---|
 | Context strategies (preregistered) | `main/` | `analysis/analyze_main.py` |
+| Correction development | `corr/e2_out/`, `corr/e3_out/` | `analysis/analyze_e2.py` |
 | Latent brightness direction | `corr/latent_summary.csv`, `corr/dose.csv`, `corr/jac/`, `corr/jac_*.npz`, `corr/luma_*.npz` | `generation/latent_summary.py`, `dose_response.py`, `jacobian.py` |
 | Correction, confirmatory (preregistered) | `corr/confirm_out/` | `analysis/analyze_confirm.py` |
 | Context interventions | `corr/swap_out/`, `corr/checks_out/` | `analysis/analyze_swap.py`, `analyze_checks.py` |
