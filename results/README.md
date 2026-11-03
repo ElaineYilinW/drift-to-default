@@ -48,6 +48,10 @@ This folder holds the summary outputs of every experiment: tables, JSON summarie
 | Attractor offset against the window (study 33, preregistered) | `corr/s33_out/` | `analysis/analyze_s33.py` |
 | One sink frequency held in two models (study 35, preregistered) | `corr/s35_out/` | `analysis/analyze_s35.py` |
 | The offset beyond the released window (study 36, preregistered) | `corr/s36_out/` | `analysis/analyze_s36.py` |
+| Probes of CausVid and Self Forcing GAN (exploratory) | `corr/probe37_out/` | `analysis/analyze_sinkprobe_long.py` |
+| The held-sink distance chosen by one rule (study 37, preregistered) | `corr/s37_out/dstar.json` | `analysis/select37.py` |
+| The held sink on new openings, four models (study 38, preregistered) | `corr/s38_out/` | `analysis/analyze_s38.py` |
+| The held sink on prompt-only videos, VBench-style scores (study 39, preregistered) | `corr/s39_out/` | `analysis/analyze_s39.py`, `generation/vbench_lite.py` |
 | Supplementary analyses: motion audit, opening source, μ over time, DINOv2 content (exploratory) | `corr/review3_out/` | `analysis/supplementary_analyses3.py`, `motion_audit.py`, `motion_summary.py`, `dino_content.py`, `analyze_dino_content.py` |
 | Band probe: which temporal RoPE frequencies make the probe's peaks; probe peaks by layer, head and pass (exploratory) | `corr/sinkband_out/`, `corr/sinkprobe_out/sinkprobe_heads.json` | `analysis/analyze_sinkband.py`, `analyze_sinkprobe_heads.py` |
 | MAGI-1 content and 60-s horizon (study 19, preregistered) | `corr/magi19_out/`, `corr/magi19_out_siglip/` (SigLIP rescoring) | `analysis/analyze_magi19.py` |
@@ -55,3 +59,5 @@ This folder holds the summary outputs of every experiment: tables, JSON summarie
 | Dose–response of tone persistence (study 23, preregistered) | `corr/s23_out/` | `analysis/analyze_s23.py` |
 
 `corr/` holds all the opening-based experiments.
+
+**Study 39, deviation 1.** The frozen `analyze_s39.py` read a per-frame motion series from every generator output, but `rf_gen_long.py` (Rolling Forcing, the reference) records none, so the script stopped on the first Rolling Forcing file. The fix reads motion only where it exists; the primary tests use the four sink models, which all record it, and are unaffected. The frozen version is in the git history (commit 9f2a27a).

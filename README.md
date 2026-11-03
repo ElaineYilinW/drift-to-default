@@ -2,7 +2,7 @@
 
 **How autoregressive video diffusion models forget their opening, and which training-free settings change that.**
 
-Autoregressive video models generate long videos chunk by chunk, each chunk conditioned on the model's own output, and the picture drifts. This project measures that drift by intervention across nine open-weight models (1.3B to 14B parameters), explains part of it through the attention mechanism, and tests training-free fixes. All 36 studies were preregistered with hashed analysis code; all 125 primary tests are reported, including the 34 that failed.
+Autoregressive video models generate long videos chunk by chunk, each chunk conditioned on the model's own output, and the picture drifts. This project measures that drift by intervention across nine open-weight models (1.3B to 14B parameters), explains part of it through the attention mechanism, and tests training-free fixes. All 39 studies were preregistered with hashed analysis code; all 145 primary tests are reported, including the 46 that failed.
 
 [Paper draft (PDF)](paper/main.pdf) · [Preregistrations](docs/README.md) · [Results index](results/README.md)
 
@@ -23,7 +23,7 @@ where **α** is the share of the opening kept at time T and **μ** is the defaul
 2. **What survives depends on whether the opening stays in the context.** Once it leaves a sliding key–value window it is forgotten, at 1.3B and at 14B parameters. An opening that stays in the context keeps a share: 0.21 for a re-rotated sink, 0.45 for Rolling Forcing and 0.51 for FramePack at 60 s.
 3. **Attention sinks produce bursts at positions an attention probe predicts.** With a sink at its absolute RoPE positions, the opening briefly returns where the probe finds attention to the sink peaking. Moving the sink moves the bursts; 13 burst times after 60 s, predicted out of sample, were confirmed on 180-s videos; holding one of the sink's 22 temporal RoPE frequencies removes the bursts in two models.
 4. **Drift has two separable parts.** Rollouts forget the opening, and the default itself sits away from where the prompt starts. In Self Forcing without a sink, this offset grows with the key–value window, from 5 L\* at window 6 to 16 L\* at window 21. With LongLive's 12-frame window, Self Forcing's offset halves and no longer differs significantly from LongLive's.
-5. **Training-free settings change the drift, each at a cost.** A sink held at a probe-chosen distance (Self Forcing, 120–180 s) keeps 0.45 of the opening's tone [0.40, 0.49] without bursts, against 0.22 for standard re-alignment and 0.43, with bursts, at its original positions. It does not transfer directly: at 60 s the same distance keeps 0.41 on Self Forcing and 0.17 on LongLive. A content-aware correction and a deeper sink also reduce colour drift, but the deeper sink keeps only 59% of legitimate brightness changes.
+5. **Training-free settings change the drift, each at a cost.** A sink held at a probe-chosen distance (Self Forcing, 120–180 s) keeps 0.45 of the opening's tone [0.40, 0.49] without bursts, against 0.22 for standard re-alignment and 0.43, with bursts, at its original positions. It does not transfer directly: at 60 s the same distance keeps 0.41 on Self Forcing and 0.17 on LongLive. With the distance chosen per model by one rule, the held sink keeps more than a re-aligned sink in four models on new openings (+0.20 to +0.30 at 60–120 s), but on prompt-only videos it does not improve VBench-style imaging quality and the video moves less: it controls how much of the opening is kept rather than improving quality. A content-aware correction and a deeper sink also reduce colour drift, but the deeper sink keeps only 59% of legitimate brightness changes.
 
 ![Bursts happen where the sink draws attention](assets/fig_probe.png)
 <sub>(a) Share of attention Self Forcing's queries would give a sink at each query–sink distance; orange: the 13 peaks after 60 s, preregistered as burst times. (b) Moving the sink 18 or 36 latent frames back moves the bursts to the predicted onsets. (c) For a sink held at one distance, the probe's share predicts how much is kept; above about 0.11 the video freezes on its opening.</sub>
@@ -33,7 +33,7 @@ where **α** is the share of the opening kept at time T and **μ** is the defaul
 
 ## Limitations
 
-- 34 of the 125 primary tests failed; the full table is in the paper's appendix. Within-study Holm is the preregistered correction; across all 125 tests, 67 of the 91 supported tests survive.
+- 46 of the 145 primary tests failed; the full table is in the paper's appendix. Within-study Holm is the preregistered correction; across all 145 tests, 68 of the 99 supported tests survive.
 - The attention probe and the band probe that identified the relevant RoPE frequency were exploratory; their predictions were then tested in preregistered studies. The relation between attention-sink collapse and RoPE periodicity was reported earlier by [LoL](https://arxiv.org/abs/2601.16914).
 - The measures are tone, colour and CLIP or DINOv2 scene evidence. Perceptual quality was not evaluated.
 - The held-sink result was chosen and confirmed on Self Forcing and is model-specific.

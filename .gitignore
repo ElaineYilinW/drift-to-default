@@ -16,3 +16,6 @@ paper/*.fdb_latexmk
 paper/*.out
 paper/main.blg
 cluster/jobs/
+results/corr/s37_raw/
+results/corr/s38_raw/
+results/corr/s39_raw/

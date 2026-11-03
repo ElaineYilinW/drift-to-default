@@ -14,5 +14,5 @@ mechanism that keeps the opening's scene is the unstable, positional one: keepin
 its errors is the open problem.
 
 \paragraph{Limitations.} Seven of the nine models are Wan2.1-based (FramePack and MAGI-1 are not). Content relaxation was replicated on FramePack and MAGI-1, and its prompt dependence on MAGI-1,
-but the decomposition rests on Wan-based models, and the world model collapses after 20--30\,s. Interventions shift global tone or select a scene class (CLIP and DINOv2 scores are coarse proxies for content); openings are held images; scene content is compared across openings rather than shifted within one; most configurations use one seed per scene (the main Self Forcing results replicate with more); with Holm correction across all 125 primary tests, 67 of the 91
+but the decomposition rests on Wan-based models, and the world model collapses after 20--30\,s. Interventions shift global tone or select a scene class (CLIP and DINOv2 scores are coarse proxies for content); openings are held images; scene content is compared across openings rather than shifted within one; most configurations use one seed per scene (the main Self Forcing results replicate with more); with Holm correction across all 145 primary tests, 68 of the 99
 supported ones remain significant; the correction was not compared with Pathwise or FreqForcing.

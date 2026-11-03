@@ -44,11 +44,12 @@ for p in glob.glob(f"{src}/*_s13.npz"):
         continue
     key = (x[2], x[3] or "ref")
     z = np.load(p)
-    L, mo = z["lab_mean"][:, 0], z["motion"]
+    L = z["lab_mean"][:, 0]
     if len(L) < 60 * FPS:
         continue
-    r = {"offset": abs(float(L[50 * FPS:60 * FPS].mean()) - float(L[:5 * FPS].mean())),
-         "motion": float(mo[50 * FPS:60 * FPS].mean())}
+    r = {"offset": abs(float(L[50 * FPS:60 * FPS].mean()) - float(L[:5 * FPS].mean()))}
+    if "motion" in z:   # deviation 1: rf_gen_long.py (Rolling Forcing) records no per-frame motion
+        r["motion"] = float(z["motion"][50 * FPS:60 * FPS].mean())
     q = p[:-4] + ".vbl.npz"
     if os.path.exists(q):
         w = np.load(q)
